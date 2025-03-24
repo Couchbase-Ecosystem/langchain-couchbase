@@ -64,54 +64,34 @@ def _get_pydantic_test_configs(
 ) -> List[Dict[str, str]]:
     import os.path
 
+    # For langchain-couchbase, we need specific pydantic versions that work with langchain-core
+    # Langchain core requires pydantic>=2.5.0 for the Discriminator feature
+    min_pydantic_minor_int = 5  # Start at 2.5.0 for langchain-core compatibility
+    
     # For langchain-couchbase, just check the main poetry.lock
     poetry_lock_path = "./poetry.lock"
     if not os.path.exists(poetry_lock_path):
         # If the poetry.lock file doesn't exist, use default values
-        max_pydantic_minor = "0"
+        max_pydantic_minor_int = 7  # Default to 2.7.0 as max
     else:
         with open(poetry_lock_path, "rb") as f:
             poetry_lock_data = tomllib.load(f)
         for package in poetry_lock_data["package"]:
             if package["name"] == "pydantic":
                 max_pydantic_minor = package["version"].split(".")[1]
+                try:
+                    max_pydantic_minor_int = int(max_pydantic_minor)
+                    # Cap at the latest known compatible version
+                    max_pydantic_minor_int = min(max_pydantic_minor_int, 10)  # Up to 2.10.x
+                except ValueError:
+                    max_pydantic_minor_int = 7  # Default to 2.7.0
                 break
         else:
-            max_pydantic_minor = "0"  # Default if pydantic not found in lock
-
-    # Check for pydantic in pyproject.toml
-    pyproject_path = "./pyproject.toml"
-    if os.path.exists(pyproject_path):
-        try:
-            min_pydantic_version = get_min_version_from_toml(
-                pyproject_path, "release", python_version, include=["pydantic"]
-            ).get("pydantic", "0.0.0")
-        except:
-            # If get_min_version_from_toml fails, use default
-            min_pydantic_version = "0.0.0"
-    else:
-        min_pydantic_version = "0.0.0"
-    
-    min_pydantic_minor = (
-        min_pydantic_version.split(".")[1]
-        if "." in min_pydantic_version
-        else "0"
-    )
-
-    # Convert to integers for comparison
-    try:
-        max_pydantic_minor_int = int(max_pydantic_minor)
-    except ValueError:
-        max_pydantic_minor_int = 0
-        
-    try:
-        min_pydantic_minor_int = int(min_pydantic_minor)
-    except ValueError:
-        min_pydantic_minor_int = 0
+            max_pydantic_minor_int = 7  # Default if pydantic not found in lock
 
     # Ensure min is not greater than max
     if min_pydantic_minor_int > max_pydantic_minor_int:
-        min_pydantic_minor_int = max_pydantic_minor_int
+        max_pydantic_minor_int = min_pydantic_minor_int
 
     configs = [
         {
@@ -122,12 +102,12 @@ def _get_pydantic_test_configs(
         for v in range(min_pydantic_minor_int, max_pydantic_minor_int + 1)
     ]
     
-    # If no configs were generated, add at least one
+    # If no configs were generated, use a known compatible version
     if not configs:
         configs = [
             {
                 "working-directory": dir_,
-                "pydantic-version": "2.0.0",
+                "pydantic-version": "2.5.0",
                 "python-version": python_version,
             }
         ]

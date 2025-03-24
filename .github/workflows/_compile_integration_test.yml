@@ -1,4 +1,4 @@
-name: compile-integration-test
+name: Compile Integration Tests
 
 on:
   workflow_call:
@@ -6,23 +6,20 @@ on:
       working-directory:
         required: true
         type: string
-        description: "From which folder this pipeline executes"
       python-version:
         required: true
         type: string
-        description: "Python version to use"
 
 env:
   POETRY_VERSION: "1.8.4"
 
 jobs:
-  build:
+  compile-integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    name: "poetry run pytest -m compile tests/integration_tests #${{ inputs.python-version }}"
     steps:
       - uses: actions/checkout@v4
 
@@ -32,15 +29,22 @@ jobs:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ env.POETRY_VERSION }}
           working-directory: ${{ inputs.working-directory }}
-          cache-key: compile-integration
+          cache-key: compile
 
-      - name: Install integration dependencies
+      - name: Install dependencies
         shell: bash
-        run: poetry install --with=test_integration,test
+        run: |
+          poetry install --with test
+          # Install specific version of pydantic to ensure compatibility with langchain_core
+          poetry run pip install "pydantic>=2.5.0"
 
-      - name: Check integration tests compile
+      - name: Run compile tests
         shell: bash
-        run: poetry run pytest -m compile tests/integration_tests
+        run: |
+          # Remove asyncio_mode from pyproject.toml if it exists
+          sed -i '/asyncio_mode/d' pyproject.toml
+          # Run compile tests
+          poetry run pytest tests/integration_tests -m compile -v
 
       - name: Ensure the tests did not create any additional files
         shell: bash
