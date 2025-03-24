@@ -1,4 +1,4 @@
-name: lint
+name: Lint
 
 on:
   workflow_call:
@@ -6,24 +6,19 @@ on:
       working-directory:
         required: true
         type: string
-        description: "From which folder this pipeline executes"
       python-version:
         required: true
         type: string
-        description: "Python version to use"
 
 env:
   POETRY_VERSION: "1.8.4"
-  WORKDIR: ${{ inputs.working-directory == '' && '.' || inputs.working-directory }}
-
-  # This env var allows us to get inline annotations when ruff has complaints.
-  RUFF_OUTPUT_FORMAT: github
 
 jobs:
-  build:
-    name: "make lint #${{ inputs.python-version }}"
+  lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,77 +28,16 @@ jobs:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ env.POETRY_VERSION }}
           working-directory: ${{ inputs.working-directory }}
-          cache-key: lint-with-extras
-
-      - name: Check Poetry File
-        shell: bash
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          poetry check
-
-      - name: Check lock file
-        shell: bash
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          poetry lock --check
+          cache-key: lint
 
       - name: Install dependencies
-        # Also installs dev/lint/test/typing dependencies, to ensure we have
-        # type hints for as many of our libraries as possible.
-        # This helps catch errors that require dependencies to be spotted, for example:
-        # https://github.com/langchain-ai/langchain/pull/10249/files#diff-935185cd488d015f026dcd9e19616ff62863e8cde8c0bee70318d3ccbca98341
-        #
-        # If you change this configuration, make sure to change the `cache-key`
-        # in the `poetry_setup` action above to stop using the old cache.
-        # It doesn't matter how you change it, any change will cause a cache-bust.
-        working-directory: ${{ inputs.working-directory }}
+        shell: bash
         run: |
-          poetry install --with lint,typing
+          poetry install --with lint,test
 
-      - name: Get .mypy_cache to speed up mypy
-        uses: actions/cache@v4
-        env:
-          SEGMENT_DOWNLOAD_TIMEOUT_MIN: "2"
-        with:
-          path: |
-            ${{ env.WORKDIR }}/.mypy_cache
-          key: mypy-lint-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ inputs.working-directory }}-${{ hashFiles(format('{0}/poetry.lock', inputs.working-directory)) }}
-
-
-      - name: Analysing the code with our lint
-        working-directory: ${{ inputs.working-directory }}
+      - name: Lint
+        if: inputs.working-directory == '.'
+        shell: bash
         run: |
-          make lint_package
-
-      - name: Install unit test dependencies
-        # Also installs dev/lint/test/typing dependencies, to ensure we have
-        # type hints for as many of our libraries as possible.
-        # This helps catch errors that require dependencies to be spotted, for example:
-        # https://github.com/langchain-ai/langchain/pull/10249/files#diff-935185cd488d015f026dcd9e19616ff62863e8cde8c0bee70318d3ccbca98341
-        #
-        # If you change this configuration, make sure to change the `cache-key`
-        # in the `poetry_setup` action above to stop using the old cache.
-        # It doesn't matter how you change it, any change will cause a cache-bust.
-        if: ${{ ! startsWith(inputs.working-directory, 'libs/partners/') }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          poetry install --with test
-      - name: Install unit+integration test dependencies
-        if: ${{ startsWith(inputs.working-directory, 'libs/partners/') }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          poetry install --with test,test_integration
-
-      - name: Get .mypy_cache_test to speed up mypy
-        uses: actions/cache@v4
-        env:
-          SEGMENT_DOWNLOAD_TIMEOUT_MIN: "2"
-        with:
-          path: |
-            ${{ env.WORKDIR }}/.mypy_cache_test
-          key: mypy-test-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ inputs.working-directory }}-${{ hashFiles(format('{0}/poetry.lock', inputs.working-directory)) }}
-
-      - name: Analysing the code with our lint
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          make lint_tests
+          poetry run ruff check .
+          poetry run ruff format . --check

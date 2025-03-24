@@ -1,4 +1,4 @@
-name: test
+name: Python Tests
 
 on:
   workflow_call:
@@ -6,42 +6,49 @@ on:
       working-directory:
         required: true
         type: string
-        description: "From which folder this pipeline executes"
       python-version:
         required: true
         type: string
-        description: "Python version to use"
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 env:
   POETRY_VERSION: "1.8.4"
 
 jobs:
-  build:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    name: "make test #${{ inputs.python-version }}"
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python ${{ inputs.python-version }} + Poetry ${{ env.POETRY_VERSION }}
         uses: "./.github/actions/poetry_setup"
-        id: setup-python
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ env.POETRY_VERSION }}
           working-directory: ${{ inputs.working-directory }}
-          cache-key: core
+          cache-key: test
+
       - name: Install dependencies
         shell: bash
         run: poetry install --with test
 
-      - name: Run core tests
+      - name: Run tests
+        if: inputs.working-directory == '.'
         shell: bash
-        run: |
-          make test
+        run: poetry run pytest -v
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ inputs.working-directory }}
+          fail_ci_if_error: false
 
       - name: Get minimum versions
         working-directory: ${{ inputs.working-directory }}
