@@ -148,32 +148,59 @@ def _get_configs_for_single_dir(job: str, dir_: str) -> List[Dict[str, str]]:
 def _get_pydantic_test_configs(
     dir_: str, *, python_version: str = "3.11"
 ) -> List[Dict[str, str]]:
-    with open("./libs/core/poetry.lock", "rb") as f:
-        core_poetry_lock_data = tomllib.load(f)
-    for package in core_poetry_lock_data["package"]:
-        if package["name"] == "pydantic":
-            core_max_pydantic_minor = package["version"].split(".")[1]
-            break
+    import os.path
 
-    with open(f"./{dir_}/poetry.lock", "rb") as f:
-        dir_poetry_lock_data = tomllib.load(f)
+    core_poetry_lock_path = "./libs/core/poetry.lock"
+    if not os.path.exists(core_poetry_lock_path):
+        # If the poetry.lock file doesn't exist, use default values
+        core_max_pydantic_minor = "0"
+    else:
+        with open(core_poetry_lock_path, "rb") as f:
+            core_poetry_lock_data = tomllib.load(f)
+        for package in core_poetry_lock_data["package"]:
+            if package["name"] == "pydantic":
+                core_max_pydantic_minor = package["version"].split(".")[1]
+                break
+        else:
+            core_max_pydantic_minor = "0"  # Default if pydantic not found in lock
 
-    for package in dir_poetry_lock_data["package"]:
-        if package["name"] == "pydantic":
-            dir_max_pydantic_minor = package["version"].split(".")[1]
-            break
+    dir_poetry_lock_path = f"./{dir_}/poetry.lock"
+    if not os.path.exists(dir_poetry_lock_path):
+        # If the poetry.lock file doesn't exist, use default values
+        dir_max_pydantic_minor = "0"
+    else:
+        with open(dir_poetry_lock_path, "rb") as f:
+            dir_poetry_lock_data = tomllib.load(f)
+        
+        for package in dir_poetry_lock_data["package"]:
+            if package["name"] == "pydantic":
+                dir_max_pydantic_minor = package["version"].split(".")[1]
+                break
+        else:
+            dir_max_pydantic_minor = "0"  # Default if pydantic not found in lock
 
-    core_min_pydantic_version = get_min_version_from_toml(
-        "./libs/core/pyproject.toml", "release", python_version, include=["pydantic"]
-    )["pydantic"]
+    core_pyproject_path = "./libs/core/pyproject.toml"
+    if os.path.exists(core_pyproject_path):
+        core_min_pydantic_version = get_min_version_from_toml(
+            core_pyproject_path, "release", python_version, include=["pydantic"]
+        ).get("pydantic", "0.0.0")
+    else:
+        core_min_pydantic_version = "0.0.0"
+    
     core_min_pydantic_minor = (
         core_min_pydantic_version.split(".")[1]
         if "." in core_min_pydantic_version
         else "0"
     )
-    dir_min_pydantic_version = get_min_version_from_toml(
-        f"./{dir_}/pyproject.toml", "release", python_version, include=["pydantic"]
-    ).get("pydantic", "0.0.0")
+    
+    dir_pyproject_path = f"./{dir_}/pyproject.toml"
+    if os.path.exists(dir_pyproject_path):
+        dir_min_pydantic_version = get_min_version_from_toml(
+            dir_pyproject_path, "release", python_version, include=["pydantic"]
+        ).get("pydantic", "0.0.0")
+    else:
+        dir_min_pydantic_version = "0.0.0"
+    
     dir_min_pydantic_minor = (
         dir_min_pydantic_version.split(".")[1]
         if "." in dir_min_pydantic_version
