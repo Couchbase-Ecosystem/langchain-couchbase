@@ -113,8 +113,9 @@ def add_dependents(dirs_to_eval: Set[str], dependents: dict) -> List[str]:
 
 
 def _get_configs_for_single_dir(job: str, dir_: str) -> List[Dict[str, str]]:
-    if job == "test-pydantic":
-        return _get_pydantic_test_configs(dir_)
+    # Commenting out missing workflow reference
+    # if job == "test-pydantic":
+    #     return _get_pydantic_test_configs(dir_)
 
     if dir_ == "libs/core":
         py_versions = ["3.9", "3.10", "3.11", "3.12", "3.13"]
@@ -214,7 +215,7 @@ def _get_configs_for_multi_dirs(
             dirs_to_run["lint"] | dirs_to_run["test"] | dirs_to_run["extended-test"],
             dependents,
         )
-    elif job in ["test", "compile-integration-tests", "dependencies", "test-pydantic"]:
+    elif job in ["test", "compile-integration-tests", "dependencies"]:
         dirs = add_dependents(
             dirs_to_run["test"] | dirs_to_run["extended-test"], dependents
         )
@@ -321,12 +322,13 @@ if __name__ == "__main__":
             "extended-tests",
             "compile-integration-tests",
             "dependencies",
-            "test-pydantic",
+            # "test-pydantic",
         ]
     }
-    map_job_to_configs["test-doc-imports"] = (
-        [{"python-version": "3.12"}] if docs_edited else []
-    )
+    # Commenting out missing workflow
+    # map_job_to_configs["test-doc-imports"] = (
+    #     [{"python-version": "3.12"}] if docs_edited else []
+    # )
 
     for key, value in map_job_to_configs.items():
         json_output = json.dumps(value)
