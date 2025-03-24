@@ -30,6 +30,10 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
           cache-key: lint
 
+      - name: Update poetry.lock file
+        shell: bash
+        run: poetry lock --no-update
+
       - name: Install dependencies
         shell: bash
         run: |

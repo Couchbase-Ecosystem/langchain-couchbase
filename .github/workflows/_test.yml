@@ -33,6 +33,10 @@ jobs:
           poetry-version: ${{ env.POETRY_VERSION }}
           working-directory: ${{ inputs.working-directory }}
           cache-key: test
+          
+      - name: Update poetry.lock file
+        shell: bash
+        run: poetry lock --no-update
 
       - name: Install dependencies
         shell: bash
