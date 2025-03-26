@@ -19,7 +19,7 @@ pip install -U langchain-couchbase
 
 ## CouchbaseVectorStore
 
-`CouchbaseVectorStore` enables the usage of Couchbase for Vector Search.
+`CouchbaseVectorStore` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/vectorstores.py)) enables the usage of Couchbase for Vector Search.
 
 ### Import
 
@@ -43,7 +43,7 @@ from langchain_couchbase import CouchbaseVectorStore
 
 ### Key Methods
 
-#### `add_texts`
+#### `add_texts` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/vectorstores.py))
 
 Add texts to the vector store.
 
@@ -58,7 +58,7 @@ def add_texts(
 ) -> List[str]
 ```
 
-#### `similarity_search`
+#### `similarity_search` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/vectorstores.py))
 
 Return documents most similar to the query.
 
@@ -72,7 +72,7 @@ def similarity_search(
 ) -> List[Document]
 ```
 
-#### `similarity_search_with_score`
+#### `similarity_search_with_score` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/vectorstores.py))
 
 Return documents most similar to the query with their scores.
 
@@ -86,7 +86,7 @@ def similarity_search_with_score(
 ) -> List[Tuple[Document, float]]
 ```
 
-#### `delete`
+#### `delete` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/vectorstores.py))
 
 Delete documents from the vector store by IDs.
 
@@ -156,7 +156,7 @@ for doc, score in results:
 
 ## CouchbaseCache
 
-`CouchbaseCache` allows using Couchbase as a cache for prompts and responses.
+`CouchbaseCache` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py)) allows using Couchbase as a cache for prompts and responses.
 
 ### Import
 
@@ -176,7 +176,7 @@ from langchain_couchbase.cache import CouchbaseCache
 
 ### Key Methods
 
-#### `lookup`
+#### `lookup` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Look up from cache based on prompt and llm_string.
 
@@ -184,7 +184,7 @@ Look up from cache based on prompt and llm_string.
 def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]
 ```
 
-#### `update`
+#### `update` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Update cache based on prompt and llm_string.
 
@@ -192,7 +192,7 @@ Update cache based on prompt and llm_string.
 def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE) -> None
 ```
 
-#### `clear`
+#### `clear` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Clear the cache.
 
@@ -241,7 +241,7 @@ result2 = llm.invoke("What is the capital of France?")
 
 ## CouchbaseSemanticCache
 
-`CouchbaseSemanticCache` allows retrieving cached prompts based on the semantic similarity between the user input and previously cached inputs.
+`CouchbaseSemanticCache` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py)) allows retrieving cached prompts based on the semantic similarity between the user input and previously cached inputs.
 
 ### Import
 
@@ -264,7 +264,7 @@ from langchain_couchbase.cache import CouchbaseSemanticCache
 
 ### Key Methods
 
-#### `lookup`
+#### `lookup` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Look up from cache based on the semantic similarity of the prompt.
 
@@ -272,7 +272,7 @@ Look up from cache based on the semantic similarity of the prompt.
 def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]
 ```
 
-#### `update`
+#### `update` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Update cache based on the prompt and llm_string.
 
@@ -280,7 +280,7 @@ Update cache based on the prompt and llm_string.
 def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE) -> None
 ```
 
-#### `clear`
+#### `clear` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/cache.py))
 
 Clear the cache.
 
@@ -335,7 +335,7 @@ result2 = llm.invoke("Tell me the capital city of France")
 
 ## CouchbaseChatMessageHistory
 
-`CouchbaseChatMessageHistory` allows using Couchbase as the storage for chat messages.
+`CouchbaseChatMessageHistory` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/chat_message_histories.py)) allows using Couchbase as the storage for chat messages.
 
 ### Import
 
@@ -359,7 +359,7 @@ from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHisto
 
 ### Key Methods
 
-#### `add_message`
+#### `add_message` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/chat_message_histories.py))
 
 Add a message to the chat history.
 
@@ -367,7 +367,7 @@ Add a message to the chat history.
 def add_message(self, message: BaseMessage) -> None
 ```
 
-#### `add_messages`
+#### `add_messages` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/chat_message_histories.py))
 
 Add multiple messages to the chat history in a batched manner.
 
@@ -375,7 +375,7 @@ Add multiple messages to the chat history in a batched manner.
 def add_messages(self, messages: Sequence[BaseMessage]) -> None
 ```
 
-#### `clear`
+#### `clear` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/chat_message_histories.py))
 
 Clear the chat history.
 
@@ -383,7 +383,7 @@ Clear the chat history.
 def clear(self) -> None
 ```
 
-#### `messages` (property)
+#### `messages` ([source](https://github.com/Couchbase-Ecosystem/langchain-couchbase/blob/main/langchain_couchbase/chat_message_histories.py)) (property)
 
 Get all messages in the chat history associated with the session_id.
 
