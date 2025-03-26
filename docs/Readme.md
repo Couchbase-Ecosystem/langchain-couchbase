@@ -34,7 +34,7 @@ To build and preview the documentation locally:
    mkdocs serve
    ```
 
-3. Open your browser to http://localhost:8000
+4. Open your browser to http://localhost:8000
 
 ## Deployment
 
