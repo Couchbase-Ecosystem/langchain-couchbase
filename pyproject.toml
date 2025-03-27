@@ -52,6 +52,14 @@ optional = true
 [tool.poetry.group.dev]
 optional = true
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = ">=1.5.0"
+mkdocs-material = ">=9.5.0"
+pymdown-extensions = ">=10.7"
+
 [tool.poetry.group.dev.dependencies]
 
 [tool.poetry.group.test.dependencies]
