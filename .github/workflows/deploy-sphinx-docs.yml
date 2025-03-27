@@ -25,10 +25,10 @@ jobs:
       # Checks-outs your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-           python-version: "3.11"
+           python-version: "3.9"
       
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: | 
           poetry install --with dev
-          poetry add sphinx sphinx_rtd_theme ghp-import
+          poetry add "sphinx<8.0.0" "sphinx_rtd_theme<2.0.0" ghp-import
       
       - name: Build HTML documentation
         run: | 
