@@ -1,0 +1,102 @@
+/* Custom styles for documentation */
+
+/* Improve readability with more spacing */
+.rst-content p, .rst-content li {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Better code blocks */
+.highlight {
+    border-radius: 4px;
+    margin: 1.5em 0;
+}
+
+.highlight pre {
+    padding: 16px;
+    line-height: 1.5;
+}
+
+/* Better table styles */
+.rst-content table.docutils {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 2em;
+}
+
+.rst-content table.docutils thead th {
+    background-color: #f0f0f0;
+}
+
+/* Better section headers */
+.rst-content h1, .rst-content h2, .rst-content h3, .rst-content h4 {
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+.rst-content h1 {
+    border-bottom: 1px solid #e1e4e5;
+    padding-bottom: 0.5em;
+}
+
+/* Better admonitions (notes, warnings, etc.) */
+.rst-content .admonition {
+    border-radius: 4px;
+    padding: 1em;
+    margin: 1.5em 0;
+}
+
+.rst-content .admonition-title {
+    border-radius: 4px 4px 0 0;
+    padding: 0.6em 1em;
+}
+
+/* Improve GitHub source links */
+.viewcode-link, .reference.external {
+    font-weight: normal;
+    font-size: 0.9em;
+    padding: 0 4px;
+}
+
+/* Better search box */
+.wy-side-nav-search input[type="text"] {
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+/* Better method signature display */
+dl.method > dt, dl.function > dt, dl.class > dt {
+    padding: 0.8em;
+    border-radius: 4px;
+}
+
+/* Improve parameter lists */
+.field-list {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.field-list dt {
+    font-weight: bold;
+}
+
+.field-list dd {
+    margin-left: 1.5em;
+    margin-bottom: 0.8em;
+}
+
+/* Better code examples */
+.rst-content pre.literal-block, .rst-content div[class^='highlight'] pre {
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+/* Better lists */
+.rst-content ul, .rst-content ol {
+    margin-bottom: 1.5em;
+}
+
+.rst-content ul li, .rst-content ol li {
+    margin-bottom: 0.5em;
+} 
