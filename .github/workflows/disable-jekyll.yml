@@ -1,0 +1,26 @@
+name: Disable Jekyll
+
+on:
+  push:
+    branches:
+      - main
+      - gh-pages
+  workflow_dispatch:
+
+jobs:
+  disable-jekyll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Create .nojekyll file
+        run: |
+          touch .nojekyll
+          echo "Disabled Jekyll processing" > .nojekyll
+          
+      - name: Commit .nojekyll file
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Disable Jekyll processing"
+          file_pattern: .nojekyll 
