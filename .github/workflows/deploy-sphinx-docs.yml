@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: | 
           poetry install --with dev
-          poetry add "sphinx==8.0.2" "sphinx_rtd_theme" ghp-import
+          poetry add "sphinx==6.2.1" "sphinx_rtd_theme==1.2.2" ghp-import
       
       - name: Build HTML documentation
         run: | 
