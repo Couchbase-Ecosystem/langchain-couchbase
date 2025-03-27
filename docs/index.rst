@@ -42,7 +42,7 @@ Here's a simple example of using Couchbase as a vector store:
    # Create a vector store
    vectorstore = CouchbaseVectorStore(
        connection_string="couchbase://localhost",
-       username="username",
+       username="Administrator",
        password="password",
        bucket_name="vector_store",
        scope_name="_default",
