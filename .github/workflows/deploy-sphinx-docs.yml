@@ -1,52 +1,27 @@
-# This is a basic workflow to help you get started with Actions
+name: documentation
 
-name: Build-sphinx-docs
+on: [push, pull_request, workflow_dispatch]
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+permissions:
+  contents: write
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs: 
-  # This workflow contains a single job called "build"
-  build: 
-    # The type of runner that the job will run on
+jobs:
+  docs:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-outs your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-           python-version: "3.10"
-      
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.8.2
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      
+      - uses: actions/setup-python@v5
       - name: Install dependencies
-        run: | 
-          poetry install --with dev
-          poetry add "sphinx==6.2.1" "sphinx_rtd_theme==1.2.2" ghp-import
-      
-      - name: Build HTML documentation
-        run: | 
-          cd docs/
-          poetry run sphinx-build -b html . _build/html
-      
-      - name: Deploy documentation to GitHub Pages
-        run: | 
-          poetry run ghp-import -n -p -f docs/_build/html
+        run: |
+          pip install sphinx sphinx_rtd_theme myst_parser
+      - name: Sphinx build
+        run: |
+          sphinx-build doc _build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _build/
+          force_orphan: true
