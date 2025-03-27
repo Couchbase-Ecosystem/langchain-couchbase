@@ -1,0 +1,7 @@
+Set up Docusaurus documentation site
+
+- Created Docusaurus site for LangChain Couchbase documentation
+- Added API reference documentation from index.md
+- Configured theme and styling to match Couchbase branding
+- Set up GitHub Actions workflow for automatic deployment to GitHub Pages
+- Updated site configuration, sidebar, and homepage 
