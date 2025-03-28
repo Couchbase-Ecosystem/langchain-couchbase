@@ -560,6 +560,11 @@ class CouchbaseVectorStore(VectorStore):
 
             # Parse the results
             for row in search_iter.rows():
+                if row.fields is None:
+                    raise ValueError(
+                        "Search results contain null fields. Please check your index definition "
+                        "to ensure all required fields (including text and embedding) are properly indexed and stored."
+                    )
                 text = row.fields.pop(self._text_key, "")
                 id = row.id
 
