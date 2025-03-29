@@ -45,8 +45,8 @@ jobs:
       - name: Build HTML documentation
         run: | 
           cd docs/
-          poetry run sphinx-build -vv -b html . _build/html
+          make _build/html
       
       - name: Deploy documentation to GitHub Pages
         run: | 
-          poetry run ghp-import -n -p -f docs/_build/html
+          ghp-import -n -p -f docs/_build/html
