@@ -43,10 +43,10 @@ jobs:
           poetry add "sphinx==6.2.1" "sphinx_rtd_theme==1.2.2" ghp-import
       
       - name: Build HTML documentation
-        run: | 
+        run: |
           cd docs/
-          make _build/html
+          poetry run sphinx-build -vv -b html . _build/html
       
       - name: Deploy documentation to GitHub Pages
-        run: | 
-          ghp-import -n -p -f docs/_build/html
+        run: |
+          poetry run ghp-import -n -p -f docs/_build/html
