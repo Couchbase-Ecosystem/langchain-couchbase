@@ -30,6 +30,12 @@ intersphinx_mapping = {
 }
 intersphinx_missing_references = "warn" # Ensure warnings are still shown for missing refs
 
+# Suppress specific nitpicky warnings
+nitpick_ignore = [
+    ('py:class', 'couchbase.cluster.Cluster'),  # Ignore missing Cluster type from couchbase lib
+    ('py:class', 'Cluster'),  # Also ignore if referenced without full path
+]
+
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 

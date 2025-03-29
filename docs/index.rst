@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 langchain-couchbase
-==================
+===================
 
 **Couchbase integrations for LangChain**
 
@@ -23,14 +23,14 @@ langchain-couchbase provides integrations for using Couchbase with LangChain. Th
 * **Cache**: LLM cache using Couchbase
 
 Installation
------------
+------------
 
 .. code-block:: bash
 
    pip install langchain-couchbase
 
 Quick Start
-----------
+-----------
 
 Here's a simple example of using Couchbase as a vector store:
 
@@ -65,7 +65,7 @@ Here's a simple example of using Couchbase as a vector store:
 
 
 Project Links
-------------
+-------------
 
 * `GitHub <https://github.com/langchain-ai/langchain-couchbase>`_
 * `PyPI <https://pypi.org/project/langchain-couchbase/>`_
