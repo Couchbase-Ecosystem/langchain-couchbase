@@ -9,7 +9,7 @@
 #
 import os
 import sys
-from importlib.metadata import version
+from importlib.metadata import version as get_version
 
 import sphinx_rtd_theme
 
@@ -21,7 +21,10 @@ sys.path.insert(0, os.path.abspath("../.."))
 project = "langchain-couchbase"
 copyright = "2025, Couchbase"
 author = "Couchbase"
-release = version("langchain-couchbase")
+try:
+    release = get_version("langchain-couchbase")
+except Exception:
+    release = "0.2.5"  # Default version if package not installed
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
