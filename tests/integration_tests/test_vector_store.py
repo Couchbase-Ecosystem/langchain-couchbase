@@ -8,9 +8,7 @@ import pytest
 from langchain_core.documents import Document
 
 from langchain_couchbase import CouchbaseVectorStore
-from tests.utils import (
-    ConsistentFakeEmbeddings,
-)
+from tests.utils import ConsistentFakeEmbeddings
 
 CONNECTION_STRING = os.getenv("COUCHBASE_CONNECTION_STRING", "")
 BUCKET_NAME = os.getenv("COUCHBASE_BUCKET_NAME", "")
@@ -391,6 +389,116 @@ class TestCouchbaseVectorStore:
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
+
+        output = vectorstore.similarity_search("foo", k=1)
+        assert output[0].id == ids[0]
+
+    def test_search_index_without_fields(self, cluster: Any) -> None:
+        """Test that the right error is raised if the search index
+        does not contain the required fields."""
+        from couchbase.management.search import SearchIndex
+
+        texts = [
+            "foo",
+            "bar",
+            "baz",
+        ]
+
+        metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
+
+        # Create a search index without the required fields
+        scope_index_manager = (
+            cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes()
+        )
+        INVALID_INDEX_NAME = "langchain-vs-testing-invalid-index"
+
+        index_definition = {
+            "type": "fulltext-index",
+            "name": INVALID_INDEX_NAME,
+            "sourceType": "gocbcore",
+            "sourceName": BUCKET_NAME,
+            "planParams": {"maxPartitionsPerPIndex": 1024, "indexPartitions": 1},
+            "params": {
+                "doc_config": {
+                    "docid_prefix_delim": "",
+                    "docid_regexp": "",
+                    "mode": "scope.collection.type_field",
+                    "type_field": "type",
+                },
+                "mapping": {
+                    "analysis": {},
+                    "default_analyzer": "standard",
+                    "default_datetime_parser": "dateTimeOptional",
+                    "default_field": "_all",
+                    "default_mapping": {"dynamic": False, "enabled": False},
+                    "default_type": "_default",
+                    "docvalues_dynamic": False,
+                    "index_dynamic": True,
+                    "store_dynamic": True,
+                    "type_field": "_type",
+                    "types": {
+                        "langchain.testing": {
+                            "dynamic": False,
+                            "enabled": True,
+                            "properties": {
+                                "embedding": {
+                                    "dynamic": False,
+                                    "enabled": True,
+                                    "fields": [
+                                        {
+                                            "dims": 10,
+                                            "index": True,
+                                            "name": "embedding",
+                                            "similarity": "l2_norm",
+                                            "type": "vector",
+                                            "vector_index_optimized_for": "recall",
+                                        }
+                                    ],
+                                },
+                            },
+                        }
+                    },
+                },
+                "store": {"indexType": "scorch", "segmentVersion": 16},
+            },
+            "sourceParams": {},
+        }
+
+        # Create the search index without text and metadata fields
+        scope_index_manager.upsert_index(SearchIndex.from_json(index_definition))
+
+        # Create the vector store with the invalid search index
+        invalid_index_vs = CouchbaseVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            index_name=INVALID_INDEX_NAME,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+        )
+
+        ids = invalid_index_vs.add_texts(texts, metadatas=metadatas)
+        assert len(ids) == len(texts)
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+        with pytest.raises(
+            ValueError,
+            match=("Search results do not contain the fields from the document."),
+        ):
+            output = invalid_index_vs.similarity_search("foo", k=1)
+
+        # Drop the invalid search index
+        scope_index_manager.drop_index(INVALID_INDEX_NAME)
+
+        # Test the search index with the required fields reusing the same collection
+        vectorstore = CouchbaseVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            index_name=INDEX_NAME,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+        )
 
         output = vectorstore.similarity_search("foo", k=1)
         assert output[0].id == ids[0]
