@@ -9,34 +9,37 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+from importlib.metadata import version
+
+import sphinx_rtd_theme
+
+sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'langchain-couchbase'
-copyright = '2025, Nithish Raghunandanan'
-author = 'Nithish Raghunandanan'
-release = '0.2.4'
+project = "langchain-couchbase"
+copyright = "2025, Couchbase"
+author = "Couchbase"
+release = version("langchain-couchbase")
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-import sphinx_rtd_theme
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
