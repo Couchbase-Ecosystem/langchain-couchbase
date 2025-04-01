@@ -560,16 +560,22 @@ class CouchbaseVectorStore(VectorStore):
 
             # Parse the results
             for row in search_iter.rows():
-                text = row.fields.pop(self._text_key, "")
-                id = row.id
+                if row.fields:
+                    text = row.fields.pop(self._text_key, "")
+                    id = row.id
 
-                # Format the metadata from Couchbase
-                metadata = self._format_metadata(row.fields)
+                    # Format the metadata from Couchbase
+                    metadata = self._format_metadata(row.fields)
 
-                score = row.score
-                doc = Document(id=id, page_content=text, metadata=metadata)
-                docs_with_score.append((doc, score))
-
+                    score = row.score
+                    doc = Document(id=id, page_content=text, metadata=metadata)
+                    docs_with_score.append((doc, score))
+                else:
+                    raise ValueError(
+                        "Search results do not contain the fields from the document. "
+                        "Please check if the Search index contains the required fields:"
+                        f"{self._text_key}"
+                    )
         except Exception as e:
             raise ValueError(f"Search failed with error: {e}")
 
