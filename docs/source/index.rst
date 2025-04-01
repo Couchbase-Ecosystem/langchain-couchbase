@@ -1,14 +1,26 @@
 .. langchain-couchbase documentation master file, created by
-   sphinx-quickstart on Tue Apr  1 13:05:50 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+   sphinx-quickstart.
 
-langchain-couchbase documentation
-=================================
+Welcome to langchain-couchbase's documentation!
+=================================================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+``langchain-couchbase`` is an integration package connecting Couchbase and LangChain.
+
+Check out the :doc:`usage` section for further information, including
+how to :ref:`installation` the package.
+
+.. note::
+
+   This project is under active development.
+
+.. _installation:
+
+Installation
+------------
+
+Install ``langchain-couchbase`` using ``pip``::
+
+   pip install langchain-couchbase
 
 
 .. toctree::
@@ -16,7 +28,7 @@ documentation for details.
    :caption: Contents:
 
    modules
-
+   usage
 
 Indices and tables
 ==================
