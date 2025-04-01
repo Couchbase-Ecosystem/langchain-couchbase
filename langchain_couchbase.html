@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>langchain_couchbase package &mdash; langchain-couchbase  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests package" href="tests.html" />
+    <link rel="prev" title="langchain-couchbase" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            langchain-couchbase
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">langchain-couchbase</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">langchain_couchbase package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-langchain_couchbase.cache">langchain_couchbase.cache module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.cache.CouchbaseCache"><code class="docutils literal notranslate"><span class="pre">CouchbaseCache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.cache.CouchbaseSemanticCache"><code class="docutils literal notranslate"><span class="pre">CouchbaseSemanticCache</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-langchain_couchbase.chat_message_histories">langchain_couchbase.chat_message_histories module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory"><code class="docutils literal notranslate"><span class="pre">CouchbaseChatMessageHistory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-langchain_couchbase.vectorstores">langchain_couchbase.vectorstores module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore"><code class="docutils literal notranslate"><span class="pre">CouchbaseVectorStore</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-langchain_couchbase">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.CouchbaseCache"><code class="docutils literal notranslate"><span class="pre">CouchbaseCache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.CouchbaseChatMessageHistory"><code class="docutils literal notranslate"><span class="pre">CouchbaseChatMessageHistory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.CouchbaseSemanticCache"><code class="docutils literal notranslate"><span class="pre">CouchbaseSemanticCache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#langchain_couchbase.CouchbaseVectorStore"><code class="docutils literal notranslate"><span class="pre">CouchbaseVectorStore</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">langchain-couchbase</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">langchain-couchbase</a></li>
+      <li class="breadcrumb-item active">langchain_couchbase package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/langchain_couchbase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="langchain-couchbase-package">
+<h1>langchain_couchbase package<a class="headerlink" href="#langchain-couchbase-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-langchain_couchbase.cache">
+<span id="langchain-couchbase-cache-module"></span><h2>langchain_couchbase.cache module<a class="headerlink" href="#module-langchain_couchbase.cache" title="Permalink to this heading"></a></h2>
+<p>LangChain Couchbase Caches</p>
+<p>Functions “_hash”, “_loads_generations” and “_dumps_generations”
+are duplicated in this utility from modules:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“libs/community/langchain_community/cache.py”</p></li>
+</ul>
+</div></blockquote>
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.cache.</span></span><span class="sig-name descname"><span class="pre">CouchbaseCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCache</span></code></p>
+<p>Couchbase LLM Cache
+LLM Cache that uses Couchbase as the backend</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.LLM">
+<span class="sig-name descname"><span class="pre">LLM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'llm'</span></em><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.LLM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.PROMPT">
+<span class="sig-name descname"><span class="pre">PROMPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'prompt'</span></em><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.PROMPT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.RETURN_VAL">
+<span class="sig-name descname"><span class="pre">RETURN_VAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'return_val'</span></em><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.RETURN_VAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache.
+This will delete all documents in the collection. This requires an index on the
+collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.lookup">
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.lookup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.lookup" title="Permalink to this definition"></a></dt>
+<dd><p>Look up from cache based on prompt and llm_string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseCache.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseCache.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update cache based on prompt and llm_string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.cache.</span></span><span class="sig-name descname"><span class="pre">CouchbaseSemanticCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCache</span></code>, <a class="reference internal" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore" title="langchain_couchbase.vectorstores.CouchbaseVectorStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">CouchbaseVectorStore</span></code></a></p>
+<p>Couchbase Semantic Cache
+Cache backed by a Couchbase Server with Vector Store support</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache.LLM">
+<span class="sig-name descname"><span class="pre">LLM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'llm_string'</span></em><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache.LLM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache.RETURN_VAL">
+<span class="sig-name descname"><span class="pre">RETURN_VAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'return_val'</span></em><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache.RETURN_VAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache.
+This will delete all documents in the collection.
+This requires an index on the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache.lookup">
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.lookup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache.lookup" title="Permalink to this definition"></a></dt>
+<dd><p>Look up from cache based on the semantic similarity of the prompt</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.cache.CouchbaseSemanticCache.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.cache.CouchbaseSemanticCache.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update cache based on the prompt and llm_string</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-langchain_couchbase.chat_message_histories">
+<span id="langchain-couchbase-chat-message-histories-module"></span><h2>langchain_couchbase.chat_message_histories module<a class="headerlink" href="#module-langchain_couchbase.chat_message_histories" title="Permalink to this heading"></a></h2>
+<p>Couchbase Chat Message History</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.chat_message_histories.</span></span><span class="sig-name descname"><span class="pre">CouchbaseChatMessageHistory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'session_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'message'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChatMessageHistory</span></code></p>
+<p>Couchbase Chat Message History
+Chat message history that uses Couchbase as the storage</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.add_message">
+<span class="sig-name descname"><span class="pre">add_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseMessage</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.add_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.add_message" title="Permalink to this definition"></a></dt>
+<dd><p>Add a message to the cache</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.add_messages">
+<span class="sig-name descname"><span class="pre">add_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BaseMessage</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.add_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.add_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Add messages to the cache in a batched manner</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.messages">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">messages</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BaseMessage</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#langchain_couchbase.chat_message_histories.CouchbaseChatMessageHistory.messages" title="Permalink to this definition"></a></dt>
+<dd><p>Get all messages in the cache associated with the session_id</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-langchain_couchbase.vectorstores">
+<span id="langchain-couchbase-vectorstores-module"></span><h2>langchain_couchbase.vectorstores module<a class="headerlink" href="#module-langchain_couchbase.vectorstores" title="Permalink to this heading"></a></h2>
+<p>Couchbase vector stores.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.vectorstores.</span></span><span class="sig-name descname"><span class="pre">CouchbaseVectorStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'embedding'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoped_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">VectorStore</span></code></p>
+<p>__ModuleName__ vector store integration.</p>
+<dl>
+<dt>Setup:</dt><dd><p>Install <code class="docutils literal notranslate"><span class="pre">langchain-couchbase</span></code> and head over to the Couchbase [website](<a class="reference external" href="https://cloud.couchbase.com">https://cloud.couchbase.com</a>) and create a new connection, with a bucket, collection, and search index.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>langchain-couchbase
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
+
+<span class="n">COUCHBASE_CONNECTION_STRING</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the connection string for the Couchbase cluster: &quot;</span><span class="p">)</span>
+<span class="n">DB_USERNAME</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the username for the Couchbase cluster: &quot;</span><span class="p">)</span>
+<span class="n">DB_PASSWORD</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the password for the Couchbase cluster: &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Key init args — indexing params:</dt><dd><dl class="simple">
+<dt>embedding: Embeddings</dt><dd><p>Embedding function to use.</p>
+</dd>
+</dl>
+</dd>
+<dt>Key init args — client params:</dt><dd><dl class="simple">
+<dt>cluster: Cluster</dt><dd><p>Couchbase cluster object with active connection.</p>
+</dd>
+<dt>bucket_name: str</dt><dd><p>Name of the bucket to store documents in.</p>
+</dd>
+<dt>scope_name: str</dt><dd><p>Name of the scope in the bucket to store documents in.</p>
+</dd>
+<dt>collection_name: str</dt><dd><p>Name of the collection in the scope to store documents in.</p>
+</dd>
+<dt>index_name: str</dt><dd><p>Name of the Search index to use.</p>
+</dd>
+</dl>
+</dd>
+<dt>Instantiate:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasswordAuthenticator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusterOptions</span>
+
+<span class="n">auth</span> <span class="o">=</span> <span class="n">PasswordAuthenticator</span><span class="p">(</span><span class="n">DB_USERNAME</span><span class="p">,</span> <span class="n">DB_PASSWORD</span><span class="p">)</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">ClusterOptions</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">COUCHBASE_CONNECTION_STRING</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+<span class="c1"># Wait until the cluster is ready for use.</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">BUCKET_NAME</span> <span class="o">=</span> <span class="s2">&quot;langchain_bucket&quot;</span>
+<span class="n">SCOPE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_default&quot;</span>
+<span class="n">COLLECTION_NAME</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+<span class="n">SEARCH_INDEX_NAME</span> <span class="o">=</span> <span class="s2">&quot;langchain-test-index&quot;</span>
+
+<span class="n">vector_store</span> <span class="o">=</span> <span class="n">CouchbaseVectorStore</span><span class="p">(</span>
+    <span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="n">BUCKET_NAME</span><span class="p">,</span>
+    <span class="n">scope_name</span><span class="o">=</span><span class="n">SCOPE_NAME</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="n">COLLECTION_NAME</span><span class="p">,</span>
+    <span class="n">embedding</span><span class="o">=</span><span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="n">SEARCH_INDEX_NAME</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Add Documents:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="n">document_1</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;baz&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">})</span>
+<span class="n">document_2</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span><span class="p">})</span>
+<span class="n">document_3</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;i will be deleted :(&quot;</span><span class="p">)</span>
+
+<span class="n">documents</span> <span class="o">=</span> <span class="p">[</span><span class="n">document_1</span><span class="p">,</span> <span class="n">document_2</span><span class="p">,</span> <span class="n">document_3</span><span class="p">]</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
+<span class="n">vector_store</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="o">=</span><span class="n">documents</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Delete Documents:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vector_store</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p># TODO: Fill out with example output.
+Search:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with relevant variables and example output.
+Search with filter:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Update filter to correct format</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Search with score:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;qux&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* [SIM=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Async:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># add documents</span>
+<span class="c1"># await vector_store.aadd_documents(documents=documents, ids=ids)</span>
+
+<span class="c1"># delete documents</span>
+<span class="c1"># await vector_store.adelete(ids=[&quot;3&quot;])</span>
+
+<span class="c1"># search</span>
+<span class="c1"># results = vector_store.asimilarity_search(query=&quot;thud&quot;,k=1)</span>
+
+<span class="c1"># search with score</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">asimilarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;qux&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span><span class="p">,</span><span class="n">score</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* [SIM=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Use as Retriever:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">&quot;mmr&quot;</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;fetch_k&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;lambda_mult&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;thud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.DEFAULT_BATCH_SIZE">
+<span class="sig-name descname"><span class="pre">DEFAULT_BATCH_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.DEFAULT_BATCH_SIZE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.add_texts">
+<span class="sig-name descname"><span class="pre">add_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadatas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.add_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.add_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Run texts through the embeddings and persist in vectorstore.</p>
+<p>If the document IDs are passed, the existing documents (if any) will be
+overwritten with the new ones.</p>
+<dl>
+<dt>Args:</dt><dd><p>texts (Iterable[str]): Iterable of strings to add to the vectorstore.
+metadatas (Optional[List[Dict]]): Optional list of metadatas associated</p>
+<blockquote>
+<div><p>with the texts.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ids (Optional[List[str]]): Optional list of ids associated with the texts.</dt><dd><p>IDs have to be unique strings across the collection.
+If it is not specified uuids are generated and used as ids.</p>
+</dd>
+<dt>batch_size (Optional[int]): Optional batch size for bulk insertions.</dt><dd><p>Default is 100.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]:List of ids from adding the texts into the vectorstore.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Delete documents from the vector store by ids.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ids (List[str]): List of IDs of the documents to delete.
+batch_size (Optional[int]): Optional batch size for bulk deletions.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if all the documents were deleted successfully, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.embeddings">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embeddings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Embeddings</span></em><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.embeddings" title="Permalink to this definition"></a></dt>
+<dd><p>Return the query embedding object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.from_texts">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadatas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore" title="langchain_couchbase.vectorstores.CouchbaseVectorStore"><span class="pre">CouchbaseVectorStore</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.from_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.from_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Construct a Couchbase vector store from a list of texts.</p>
+<dl>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>from langchain_couchbase import CouchbaseVectorStore
+from langchain_openai import OpenAIEmbeddings</p>
+<p>from couchbase.cluster import Cluster
+from couchbase.auth import PasswordAuthenticator
+from couchbase.options import ClusterOptions
+from datetime import timedelta</p>
+<p>auth = PasswordAuthenticator(username, password)
+options = ClusterOptions(auth)
+connect_string = “couchbases://localhost”
+cluster = Cluster(connect_string, options)</p>
+<p># Wait until the cluster is ready for use.
+cluster.wait_until_ready(timedelta(seconds=5))</p>
+<p>embeddings = OpenAIEmbeddings()</p>
+<p>texts = [“hello”, “world”]</p>
+<dl class="simple">
+<dt>vectorstore = CouchbaseVectorStore.from_texts(</dt><dd><p>texts,
+embedding=embeddings,
+cluster=cluster,
+bucket_name=””,
+scope_name=””,
+collection_name=””,
+index_name=”vector-index”,</p>
+</dd>
+</dl>
+<p>)</p>
+</dd>
+<dt>Args:</dt><dd><p>texts (List[str]): list of texts to add to the vector store.
+embedding (Embeddings): embedding function to use.
+metadatas (optional[List[Dict]): list of metadatas to add to documents.
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Keyword arguments used to initialize the vector store with and/or</p>
+<blockquote>
+<div><p>passed to <cite>add_texts</cite> method. Check the constructor and/or <cite>add_texts</cite>
+for the list of accepted arguments.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>A Couchbase vector store.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search">
+<span class="sig-name descname"><span class="pre">similarity_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents most similar to embedding vector with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>query (str): Query to look up for similar documents
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to all the fields stored in the index.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of Documents most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_by_vector">
+<span class="sig-name descname"><span class="pre">similarity_search_by_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_by_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_by_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents that are most similar to the vector embedding.</p>
+<dl>
+<dt>Args:</dt><dd><p>embedding (List[float]): Embedding to look up documents similar to.
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to document text and metadata fields.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of Documents most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_with_score">
+<span class="sig-name descname"><span class="pre">similarity_search_with_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_with_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_with_score" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents that are most similar to the query with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>query (str): Query to look up for similar documents
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to text and metadata fields.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of (Document, score) that are most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_with_score_by_vector">
+<span class="sig-name descname"><span class="pre">similarity_search_with_score_by_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_with_score_by_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore.similarity_search_with_score_by_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Return docs most similar to embedding vector with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>embedding (List[float]): Embedding vector to look up documents similar to.
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to all the fields stored in the index.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of (Document, score) that are the most similar to the query vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-langchain_couchbase">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-langchain_couchbase" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.</span></span><span class="sig-name descname"><span class="pre">CouchbaseCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCache</span></code></p>
+<p>Couchbase LLM Cache
+LLM Cache that uses Couchbase as the backend</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.LLM">
+<span class="sig-name descname"><span class="pre">LLM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'llm'</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.LLM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.PROMPT">
+<span class="sig-name descname"><span class="pre">PROMPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'prompt'</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.PROMPT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.RETURN_VAL">
+<span class="sig-name descname"><span class="pre">RETURN_VAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'return_val'</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.RETURN_VAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache.
+This will delete all documents in the collection. This requires an index on the
+collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.lookup">
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.lookup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.lookup" title="Permalink to this definition"></a></dt>
+<dd><p>Look up from cache based on prompt and llm_string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseCache.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseCache.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseCache.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update cache based on prompt and llm_string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseChatMessageHistory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.</span></span><span class="sig-name descname"><span class="pre">CouchbaseChatMessageHistory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'session_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'message'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseChatMessageHistory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChatMessageHistory</span></code></p>
+<p>Couchbase Chat Message History
+Chat message history that uses Couchbase as the storage</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseChatMessageHistory.add_message">
+<span class="sig-name descname"><span class="pre">add_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseMessage</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.add_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseChatMessageHistory.add_message" title="Permalink to this definition"></a></dt>
+<dd><p>Add a message to the cache</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseChatMessageHistory.add_messages">
+<span class="sig-name descname"><span class="pre">add_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BaseMessage</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.add_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseChatMessageHistory.add_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Add messages to the cache in a batched manner</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseChatMessageHistory.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/chat_message_histories.html#CouchbaseChatMessageHistory.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseChatMessageHistory.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseChatMessageHistory.messages">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">messages</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BaseMessage</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseChatMessageHistory.messages" title="Permalink to this definition"></a></dt>
+<dd><p>Get all messages in the cache associated with the session_id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.</span></span><span class="sig-name descname"><span class="pre">CouchbaseSemanticCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCache</span></code>, <a class="reference internal" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore" title="langchain_couchbase.vectorstores.CouchbaseVectorStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">CouchbaseVectorStore</span></code></a></p>
+<p>Couchbase Semantic Cache
+Cache backed by a Couchbase Server with Vector Store support</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache.LLM">
+<span class="sig-name descname"><span class="pre">LLM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'llm_string'</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache.LLM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache.RETURN_VAL">
+<span class="sig-name descname"><span class="pre">RETURN_VAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'return_val'</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache.RETURN_VAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear the cache.
+This will delete all documents in the collection.
+This requires an index on the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache.lookup">
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.lookup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache.lookup" title="Permalink to this definition"></a></dt>
+<dd><p>Look up from cache based on the semantic similarity of the prompt</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseSemanticCache.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Generation</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/cache.html#CouchbaseSemanticCache.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseSemanticCache.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update cache based on the prompt and llm_string</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">langchain_couchbase.</span></span><span class="sig-name descname"><span class="pre">CouchbaseVectorStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'embedding'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoped_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">VectorStore</span></code></p>
+<p>__ModuleName__ vector store integration.</p>
+<dl>
+<dt>Setup:</dt><dd><p>Install <code class="docutils literal notranslate"><span class="pre">langchain-couchbase</span></code> and head over to the Couchbase [website](<a class="reference external" href="https://cloud.couchbase.com">https://cloud.couchbase.com</a>) and create a new connection, with a bucket, collection, and search index.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>langchain-couchbase
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
+
+<span class="n">COUCHBASE_CONNECTION_STRING</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the connection string for the Couchbase cluster: &quot;</span><span class="p">)</span>
+<span class="n">DB_USERNAME</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the username for the Couchbase cluster: &quot;</span><span class="p">)</span>
+<span class="n">DB_PASSWORD</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Enter the password for the Couchbase cluster: &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Key init args — indexing params:</dt><dd><dl class="simple">
+<dt>embedding: Embeddings</dt><dd><p>Embedding function to use.</p>
+</dd>
+</dl>
+</dd>
+<dt>Key init args — client params:</dt><dd><dl class="simple">
+<dt>cluster: Cluster</dt><dd><p>Couchbase cluster object with active connection.</p>
+</dd>
+<dt>bucket_name: str</dt><dd><p>Name of the bucket to store documents in.</p>
+</dd>
+<dt>scope_name: str</dt><dd><p>Name of the scope in the bucket to store documents in.</p>
+</dd>
+<dt>collection_name: str</dt><dd><p>Name of the collection in the scope to store documents in.</p>
+</dd>
+<dt>index_name: str</dt><dd><p>Name of the Search index to use.</p>
+</dd>
+</dl>
+</dd>
+<dt>Instantiate:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasswordAuthenticator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusterOptions</span>
+
+<span class="n">auth</span> <span class="o">=</span> <span class="n">PasswordAuthenticator</span><span class="p">(</span><span class="n">DB_USERNAME</span><span class="p">,</span> <span class="n">DB_PASSWORD</span><span class="p">)</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">ClusterOptions</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">COUCHBASE_CONNECTION_STRING</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+<span class="c1"># Wait until the cluster is ready for use.</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">BUCKET_NAME</span> <span class="o">=</span> <span class="s2">&quot;langchain_bucket&quot;</span>
+<span class="n">SCOPE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_default&quot;</span>
+<span class="n">COLLECTION_NAME</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+<span class="n">SEARCH_INDEX_NAME</span> <span class="o">=</span> <span class="s2">&quot;langchain-test-index&quot;</span>
+
+<span class="n">vector_store</span> <span class="o">=</span> <span class="n">CouchbaseVectorStore</span><span class="p">(</span>
+    <span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="n">BUCKET_NAME</span><span class="p">,</span>
+    <span class="n">scope_name</span><span class="o">=</span><span class="n">SCOPE_NAME</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="n">COLLECTION_NAME</span><span class="p">,</span>
+    <span class="n">embedding</span><span class="o">=</span><span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="n">SEARCH_INDEX_NAME</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Add Documents:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="n">document_1</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;baz&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">})</span>
+<span class="n">document_2</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span><span class="p">})</span>
+<span class="n">document_3</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;i will be deleted :(&quot;</span><span class="p">)</span>
+
+<span class="n">documents</span> <span class="o">=</span> <span class="p">[</span><span class="n">document_1</span><span class="p">,</span> <span class="n">document_2</span><span class="p">,</span> <span class="n">document_3</span><span class="p">]</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
+<span class="n">vector_store</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="o">=</span><span class="n">documents</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Delete Documents:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vector_store</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p># TODO: Fill out with example output.
+Search:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with relevant variables and example output.
+Search with filter:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Update filter to correct format</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;thud&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Search with score:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;qux&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* [SIM=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Async:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># add documents</span>
+<span class="c1"># await vector_store.aadd_documents(documents=documents, ids=ids)</span>
+
+<span class="c1"># delete documents</span>
+<span class="c1"># await vector_store.adelete(ids=[&quot;3&quot;])</span>
+
+<span class="c1"># search</span>
+<span class="c1"># results = vector_store.asimilarity_search(query=&quot;thud&quot;,k=1)</span>
+
+<span class="c1"># search with score</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">asimilarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;qux&quot;</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span><span class="p">,</span><span class="n">score</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* [SIM=</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p># TODO: Fill out with example output.
+Use as Retriever:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">&quot;mmr&quot;</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;fetch_k&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;lambda_mult&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;thud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: Example output</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.DEFAULT_BATCH_SIZE">
+<span class="sig-name descname"><span class="pre">DEFAULT_BATCH_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.DEFAULT_BATCH_SIZE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.add_texts">
+<span class="sig-name descname"><span class="pre">add_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadatas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.add_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.add_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Run texts through the embeddings and persist in vectorstore.</p>
+<p>If the document IDs are passed, the existing documents (if any) will be
+overwritten with the new ones.</p>
+<dl>
+<dt>Args:</dt><dd><p>texts (Iterable[str]): Iterable of strings to add to the vectorstore.
+metadatas (Optional[List[Dict]]): Optional list of metadatas associated</p>
+<blockquote>
+<div><p>with the texts.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>ids (Optional[List[str]]): Optional list of ids associated with the texts.</dt><dd><p>IDs have to be unique strings across the collection.
+If it is not specified uuids are generated and used as ids.</p>
+</dd>
+<dt>batch_size (Optional[int]): Optional batch size for bulk insertions.</dt><dd><p>Default is 100.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List[str]:List of ids from adding the texts into the vectorstore.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Delete documents from the vector store by ids.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ids (List[str]): List of IDs of the documents to delete.
+batch_size (Optional[int]): Optional batch size for bulk deletions.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if all the documents were deleted successfully, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.embeddings">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embeddings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Embeddings</span></em><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.embeddings" title="Permalink to this definition"></a></dt>
+<dd><p>Return the query embedding object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.from_texts">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadatas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#langchain_couchbase.vectorstores.CouchbaseVectorStore" title="langchain_couchbase.vectorstores.CouchbaseVectorStore"><span class="pre">CouchbaseVectorStore</span></a></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.from_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.from_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Construct a Couchbase vector store from a list of texts.</p>
+<dl>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>from langchain_couchbase import CouchbaseVectorStore
+from langchain_openai import OpenAIEmbeddings</p>
+<p>from couchbase.cluster import Cluster
+from couchbase.auth import PasswordAuthenticator
+from couchbase.options import ClusterOptions
+from datetime import timedelta</p>
+<p>auth = PasswordAuthenticator(username, password)
+options = ClusterOptions(auth)
+connect_string = “couchbases://localhost”
+cluster = Cluster(connect_string, options)</p>
+<p># Wait until the cluster is ready for use.
+cluster.wait_until_ready(timedelta(seconds=5))</p>
+<p>embeddings = OpenAIEmbeddings()</p>
+<p>texts = [“hello”, “world”]</p>
+<dl class="simple">
+<dt>vectorstore = CouchbaseVectorStore.from_texts(</dt><dd><p>texts,
+embedding=embeddings,
+cluster=cluster,
+bucket_name=””,
+scope_name=””,
+collection_name=””,
+index_name=”vector-index”,</p>
+</dd>
+</dl>
+<p>)</p>
+</dd>
+<dt>Args:</dt><dd><p>texts (List[str]): list of texts to add to the vector store.
+embedding (Embeddings): embedding function to use.
+metadatas (optional[List[Dict]): list of metadatas to add to documents.
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Keyword arguments used to initialize the vector store with and/or</p>
+<blockquote>
+<div><p>passed to <cite>add_texts</cite> method. Check the constructor and/or <cite>add_texts</cite>
+for the list of accepted arguments.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>A Couchbase vector store.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.similarity_search">
+<span class="sig-name descname"><span class="pre">similarity_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.similarity_search" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents most similar to embedding vector with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>query (str): Query to look up for similar documents
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to all the fields stored in the index.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of Documents most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.similarity_search_by_vector">
+<span class="sig-name descname"><span class="pre">similarity_search_by_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_by_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.similarity_search_by_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents that are most similar to the vector embedding.</p>
+<dl>
+<dt>Args:</dt><dd><p>embedding (List[float]): Embedding to look up documents similar to.
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to document text and metadata fields.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of Documents most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.similarity_search_with_score">
+<span class="sig-name descname"><span class="pre">similarity_search_with_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_with_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.similarity_search_with_score" title="Permalink to this definition"></a></dt>
+<dd><p>Return documents that are most similar to the query with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>query (str): Query to look up for similar documents
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to text and metadata fields.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of (Document, score) that are most similar to the query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="langchain_couchbase.CouchbaseVectorStore.similarity_search_with_score_by_vector">
+<span class="sig-name descname"><span class="pre">similarity_search_with_score_by_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Document</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/langchain_couchbase/vectorstores.html#CouchbaseVectorStore.similarity_search_with_score_by_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#langchain_couchbase.CouchbaseVectorStore.similarity_search_with_score_by_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Return docs most similar to embedding vector with their scores.</p>
+<dl>
+<dt>Args:</dt><dd><p>embedding (List[float]): Embedding vector to look up documents similar to.
+k (int): Number of Documents to return.</p>
+<blockquote>
+<div><p>Defaults to 4.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>search_options (Optional[Dict[str, Any]]): Optional search options that are</dt><dd><p>passed to Couchbase search.
+Defaults to empty dictionary.</p>
+</dd>
+<dt>fields (Optional[List[str]]): Optional list of fields to include in the</dt><dd><p>metadata of results. Note that these need to be stored in the index.
+If nothing is specified, defaults to all the fields stored in the index.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of (Document, score) that are the most similar to the query vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="langchain-couchbase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.html" class="btn btn-neutral float-right" title="tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nithish Raghunandanan.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

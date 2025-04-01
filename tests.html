@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests package &mdash; langchain-couchbase  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.integration_tests package" href="tests.integration_tests.html" />
+    <link rel="prev" title="langchain_couchbase package" href="langchain_couchbase.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            langchain-couchbase
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">langchain-couchbase</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="langchain_couchbase.html">langchain_couchbase package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tests package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.integration_tests.html">tests.integration_tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.unit_tests.html">tests.unit_tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.utils">tests.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.ConsistentFakeEmbeddings"><code class="docutils literal notranslate"><span class="pre">ConsistentFakeEmbeddings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.FakeEmbeddings"><code class="docutils literal notranslate"><span class="pre">FakeEmbeddings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.FakeLLM"><code class="docutils literal notranslate"><span class="pre">FakeLLM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.cache_key_hash_function"><code class="docutils literal notranslate"><span class="pre">cache_key_hash_function()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.fetch_document_expiry_time"><code class="docutils literal notranslate"><span class="pre">fetch_document_expiry_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.utils.get_document_keys"><code class="docutils literal notranslate"><span class="pre">get_document_keys()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">langchain-couchbase</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">langchain-couchbase</a></li>
+      <li class="breadcrumb-item active">tests package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tests-package">
+<h1>tests package<a class="headerlink" href="#tests-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tests.integration_tests.html">tests.integration_tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#tests-integration-tests-test-cache-module">tests.integration_tests.test_cache module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#tests-integration-tests-test-chat-message-history-module">tests.integration_tests.test_chat_message_history module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#tests-integration-tests-test-compile-module">tests.integration_tests.test_compile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#tests-integration-tests-test-vector-store-module">tests.integration_tests.test_vector_store module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.integration_tests.html#module-tests.integration_tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.unit_tests.html">tests.unit_tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.unit_tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.unit_tests.html#module-tests.unit_tests.test_imports">tests.unit_tests.test_imports module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.unit_tests.html#module-tests.unit_tests.test_vectorstore">tests.unit_tests.test_vectorstore module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.unit_tests.html#module-tests.unit_tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-tests.utils">
+<span id="tests-utils-module"></span><h2>tests.utils module<a class="headerlink" href="#module-tests.utils" title="Permalink to this heading"></a></h2>
+<p>Utilities for testing purposes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.utils.ConsistentFakeEmbeddings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">ConsistentFakeEmbeddings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimensionality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/utils.html#ConsistentFakeEmbeddings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.ConsistentFakeEmbeddings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tests.utils.FakeEmbeddings" title="tests.utils.FakeEmbeddings"><code class="xref py py-class docutils literal notranslate"><span class="pre">FakeEmbeddings</span></code></a></p>
+<p>Fake embeddings which remember all the texts seen so far to return consistent
+vectors for the same texts.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.ConsistentFakeEmbeddings.embed_documents">
+<span class="sig-name descname"><span class="pre">embed_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#ConsistentFakeEmbeddings.embed_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.ConsistentFakeEmbeddings.embed_documents" title="Permalink to this definition"></a></dt>
+<dd><p>Return consistent embeddings for each text seen so far.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.ConsistentFakeEmbeddings.embed_query">
+<span class="sig-name descname"><span class="pre">embed_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#ConsistentFakeEmbeddings.embed_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.ConsistentFakeEmbeddings.embed_query" title="Permalink to this definition"></a></dt>
+<dd><p>Return consistent embeddings for the text, if seen before, or a constant
+one if the text is unknown.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.utils.FakeEmbeddings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">FakeEmbeddings</span></span><a class="reference internal" href="_modules/tests/utils.html#FakeEmbeddings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeEmbeddings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Embeddings</span></code></p>
+<p>Fake embeddings functionality for testing.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.FakeEmbeddings.aembed_documents">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aembed_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#FakeEmbeddings.aembed_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeEmbeddings.aembed_documents" title="Permalink to this definition"></a></dt>
+<dd><p>Asynchronous Embed search docs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>texts: List of text to embed.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of embeddings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.FakeEmbeddings.aembed_query">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aembed_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#FakeEmbeddings.aembed_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeEmbeddings.aembed_query" title="Permalink to this definition"></a></dt>
+<dd><p>Asynchronous Embed query text.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>text: Text to embed.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Embedding.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.FakeEmbeddings.embed_documents">
+<span class="sig-name descname"><span class="pre">embed_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#FakeEmbeddings.embed_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeEmbeddings.embed_documents" title="Permalink to this definition"></a></dt>
+<dd><p>Return simple embeddings.
+Embeddings encode each text as its index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.FakeEmbeddings.embed_query">
+<span class="sig-name descname"><span class="pre">embed_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#FakeEmbeddings.embed_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeEmbeddings.embed_query" title="Permalink to this definition"></a></dt>
+<dd><p>Return constant query embeddings.
+Embeddings are identical to embed_documents(texts)[0].
+Distance to each text will be that text’s index,
+as it was passed to embed_documents.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">FakeLLM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*args:</span> <span class="pre">~typing.Any,</span> <span class="pre">name:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">cache:</span> <span class="pre">~langchain_core.caches.BaseCache</span> <span class="pre">|</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">callbacks:</span> <span class="pre">list[langchain_core.callbacks.base.BaseCallbackHandler]</span> <span class="pre">|</span> <span class="pre">~langchain_core.callbacks.base.BaseCallbackManager</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">tags:</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">metadata:</span> <span class="pre">dict[str,</span> <span class="pre">typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">custom_get_token_ids:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">list[int]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">callback_manager:</span> <span class="pre">~langchain_core.callbacks.base.BaseCallbackManager</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">queries:</span> <span class="pre">~typing.Mapping</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">sequential_responses:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">response_index:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/utils.html#FakeLLM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeLLM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LLM</span></code></p>
+<p>Fake LLM wrapper for testing purposes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM.get_num_tokens">
+<span class="sig-name descname"><span class="pre">get_num_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/tests/utils.html#FakeLLM.get_num_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.FakeLLM.get_num_tokens" title="Permalink to this definition"></a></dt>
+<dd><p>Return number of tokens.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'ignore',</span> <span class="pre">'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#tests.utils.FakeLLM.model_config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM.queries">
+<span class="sig-name descname"><span class="pre">queries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.13)"><span class="pre">Mapping</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#tests.utils.FakeLLM.queries" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM.response_index">
+<span class="sig-name descname"><span class="pre">response_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#tests.utils.FakeLLM.response_index" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.utils.FakeLLM.sequential_responses">
+<span class="sig-name descname"><span class="pre">sequential_responses</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#tests.utils.FakeLLM.sequential_responses" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.utils.cache_key_hash_function">
+<span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">cache_key_hash_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/tests/utils.html#cache_key_hash_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.cache_key_hash_function" title="Permalink to this definition"></a></dt>
+<dd><p>Use a deterministic hashing approach.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.utils.fetch_document_expiry_time">
+<span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">fetch_document_expiry_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a></span></span><a class="reference internal" href="_modules/tests/utils.html#fetch_document_expiry_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.fetch_document_expiry_time" title="Permalink to this definition"></a></dt>
+<dd><p>Fetch the document’s expiry time from the database.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.utils.get_document_keys">
+<span class="sig-prename descclassname"><span class="pre">tests.utils.</span></span><span class="sig-name descname"><span class="pre">get_document_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/utils.html#get_document_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.utils.get_document_keys" title="Permalink to this definition"></a></dt>
+<dd><p>Get the document key from the database based on the query using meta().id.</p>
+</dd></dl>
+
+</section>
+<section id="module-tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="langchain_couchbase.html" class="btn btn-neutral float-left" title="langchain_couchbase package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.integration_tests.html" class="btn btn-neutral float-right" title="tests.integration_tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nithish Raghunandanan.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

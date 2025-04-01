@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.utils &mdash; langchain-couchbase  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            langchain-couchbase
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">langchain-couchbase</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">langchain-couchbase</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tests.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tests.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for testing purposes.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">couchbase.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">GetOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackManagerForLLMRun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embeddings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.language_models.llms</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLM</span>
+
+
+<div class="viewcode-block" id="FakeEmbeddings"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeEmbeddings">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">FakeEmbeddings</span><span class="p">(</span><span class="n">Embeddings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fake embeddings functionality for testing.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FakeEmbeddings.embed_documents"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeEmbeddings.embed_documents">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return simple embeddings.</span>
+<span class="sd">        Embeddings encode each text as its index.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">+</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">))]</span></div>
+
+<div class="viewcode-block" id="FakeEmbeddings.aembed_documents"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeEmbeddings.aembed_documents">[docs]</a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aembed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FakeEmbeddings.embed_query"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeEmbeddings.embed_query">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return constant query embeddings.</span>
+<span class="sd">        Embeddings are identical to embed_documents(texts)[0].</span>
+<span class="sd">        Distance to each text will be that text&#39;s index,</span>
+<span class="sd">        as it was passed to embed_documents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">+</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="FakeEmbeddings.aembed_query"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeEmbeddings.aembed_query">[docs]</a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aembed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ConsistentFakeEmbeddings"><a class="viewcode-back" href="../../tests.html#tests.utils.ConsistentFakeEmbeddings">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ConsistentFakeEmbeddings</span><span class="p">(</span><span class="n">FakeEmbeddings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fake embeddings which remember all the texts seen so far to return consistent</span>
+<span class="sd">    vectors for the same texts.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimensionality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">known_texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">=</span> <span class="n">dimensionality</span>
+
+<div class="viewcode-block" id="ConsistentFakeEmbeddings.embed_documents"><a class="viewcode-back" href="../../tests.html#tests.utils.ConsistentFakeEmbeddings.embed_documents">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return consistent embeddings for each text seen so far.&quot;&quot;&quot;</span>
+        <span class="n">out_vectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_texts</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">known_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">vector</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">known_texts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+            <span class="p">]</span>
+            <span class="n">out_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_vectors</span></div>
+
+<div class="viewcode-block" id="ConsistentFakeEmbeddings.embed_query"><a class="viewcode-back" href="../../tests.html#tests.utils.ConsistentFakeEmbeddings.embed_query">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return consistent embeddings for the text, if seen before, or a constant</span>
+<span class="sd">        one if the text is unknown.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">([</span><span class="n">text</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="FakeLLM"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeLLM">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">FakeLLM</span><span class="p">(</span><span class="n">LLM</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fake LLM wrapper for testing purposes.&quot;&quot;&quot;</span>
+
+    <span class="n">queries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sequential_responses</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">response_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="FakeLLM.get_num_tokens"><a class="viewcode-back" href="../../tests.html#tests.utils.FakeLLM.get_num_tokens">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_num_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of tokens.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_llm_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return type of llm.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;fake&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_call</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">stop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">run_manager</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CallbackManagerForLLMRun</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequential_responses</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_next_response_in_sequence</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">queries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queries</span><span class="p">[</span><span class="n">prompt</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;foo&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;bar&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_identifying_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_next_response_in_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">queries</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">queries</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">queries</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="bp">self</span><span class="o">.</span><span class="n">response_index</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="cache_key_hash_function"><a class="viewcode-back" href="../../tests.html#tests.utils.cache_key_hash_function">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">cache_key_hash_function</span><span class="p">(</span><span class="n">_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use a deterministic hashing approach.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">_input</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="fetch_document_expiry_time"><a class="viewcode-back" href="../../tests.html#tests.utils.fetch_document_expiry_time">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">fetch_document_expiry_time</span><span class="p">(</span>
+    <span class="n">cluster</span><span class="p">:</span> <span class="n">Cluster</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">scope_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">document_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch the document&#39;s expiry time from the database.&quot;&quot;&quot;</span>
+    <span class="n">collection</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">cluster</span><span class="o">.</span><span class="n">bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span><span class="o">.</span><span class="n">scope</span><span class="p">(</span><span class="n">scope_name</span><span class="p">)</span><span class="o">.</span><span class="n">collection</span><span class="p">(</span><span class="n">collection_name</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">document_key</span><span class="p">,</span> <span class="n">GetOptions</span><span class="p">(</span><span class="n">with_expiry</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">expiryTime</span></div>
+
+
+<div class="viewcode-block" id="get_document_keys"><a class="viewcode-back" href="../../tests.html#tests.utils.get_document_keys">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_document_keys</span><span class="p">(</span>
+    <span class="n">cluster</span><span class="p">:</span> <span class="n">Cluster</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scope_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the document key from the database based on the query using meta().id.&quot;&quot;&quot;</span>
+    <span class="n">scope</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span><span class="o">.</span><span class="n">scope</span><span class="p">(</span><span class="n">scope_name</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">scope</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+    <span class="n">document_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">document_keys</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nithish Raghunandanan.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
