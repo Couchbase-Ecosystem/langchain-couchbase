@@ -1,228 +1,18 @@
-"""Couchbase vector stores."""
-
 from __future__ import annotations
 
-import uuid
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Type,
-)
+from typing import Any, Dict, List, Optional, Tuple, Type
 
 import couchbase.search as search
 from couchbase.cluster import Cluster
-from couchbase.exceptions import DocumentExistsException, DocumentNotFoundException
 from couchbase.options import SearchOptions
 from couchbase.vector_search import VectorQuery, VectorSearch
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
-from langchain_core.vectorstores import VectorStore
+
+from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVectorStore
 
 
-class CouchbaseVectorStore(VectorStore):
-    """__ModuleName__ vector store integration.
-
-    Setup:
-        Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
-
-        .. code-block:: bash
-
-            pip install -U langchain-couchbase
-
-        .. code-block:: python
-
-            import getpass
-
-            COUCHBASE_CONNECTION_STRING = getpass.getpass("Enter the connection string for the Couchbase cluster: ")
-            DB_USERNAME = getpass.getpass("Enter the username for the Couchbase cluster: ")
-            DB_PASSWORD = getpass.getpass("Enter the password for the Couchbase cluster: ")
-
-    Key init args — indexing params:
-        embedding: Embeddings
-            Embedding function to use.
-
-    Key init args — client params:
-        cluster: Cluster
-            Couchbase cluster object with active connection.
-        bucket_name: str
-            Name of the bucket to store documents in.
-        scope_name: str
-            Name of the scope in the bucket to store documents in.
-        collection_name: str
-            Name of the collection in the scope to store documents in.
-        index_name: str
-            Name of the Search index to use.
-
-    Instantiate:
-        .. code-block:: python
-
-            from datetime import timedelta
-            from langchain_openai import OpenAIEmbeddings
-            from couchbase.auth import PasswordAuthenticator
-            from couchbase.cluster import Cluster
-            from couchbase.options import ClusterOptions
-
-            auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
-            options = ClusterOptions(auth)
-            cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
-
-            # Wait until the cluster is ready for use.
-            cluster.wait_until_ready(timedelta(seconds=5))
-
-            BUCKET_NAME = "langchain_bucket"
-            SCOPE_NAME = "_default"
-            COLLECTION_NAME = "default"
-            SEARCH_INDEX_NAME = "langchain-test-index"
-
-            vector_store = CouchbaseVectorStore(
-                cluster=cluster,
-                bucket_name=BUCKET_NAME,
-                scope_name=SCOPE_NAME,
-                collection_name=COLLECTION_NAME,
-                embedding=embeddings,
-                index_name=SEARCH_INDEX_NAME,
-            )
-
-    Add Documents:
-        .. code-block:: python
-
-            from langchain_core.documents import Document
-
-            document_1 = Document(page_content="foo", metadata={"baz": "bar"})
-            document_2 = Document(page_content="thud", metadata={"bar": "baz"})
-            document_3 = Document(page_content="i will be deleted :(")
-
-            documents = [document_1, document_2, document_3]
-            ids = ["1", "2", "3"]
-            vector_store.add_documents(documents=documents, ids=ids)
-
-    Delete Documents:
-        .. code-block:: python
-
-            vector_store.delete(ids=["3"])
-
-    # TODO: Fill out with example output.
-    Search:
-        .. code-block:: python
-
-            results = vector_store.similarity_search(query="thud",k=1)
-            for doc in results:
-                print(f"* {doc.page_content} [{doc.metadata}]")
-
-        .. code-block:: python
-
-            # TODO: Example output
-
-    # TODO: Fill out with relevant variables and example output.
-    Search with filter:
-        .. code-block:: python
-
-            # TODO: Update filter to correct format
-            results = vector_store.similarity_search(query="thud",k=1,filter={"bar": "baz"})
-            for doc in results:
-                print(f"* {doc.page_content} [{doc.metadata}]")
-
-        .. code-block:: python
-
-            # TODO: Example output
-
-    # TODO: Fill out with example output.
-    Search with score:
-        .. code-block:: python
-
-            results = vector_store.similarity_search_with_score(query="qux",k=1)
-            for doc, score in results:
-                print(f"* [SIM={score:3f}] {doc.page_content} [{doc.metadata}]")
-
-        .. code-block:: python
-
-            # TODO: Example output
-
-    # TODO: Fill out with example output.
-    Async:
-        .. code-block:: python
-
-            # add documents
-            # await vector_store.aadd_documents(documents=documents, ids=ids)
-
-            # delete documents
-            # await vector_store.adelete(ids=["3"])
-
-            # search
-            # results = vector_store.asimilarity_search(query="thud",k=1)
-
-            # search with score
-            results = await vector_store.asimilarity_search_with_score(query="qux",k=1)
-            for doc,score in results:
-                print(f"* [SIM={score:3f}] {doc.page_content} [{doc.metadata}]")
-
-        .. code-block:: python
-
-            # TODO: Example output
-
-    # TODO: Fill out with example output.
-    Use as Retriever:
-        .. code-block:: python
-
-            retriever = vector_store.as_retriever(
-                search_type="mmr",
-                search_kwargs={"k": 1, "fetch_k": 2, "lambda_mult": 0.5},
-            )
-            retriever.invoke("thud")
-
-        .. code-block:: python
-
-            # TODO: Example output
-
-    """  # noqa: E501
-
-    # Default batch size
-    DEFAULT_BATCH_SIZE = 100
-    _metadata_key = "metadata"
-    _default_text_key = "text"
-    _default_embedding_key = "embedding"
-
-    def _check_bucket_exists(self) -> bool:
-        """Check if the bucket exists in the linked Couchbase cluster"""
-        bucket_manager = self._cluster.buckets()
-        try:
-            bucket_manager.get_bucket(self._bucket_name)
-            return True
-        except Exception:
-            return False
-
-    def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
-        scope_collection_map: Dict[str, Any] = {}
-
-        # Get a list of all scopes in the bucket
-        for scope in self._bucket.collections().get_all_scopes():
-            scope_collection_map[scope.name] = []
-
-            # Get a list of all the collections in the scope
-            for collection in scope.collections:
-                scope_collection_map[scope.name].append(collection.name)
-
-        # Check if the scope exists
-        if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
-                f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
-            )
-
-        # Check if the collection exists in the scope
-        if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
-                f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket {self._bucket_name}"
-            )
-
-        return True
+class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
     def _check_index_exists(self) -> bool:
         """Check if the Search index exists in the linked Couchbase cluster
@@ -257,8 +47,8 @@ class CouchbaseVectorStore(VectorStore):
         embedding: Embeddings,
         index_name: str,
         *,
-        text_key: Optional[str] = _default_text_key,
-        embedding_key: Optional[str] = _default_embedding_key,
+        text_key: Optional[str] = BaseCouchbaseVectorStore._default_text_key,
+        embedding_key: Optional[str] = BaseCouchbaseVectorStore._default_embedding_key,
         scoped_index: bool = True,
     ) -> None:
         """
@@ -279,175 +69,27 @@ class CouchbaseVectorStore(VectorStore):
             scoped_index (optional[bool]): specify whether the index is a scoped index.
                 Set to True by default.
         """
-        if not isinstance(cluster, Cluster):
-            raise ValueError(
-                f"cluster should be an instance of couchbase.Cluster, "
-                f"got {type(cluster)}"
-            )
-
-        self._cluster = cluster
-
-        if not embedding:
-            raise ValueError("Embeddings instance must be provided.")
-
-        if not bucket_name:
-            raise ValueError("bucket_name must be provided.")
-
-        if not scope_name:
-            raise ValueError("scope_name must be provided.")
-
-        if not collection_name:
-            raise ValueError("collection_name must be provided.")
+        super().__init__(
+            cluster=cluster,
+            bucket_name=bucket_name,
+            scope_name=scope_name,
+            collection_name=collection_name,
+            embedding=embedding,
+            text_key=text_key,
+            embedding_key=embedding_key,
+        )
 
         if not index_name:
             raise ValueError("index_name must be provided.")
 
-        self._bucket_name = bucket_name
-        self._scope_name = scope_name
-        self._collection_name = collection_name
-        self._embedding_function = embedding
-        self._text_key = text_key
-        self._embedding_key = embedding_key
         self._index_name = index_name
         self._scoped_index = scoped_index
-
-        # Check if the bucket exists
-        if not self._check_bucket_exists():
-            raise ValueError(
-                f"Bucket {self._bucket_name} does not exist. "
-                " Please create the bucket before searching."
-            )
-
-        try:
-            self._bucket = self._cluster.bucket(self._bucket_name)
-            self._scope = self._bucket.scope(self._scope_name)
-            self._collection = self._scope.collection(self._collection_name)
-        except Exception as e:
-            raise ValueError(
-                "Error connecting to couchbase. "
-                "Please check the connection and credentials."
-            ) from e
-
-        # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
 
         # Check if the index exists. Throws ValueError if it doesn't
         try:
             self._check_index_exists()
         except Exception as e:
             raise e
-
-    def add_texts(
-        self,
-        texts: Iterable[str],
-        metadatas: Optional[List[dict]] = None,
-        ids: Optional[List[str]] = None,
-        batch_size: Optional[int] = None,
-        **kwargs: Any,
-    ) -> List[str]:
-        """Run texts through the embeddings and persist in vectorstore.
-
-        If the document IDs are passed, the existing documents (if any) will be
-        overwritten with the new ones.
-
-        Args:
-            texts (Iterable[str]): Iterable of strings to add to the vectorstore.
-            metadatas (Optional[List[Dict]]): Optional list of metadatas associated
-                with the texts.
-            ids (Optional[List[str]]): Optional list of ids associated with the texts.
-                IDs have to be unique strings across the collection.
-                If it is not specified uuids are generated and used as ids.
-            batch_size (Optional[int]): Optional batch size for bulk insertions.
-                Default is 100.
-
-        Returns:
-            List[str]:List of ids from adding the texts into the vectorstore.
-        """
-
-        if not batch_size:
-            batch_size = self.DEFAULT_BATCH_SIZE
-        doc_ids: List[str] = []
-
-        if ids is None:
-            ids = [uuid.uuid4().hex for _ in texts]
-
-        if metadatas is None:
-            metadatas = [{} for _ in texts]
-
-        # Check if TTL is provided
-        ttl = kwargs.get("ttl", None)
-
-        # Insert in batches
-        for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
-            batch_metadatas = metadatas[i : i + batch_size]
-            batch_ids = ids[i : i + batch_size]
-            batch_embedded_texts = self._embedding_function.embed_documents(batch_texts)
-
-            batch_docs = {
-                id: {
-                    self._text_key: text,
-                    self._metadata_key: metadata,
-                    self._embedding_key: vector,
-                }
-                for id, text, metadata, vector in zip(
-                    batch_ids, batch_texts, batch_metadatas, batch_embedded_texts
-                )
-            }
-
-            try:
-                # Insert with TTL if provided
-                if ttl:
-                    result = self._collection.upsert_multi(batch_docs, expiry=ttl)
-                else:
-                    result = self._collection.upsert_multi(batch_docs)
-                if result.all_ok:
-                    doc_ids.extend(batch_docs.keys())
-                else:
-                    raise ValueError("Failed to insert documents.", result.exceptions)
-            except DocumentExistsException as e:
-                raise ValueError(f"Document already exists: {e}")
-
-        return doc_ids
-
-    def delete(self, ids: Optional[List[str]] = None, **kwargs: Any) -> Optional[bool]:
-        """Delete documents from the vector store by ids.
-
-        Args:
-            ids (List[str]): List of IDs of the documents to delete.
-            batch_size (Optional[int]): Optional batch size for bulk deletions.
-
-        Returns:
-            bool: True if all the documents were deleted successfully, False otherwise.
-
-        """
-
-        if ids is None:
-            raise ValueError("No document ids provided to delete.")
-
-        batch_size = kwargs.get("batch_size", self.DEFAULT_BATCH_SIZE)
-        deletion_status = True
-
-        # Delete in batches
-        for i in range(0, len(ids), batch_size):
-            batch = ids[i : i + batch_size]
-            try:
-                result = self._collection.remove_multi(batch)
-            except DocumentNotFoundException as e:
-                deletion_status = False
-                raise ValueError(f"Document not found: {e}")
-
-            deletion_status &= result.all_ok
-
-        return deletion_status
-
-    @property
-    def embeddings(self) -> Embeddings:
-        """Return the query embedding object."""
-        return self._embedding_function
 
     def _format_metadata(self, row_fields: Dict[str, Any]) -> Dict[str, Any]:
         """Helper method to format the metadata from the Couchbase Search API.
@@ -640,10 +282,10 @@ class CouchbaseVectorStore(VectorStore):
 
     @classmethod
     def _from_kwargs(
-        cls: Type[CouchbaseVectorStore],
+        cls: Type[CouchbaseSearchVectorStore],
         embedding: Embeddings,
         **kwargs: Any,
-    ) -> CouchbaseVectorStore:
+    ) -> CouchbaseSearchVectorStore:
         """Initialize the Couchbase vector store from keyword arguments for the
         vector store.
 
@@ -684,18 +326,18 @@ class CouchbaseVectorStore(VectorStore):
 
     @classmethod
     def from_texts(
-        cls: Type[CouchbaseVectorStore],
+        cls: Type[CouchbaseSearchVectorStore],
         texts: List[str],
         embedding: Embeddings,
         metadatas: Optional[List[dict]] = None,
         **kwargs: Any,
-    ) -> CouchbaseVectorStore:
+    ) -> CouchbaseSearchVectorStore:
         """Construct a Couchbase vector store from a list of texts.
 
         Example:
             .. code-block:: python
 
-            from langchain_couchbase import CouchbaseVectorStore
+            from langchain_couchbase import CouchbaseSearchVectorStore
             from langchain_openai import OpenAIEmbeddings
 
             from couchbase.cluster import Cluster
@@ -715,7 +357,7 @@ class CouchbaseVectorStore(VectorStore):
 
             texts = ["hello", "world"]
 
-            vectorstore = CouchbaseVectorStore.from_texts(
+            vectorstore = CouchbaseSearchVectorStore.from_texts(
                 texts,
                 embedding=embeddings,
                 cluster=cluster,

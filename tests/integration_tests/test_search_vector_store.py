@@ -8,7 +8,7 @@ import pytest
 from langchain_core.documents import Document
 
 from langchain_couchbase import (
-    CouchbaseVectorStore,
+    CouchbaseSearchVectorStore,
 )
 from tests.utils import ConsistentFakeEmbeddings
 
@@ -72,7 +72,7 @@ def delete_documents(
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
 )
-class TestCouchbaseVectorStore:
+class TestCouchbaseSearchVectorStore:
     @classmethod
     def setup_method(self) -> None:
         cluster = get_cluster()
@@ -88,7 +88,7 @@ class TestCouchbaseVectorStore:
             Document(page_content="baz", metadata={"page": 3}),
         ]
 
-        vectorstore = CouchbaseVectorStore.from_documents(
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
             documents,
             ConsistentFakeEmbeddings(),
             cluster=cluster,
@@ -114,7 +114,7 @@ class TestCouchbaseVectorStore:
             "baz",
         ]
 
-        vectorstore = CouchbaseVectorStore.from_texts(
+        vectorstore = CouchbaseSearchVectorStore.from_texts(
             texts,
             ConsistentFakeEmbeddings(),
             cluster=cluster,
@@ -142,7 +142,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore.from_texts(
+        vectorstore = CouchbaseSearchVectorStore.from_texts(
             texts,
             ConsistentFakeEmbeddings(),
             metadatas=metadatas,
@@ -173,7 +173,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -209,7 +209,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -239,7 +239,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -269,7 +269,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -303,7 +303,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"page": 1, "a": 1}, {"page": 2, "b": 2}, {"page": 3, "c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -338,7 +338,7 @@ class TestCouchbaseVectorStore:
             {"section": "appendix"},
         ]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -377,7 +377,7 @@ class TestCouchbaseVectorStore:
 
         metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
 
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
@@ -470,7 +470,7 @@ class TestCouchbaseVectorStore:
         scope_index_manager.upsert_index(SearchIndex.from_json(index_definition))
 
         # Create the vector store with the invalid search index
-        invalid_index_vs = CouchbaseVectorStore(
+        invalid_index_vs = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INVALID_INDEX_NAME,
@@ -493,7 +493,7 @@ class TestCouchbaseVectorStore:
         scope_index_manager.drop_index(INVALID_INDEX_NAME)
 
         # Test the search index with the required fields reusing the same collection
-        vectorstore = CouchbaseVectorStore(
+        vectorstore = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
             index_name=INDEX_NAME,
