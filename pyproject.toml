@@ -53,6 +53,7 @@ optional = true
 optional = true
 
 [tool.poetry.group.dev.dependencies]
+tomli = "^2.0.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.3"

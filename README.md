@@ -156,7 +156,7 @@ pip install -e .  # Install in development mode
 
 2. Install the required documentation dependencies:
 ```bash
-pip install sphinx sphinx-rtd-theme
+pip install sphinx sphinx-rtd-theme tomli
 ```
 
 3. Navigate to the docs directory:
@@ -211,3 +211,5 @@ make help
 - If you encounter errors about missing modules, ensure you have installed the project in your environment.
 - If Sphinx can't find your package modules, verify your `conf.py` has the correct path configuration.
 - For sphinx-specific errors, refer to the [Sphinx documentation](https://www.sphinx-doc.org/).
+- If you see an error about missing `tomli` module, make sure you've installed it with `pip install tomli`.
+
