@@ -142,3 +142,72 @@ session_id="test-session",
 
 message_history.add_user_message("hi!")
 ```
+
+## Documentation
+
+### Generating Documentation Locally
+
+To generate the documentation locally, follow these steps:
+
+1. Ensure you have the project installed in your environment:
+```bash
+pip install -e .  # Install in development mode
+```
+
+2. Install the required documentation dependencies:
+```bash
+pip install sphinx sphinx-rtd-theme
+```
+
+3. Navigate to the docs directory:
+```bash
+cd docs
+```
+
+4. Ensure the _static directory exists:
+```bash
+mkdir -p source/_static
+```
+
+5. Build the HTML documentation:
+```bash
+make html
+```
+
+6. The generated documentation will be available in the `docs/build/html` directory. You can open `index.html` in your browser to view it:
+```bash
+# On macOS
+open build/html/index.html
+# On Linux
+xdg-open build/html/index.html
+# On Windows
+start build/html/index.html
+```
+
+#### Additional Documentation Commands
+
+- To clean the build directory before rebuilding:
+```bash
+make clean html
+```
+
+- To check for broken links in the documentation:
+```bash
+make linkcheck
+```
+
+- To generate a PDF version of the documentation (requires LaTeX):
+```bash
+make latexpdf
+```
+
+- For help on available make commands:
+```bash
+make help
+```
+
+#### Troubleshooting
+
+- If you encounter errors about missing modules, ensure you have installed the project in your environment.
+- If Sphinx can't find your package modules, verify your `conf.py` has the correct path configuration.
+- For sphinx-specific errors, refer to the [Sphinx documentation](https://www.sphinx-doc.org/).

@@ -9,7 +9,9 @@
 #
 import os
 import sys
+import tomli
 from importlib.metadata import version as get_version
+from pathlib import Path
 
 import sphinx_rtd_theme
 
@@ -24,7 +26,11 @@ author = "Couchbase"
 try:
     release = get_version("langchain-couchbase")
 except Exception:
-    release = "0.2.5"  # Default version if package not installed
+        # Get version from pyproject.toml if package not installed
+    pyproject_path = Path(__file__).parents[2] / "pyproject.toml"
+    with open(pyproject_path, "rb") as f:
+        pyproject_data = tomli.load(f)
+    release = pyproject_data["tool"]["poetry"]["version"]
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
