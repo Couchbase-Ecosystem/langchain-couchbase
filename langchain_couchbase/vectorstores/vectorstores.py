@@ -25,7 +25,7 @@ from langchain_core.vectorstores import VectorStore
 
 
 @deprecated(
-    alternative="langchain_couchbase.CouchbaseSearchVectorStore",
+    alternative_import="langchain_couchbase.vectorstores.CouchbaseSearchVectorStore",
     since="0.3.0",
     removal="1.0.0",
 )
