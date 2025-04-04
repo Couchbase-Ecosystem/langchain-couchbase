@@ -19,7 +19,7 @@ from langchain_core.load.dump import dumps
 from langchain_core.load.load import loads
 from langchain_core.outputs import Generation
 
-from langchain_couchbase.vectorstores import CouchbaseVectorStore
+from langchain_couchbase.vectorstores import CouchbaseSearchVectorStore
 
 logger = logging.getLogger(__file__)
 
@@ -252,7 +252,7 @@ class CouchbaseCache(BaseCache):
             logger.error("Error clearing cache. Please check if you have an index.")
 
 
-class CouchbaseSemanticCache(BaseCache, CouchbaseVectorStore):
+class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
     """Couchbase Semantic Cache
     Cache backed by a Couchbase Server with Vector Store support
     """
