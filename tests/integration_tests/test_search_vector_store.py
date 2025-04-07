@@ -504,3 +504,24 @@ class TestCouchbaseSearchVectorStore:
 
         output = vectorstore.similarity_search("foo", k=1)
         assert output[0].id == ids[0]
+
+    def test_retriever(self, cluster: Any) -> None:
+        """Test the SearchVectorStore as a retriever."""
+        texts = ["foo", "bar", "baz"]
+        vectorstore = CouchbaseSearchVectorStore.from_texts(
+            texts=texts,
+            embedding=ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            index_name=INDEX_NAME,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+        )
+
+        # Create the retriever
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 1})
+        docs = retriever.invoke("foo")
+
+        assert len(docs) == 1
+
+        assert docs[0].page_content == "foo"
