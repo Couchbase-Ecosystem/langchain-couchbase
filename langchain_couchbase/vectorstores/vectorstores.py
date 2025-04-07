@@ -30,7 +30,7 @@ from langchain_core.vectorstores import VectorStore
     removal="1.0.0",
 )
 class CouchbaseVectorStore(VectorStore):
-    """__ModuleName__ vector store integration.
+    """__Couchbase__ vector store integration.
 
     Setup:
         Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
@@ -71,6 +71,7 @@ class CouchbaseVectorStore(VectorStore):
             from couchbase.auth import PasswordAuthenticator
             from couchbase.cluster import Cluster
             from couchbase.options import ClusterOptions
+            from langchain_couchbase import CouchbaseVectorStore
 
             auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
             options = ClusterOptions(auth)
@@ -81,8 +82,10 @@ class CouchbaseVectorStore(VectorStore):
 
             BUCKET_NAME = "langchain_bucket"
             SCOPE_NAME = "_default"
-            COLLECTION_NAME = "default"
+            COLLECTION_NAME = "_default"
             SEARCH_INDEX_NAME = "langchain-test-index"
+
+            embeddings = OpenAIEmbeddings()
 
             vector_store = CouchbaseVectorStore(
                 cluster=cluster,
@@ -111,7 +114,6 @@ class CouchbaseVectorStore(VectorStore):
 
             vector_store.delete(ids=["3"])
 
-    # TODO: Fill out with example output.
     Search:
         .. code-block:: python
 
@@ -121,22 +123,19 @@ class CouchbaseVectorStore(VectorStore):
 
         .. code-block:: python
 
-            # TODO: Example output
+            * thud [{'bar': 'baz'}]
 
-    # TODO: Fill out with relevant variables and example output.
     Search with filter:
         .. code-block:: python
 
-            # TODO: Update filter to correct format
-            results = vector_store.similarity_search(query="thud",k=1,filter={"bar": "baz"})
+            results = vector_store.similarity_search(query="thud",k=1,search_options={"query": {"field":"metadata.bar", "match": "baz"}})
             for doc in results:
                 print(f"* {doc.page_content} [{doc.metadata}]")
 
         .. code-block:: python
 
-            # TODO: Example output
+            * thud [{'bar': 'baz'}]
 
-    # TODO: Fill out with example output.
     Search with score:
         .. code-block:: python
 
@@ -146,20 +145,19 @@ class CouchbaseVectorStore(VectorStore):
 
         .. code-block:: python
 
-            # TODO: Example output
+            * [SIM=0.500778] foo [{'baz': 'bar'}]
 
-    # TODO: Fill out with example output.
     Async:
         .. code-block:: python
 
             # add documents
-            # await vector_store.aadd_documents(documents=documents, ids=ids)
+            await vector_store.aadd_documents(documents=documents, ids=ids)
 
             # delete documents
-            # await vector_store.adelete(ids=["3"])
+            await vector_store.adelete(ids=["3"])
 
             # search
-            # results = vector_store.asimilarity_search(query="thud",k=1)
+            results = vector_store.asimilarity_search(query="thud",k=1)
 
             # search with score
             results = await vector_store.asimilarity_search_with_score(query="qux",k=1)
@@ -168,21 +166,19 @@ class CouchbaseVectorStore(VectorStore):
 
         .. code-block:: python
 
-            # TODO: Example output
+            * [SIM=0.500762] foo [{'baz': 'bar'}]
 
-    # TODO: Fill out with example output.
     Use as Retriever:
         .. code-block:: python
 
             retriever = vector_store.as_retriever(
-                search_type="mmr",
                 search_kwargs={"k": 1, "fetch_k": 2, "lambda_mult": 0.5},
             )
             retriever.invoke("thud")
 
         .. code-block:: python
 
-            # TODO: Example output
+            [Document(id='2', metadata={'bar': 'baz'}, page_content='thud')]
 
     """  # noqa: E501
 

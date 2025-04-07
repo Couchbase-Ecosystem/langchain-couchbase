@@ -9,10 +9,160 @@ from couchbase.vector_search import VectorQuery, VectorSearch
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
-from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVectorStore
+from langchain_couchbase.vectorstores import BaseCouchbaseVectorStore
 
 
 class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
+    """__Couchbase__ vector store integration using Search/FTS service.
+
+    Setup:
+        Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
+
+        .. code-block:: bash
+
+            pip install -U langchain-couchbase
+
+        .. code-block:: python
+
+            import getpass
+
+            COUCHBASE_CONNECTION_STRING = getpass.getpass("Enter the connection string for the Couchbase cluster: ")
+            DB_USERNAME = getpass.getpass("Enter the username for the Couchbase cluster: ")
+            DB_PASSWORD = getpass.getpass("Enter the password for the Couchbase cluster: ")
+
+    Key init args — indexing params:
+        embedding: Embeddings
+            Embedding function to use.
+
+    Key init args — client params:
+        cluster: Cluster
+            Couchbase cluster object with active connection.
+        bucket_name: str
+            Name of the bucket to store documents in.
+        scope_name: str
+            Name of the scope in the bucket to store documents in.
+        collection_name: str
+            Name of the collection in the scope to store documents in.
+        index_name: str
+            Name of the Search index to use.
+
+    Instantiate:
+        .. code-block:: python
+
+            from datetime import timedelta
+            from langchain_openai import OpenAIEmbeddings
+            from couchbase.auth import PasswordAuthenticator
+            from couchbase.cluster import Cluster
+            from couchbase.options import ClusterOptions
+            from langchain_couchbase import CouchbaseSearchVectorStore
+
+            auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
+            options = ClusterOptions(auth)
+            cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
+
+            # Wait until the cluster is ready for use.
+            cluster.wait_until_ready(timedelta(seconds=5))
+
+            BUCKET_NAME = "langchain_bucket"
+            SCOPE_NAME = "_default"
+            COLLECTION_NAME = "_default"
+            SEARCH_INDEX_NAME = "langchain-test-index"
+
+            embeddings = OpenAIEmbeddings()
+
+            vector_store = CouchbaseSearchVectorStore(
+                cluster=cluster,
+                bucket_name=BUCKET_NAME,
+                scope_name=SCOPE_NAME,
+                collection_name=COLLECTION_NAME,
+                embedding=embeddings,
+                index_name=SEARCH_INDEX_NAME,
+            )
+
+    Add Documents:
+        .. code-block:: python
+
+            from langchain_core.documents import Document
+
+            document_1 = Document(page_content="foo", metadata={"baz": "bar"})
+            document_2 = Document(page_content="thud", metadata={"bar": "baz"})
+            document_3 = Document(page_content="i will be deleted :(")
+
+            documents = [document_1, document_2, document_3]
+            ids = ["1", "2", "3"]
+            vector_store.add_documents(documents=documents, ids=ids)
+
+    Delete Documents:
+        .. code-block:: python
+
+            vector_store.delete(ids=["3"])
+
+    Search:
+        .. code-block:: python
+
+            results = vector_store.similarity_search(query="thud",k=1)
+            for doc in results:
+                print(f"* {doc.page_content} [{doc.metadata}]")
+
+        .. code-block:: python
+
+            * thud [{'bar': 'baz'}]
+
+    Search with filter:
+        .. code-block:: python
+
+            results = vector_store.similarity_search(query="thud",k=1,search_options={"query": {"field":"metadata.bar", "match": "baz"}})
+            for doc in results:
+                print(f"* {doc.page_content} [{doc.metadata}]")
+
+        .. code-block:: python
+
+            * thud [{'bar': 'baz'}]
+
+    Search with score:
+        .. code-block:: python
+
+            results = vector_store.similarity_search_with_score(query="qux",k=1)
+            for doc, score in results:
+                print(f"* [SIM={score:3f}] {doc.page_content} [{doc.metadata}]")
+
+        .. code-block:: python
+
+            * [SIM=0.500762] foo [{'baz': 'bar'}]
+
+    Async:
+        .. code-block:: python
+
+            # add documents
+            await vector_store.aadd_documents(documents=documents, ids=ids)
+
+            # delete documents
+            await vector_store.adelete(ids=["3"])
+
+            # search
+            results = vector_store.asimilarity_search(query="thud",k=1)
+
+            # search with score
+            results = await vector_store.asimilarity_search_with_score(query="qux",k=1)
+            for doc,score in results:
+                print(f"* [SIM={score:3f}] {doc.page_content} [{doc.metadata}]")
+
+        .. code-block:: python
+
+            * [SIM=0.500735] foo [{'baz': 'bar'}]
+
+    Use as Retriever:
+        .. code-block:: python
+
+            retriever = vector_store.as_retriever(
+                search_kwargs={"k": 1, "fetch_k": 2, "lambda_mult": 0.5},
+            )
+            retriever.invoke("thud")
+
+        .. code-block:: python
+
+            [Document(id='2', metadata={'bar': 'baz'}, page_content='thud')]
+    """  # noqa: E501
 
     def _check_index_exists(self) -> bool:
         """Check if the Search index exists in the linked Couchbase cluster
@@ -52,7 +202,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         scoped_index: bool = True,
     ) -> None:
         """
-        Initialize the Couchbase Vector Store.
+        Initialize the Couchbase SearchVector Store.
 
         Args:
 
@@ -286,7 +436,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: Embeddings,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Initialize the Couchbase vector store from keyword arguments for the
+        """Initialize the Couchbase Searchvector store from keyword arguments for the
         vector store.
 
         Args:
@@ -376,7 +526,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 for the list of accepted arguments.
 
         Returns:
-            A Couchbase vector store.
+            A Couchbase Searchvector store.
 
         """
         vector_store = cls._from_kwargs(embedding, **kwargs)
