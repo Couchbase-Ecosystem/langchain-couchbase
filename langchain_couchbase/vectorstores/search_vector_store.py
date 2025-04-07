@@ -9,7 +9,7 @@ from couchbase.vector_search import VectorQuery, VectorSearch
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
-from langchain_couchbase.vectorstores import BaseCouchbaseVectorStore
+from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVectorStore
 
 
 class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):

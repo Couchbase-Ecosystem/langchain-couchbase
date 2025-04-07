@@ -21,7 +21,10 @@ if TYPE_CHECKING:
 
 
 class BaseCouchbaseVectorStore(VectorStore):
-    """Base vector store for Couchbase."""
+    """Base vector store for Couchbase.
+    This class handles the data input and output for the vector store.
+    This class is meant to be used as a base class for other vector stores.
+    """
 
     # Default batch size
     DEFAULT_BATCH_SIZE = 100
@@ -79,7 +82,7 @@ class BaseCouchbaseVectorStore(VectorStore):
         embedding_key: Optional[str] = _default_embedding_key,
     ) -> None:
         """
-        Initialize the Couchbase Vector Store.
+        Initialize the Couchbase Base Vector Store for data input and output.
 
         Args:
 
