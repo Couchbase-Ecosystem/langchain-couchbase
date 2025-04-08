@@ -13,7 +13,7 @@ pip install -U langchain-couchbase
 `CouchbaseVectorStore` class enables the usage of Couchbase for Vector Search.
 
 ```python
-from langchain_couchbase import CouchbaseVectorStore
+from langchain_couchbase import CouchbaseSearchVectorStore
 ```
 
 To use this in an application:
@@ -42,7 +42,7 @@ cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
 # Wait until the cluster is ready for use.
 cluster.wait_until_ready(timedelta(seconds=5))
 
-vector_store = CouchbaseVectorStore(
+vector_store = CouchbaseSearchVectorStore(
     cluster=cluster,
     bucket_name=BUCKET_NAME,
     scope_name=SCOPE_NAME,
@@ -133,11 +133,11 @@ To use the chat message history in your applications:
 from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHistory
 
 message_history = CouchbaseChatMessageHistory(
-cluster=cluster,
-bucket_name=BUCKET_NAME,
-scope_name=SCOPE_NAME,
-collection_name=COLLECTION_NAME,
-session_id="test-session",
+    cluster=cluster,
+    bucket_name=BUCKET_NAME,
+    scope_name=SCOPE_NAME,
+    collection_name=COLLECTION_NAME,
+    session_id="test-session",
 )
 
 message_history.add_user_message("hi!")
