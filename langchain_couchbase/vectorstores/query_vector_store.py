@@ -75,6 +75,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             from couchbase.cluster import Cluster
             from couchbase.options import ClusterOptions
             from langchain_couchbase import CouchbaseSearchVectorStore
+            from langchain_couchbase.vectorstores import DistanceStrategy
 
             auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
             options = ClusterOptions(auth)
@@ -86,17 +87,16 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             BUCKET_NAME = "langchain_bucket"
             SCOPE_NAME = "_default"
             COLLECTION_NAME = "_default"
-            SEARCH_INDEX_NAME = "langchain-test-index"
 
             embeddings = OpenAIEmbeddings()
 
-            vector_store = CouchbaseSearchVectorStore(
+            vector_store = CouchbaseQueryVectorStore(
                 cluster=cluster,
                 bucket_name=BUCKET_NAME,
                 scope_name=SCOPE_NAME,
                 collection_name=COLLECTION_NAME,
                 embedding=embeddings,
-                index_name=SEARCH_INDEX_NAME,
+                distance_metric=DistanceStrategy.DOT,
             )
 
     Add Documents:
@@ -131,7 +131,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
     Search with filter:
         .. code-block:: python
 
-            results = vector_store.similarity_search(query="thud",k=1,search_options={"query": {"field":"metadata.bar", "match": "baz"}})
+            results = vector_store.similarity_search(query="thud",k=1, where_str="metadata.bar = 'baz'")
             for doc in results:
                 print(f"* {doc.page_content} [{doc.metadata}]")
 
@@ -148,7 +148,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
 
         .. code-block:: python
 
-            * [SIM=0.500762] foo [{'baz': 'bar'}]
+            * [SIM=-0.832155] foo [{'baz': 'bar'}]
 
     Async:
         .. code-block:: python
@@ -169,7 +169,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
 
         .. code-block:: python
 
-            * [SIM=0.500735] foo [{'baz': 'bar'}]
+            * [SIM=-0.832155] foo [{'baz': 'bar'}]
 
     Use as Retriever:
         .. code-block:: python
