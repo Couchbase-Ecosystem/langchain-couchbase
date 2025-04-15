@@ -207,6 +207,14 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         )
         self._distance_metric = distance_metric
 
+        # Create a primary index on the collection if it does not exist
+        try:
+            self._scope.query(
+                f"CREATE PRIMARY INDEX IF NOT EXISTS ON {self._collection_name}"
+            ).execute()
+        except Exception as e:
+            raise ValueError(f"Primary index creation failed with error: {e}")
+
     def similarity_search(
         self,
         query: str,
