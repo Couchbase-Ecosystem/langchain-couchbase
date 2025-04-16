@@ -275,7 +275,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             fields.append(self._text_key)
 
         similarity_search_string = (
-            f"ANN({self._embedding_key}, {embedding}, '{self._distance_metric.value}')"
+            f"ANN_DISTANCE({self._embedding_key}, {embedding}, "
+            f"'{self._distance_metric.value}')"
         )
 
         if not where_str:
