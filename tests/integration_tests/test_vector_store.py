@@ -23,6 +23,7 @@ SLEEP_DURATION = 1
 
 
 def set_all_env_vars() -> bool:
+    """Check if all the environment variables are set."""
     return all(
         [
             CONNECTION_STRING,

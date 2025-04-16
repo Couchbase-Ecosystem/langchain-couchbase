@@ -518,6 +518,9 @@ class TestCouchbaseSearchVectorStore:
             collection_name=COLLECTION_NAME,
         )
 
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
         # Create the retriever
         retriever = vectorstore.as_retriever(search_kwargs={"k": 1})
         docs = retriever.invoke("foo")
