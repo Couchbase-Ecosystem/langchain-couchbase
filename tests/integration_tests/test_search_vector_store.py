@@ -436,7 +436,7 @@ class TestCouchbaseSearchVectorStore:
                     "default_type": "_default",
                     "docvalues_dynamic": False,
                     "index_dynamic": True,
-                    "store_dynamic": True,
+                    "store_dynamic": False,
                     "type_field": "_type",
                     "types": {
                         "langchain.testing": {
@@ -491,6 +491,7 @@ class TestCouchbaseSearchVectorStore:
 
         # Drop the invalid search index
         scope_index_manager.drop_index(INVALID_INDEX_NAME)
+        time.sleep(SLEEP_DURATION)
 
         # Test the search index with the required fields reusing the same collection
         vectorstore = CouchbaseSearchVectorStore(
