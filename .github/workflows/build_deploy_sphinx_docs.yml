@@ -26,8 +26,8 @@ jobs:
           pip install . # Install project dependencies from pyproject.toml
           pip install sphinx sphinx-rtd-theme tomli # Install Sphinx and theme
 
-      - name: Ensure _static directory exists
-        run: mkdir -p docs/source/_static
+      - name: Ensure build directory exists
+        run: mkdir -p docs/build
 
       - name: Build Sphinx documentation
         run: make -C docs html
