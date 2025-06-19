@@ -2,8 +2,9 @@
 LangChain Couchbase Caches
 
 Functions "_hash", "_loads_generations" and "_dumps_generations"
-are duplicated in this utility from modules:
-    - "libs/community/langchain_community/cache.py"
+are copied from the LangChain community module:
+
+    "libs/community/langchain_community/cache.py"
 """
 
 import hashlib

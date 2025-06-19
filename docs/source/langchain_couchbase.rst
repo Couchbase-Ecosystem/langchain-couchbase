@@ -1,6 +1,3 @@
-API Reference
-=============
-
 This page contains the complete API reference for the ``langchain-couchbase`` package. 
 For usage examples and tutorials, see the :doc:`usage` page.
 
@@ -25,7 +22,7 @@ Couchbase Vector Store
 ~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
-   This class is deprecated since version 0.1.0 and will be removed in version 1.0.0.
+   This class is deprecated since version 0.3.0 and will be removed in version 1.0.0.
    Use :class:`CouchbaseSearchVectorStore` instead.
 
 .. automodule:: langchain_couchbase.vectorstores.vectorstores
@@ -44,9 +41,6 @@ Base Vector Store
 
 Caching
 -------
-
-Couchbase Cache
-~~~~~~~~~~~~~~~
 
 .. automodule:: langchain_couchbase.cache
    :members:

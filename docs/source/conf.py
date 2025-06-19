@@ -9,11 +9,10 @@
 #
 import os
 import sys
-import tomli
 from importlib.metadata import version as get_version
 from pathlib import Path
 
-import sphinx_rtd_theme
+import tomli
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -42,7 +41,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ["tests/*", "test_app/*", "scripts/*"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

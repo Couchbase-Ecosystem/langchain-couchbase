@@ -1,6 +1,8 @@
 # langchain-couchbase
 
-This package contains the LangChain integration with Couchbase
+This package contains the official [LangChain](https://python.langchain.com/docs/introduction/) integration with Couchbase
+
+The documentation and API Reference can be found on [Github Pages](https://couchbase-ecosystem.github.io/langchain-couchbase/index.html).
 
 ## Installation
 
@@ -166,9 +168,9 @@ pip install sphinx sphinx-rtd-theme tomli
 cd docs
 ```
 
-4. Ensure the _static directory exists:
+4. Ensure the build directory exists:
 ```bash
-mkdir -p source/_static
+mkdir -p source/build
 ```
 
 5. Build the HTML documentation:
