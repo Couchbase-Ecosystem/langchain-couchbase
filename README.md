@@ -132,6 +132,8 @@ To use the chat message history in your applications:
 ```python
 from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHistory
 
+cluster = couchbase_cluster_connection_object
+
 message_history = CouchbaseChatMessageHistory(
     cluster=cluster,
     bucket_name=BUCKET_NAME,
