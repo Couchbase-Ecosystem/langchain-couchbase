@@ -4,10 +4,9 @@
 Welcome to langchain-couchbase's documentation!
 =================================================
 
-``langchain-couchbase`` is an integration package connecting Couchbase and LangChain.
+``langchain-couchbase`` is the official Couchbase integration for `LangChain <https://python.langchain.com/>`_.
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the package.
+Check out the :doc:`usage` section for usage information. 
 
 .. note::
 
@@ -27,8 +26,8 @@ Install ``langchain-couchbase`` using ``pip``::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
    usage
+   modules
 
 Indices and tables
 ==================

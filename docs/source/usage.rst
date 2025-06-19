@@ -3,28 +3,47 @@
 Usage
 =====
 
-``langchain-couchbase`` provides several components to integrate Couchbase with LangChain:
+``langchain-couchbase`` is the official Couchbase integration for `LangChain <https://python.langchain.com/>`_.
 
 Vector Store
------------
+------------
 
-Use Couchbase as a vector store for your embeddings:
+Use Couchbase as a vector store for your documents:
+
+See a `complete vector store usage example <https://python.langchain.com/docs/integrations/vectorstores/couchbase/>`_.
 
 .. code-block:: python
 
-    from langchain.embeddings import OpenAIEmbeddings
-    from langchain_couchbase.vectorstores import CouchbaseVectorStore
-    
-    embeddings = OpenAIEmbeddings()
-    
-    vectorstore = CouchbaseVectorStore(
-        connection_string="couchbase://localhost",
-        username="Administrator",
-        password="password",
-        bucket_name="vector_bucket",
-        scope_name="_default",
-        collection_name="vector_collection",
-        embedding=embeddings
+    import getpass
+
+    # Constants for the connection
+    COUCHBASE_CONNECTION_STRING = getpass.getpass(
+        "Enter the connection string for the Couchbase cluster: "
+    )
+    DB_USERNAME = getpass.getpass("Enter the username for the Couchbase cluster: ")
+    DB_PASSWORD = getpass.getpass("Enter the password for the Couchbase cluster: ")
+
+    # Create Couchbase connection object
+    from datetime import timedelta
+
+    from couchbase.auth import PasswordAuthenticator
+    from couchbase.cluster import Cluster
+    from couchbase.options import ClusterOptions
+
+    auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
+    options = ClusterOptions(auth)
+    cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
+
+    # Wait until the cluster is ready for use.
+    cluster.wait_until_ready(timedelta(seconds=5))
+
+    vector_store = CouchbaseSearchVectorStore(
+        cluster=cluster,
+        bucket_name=BUCKET_NAME,
+        scope_name=SCOPE_NAME,
+        collection_name=COLLECTION_NAME,
+        embedding=my_embeddings,
+        index_name=SEARCH_INDEX_NAME,
     )
     
     # Add documents
@@ -37,45 +56,77 @@ Use Couchbase as a vector store for your embeddings:
 
 Cache
 -----
-
 Use Couchbase as a cache for LLM responses:
+
+See a `complete cache usage example <https://python.langchain.com/docs/integrations/llm_caching/#couchbase-caches>`_.
 
 .. code-block:: python
 
-    from langchain.cache import BaseCache
     from langchain_couchbase.cache import CouchbaseCache
-    from langchain.globals import set_llm_cache
-    
-    # Setup cache
+    from langchain_core.globals import set_llm_cache
+
+    cluster = couchbase_cluster_connection_object
+
     cache = CouchbaseCache(
-        connection_string="couchbase://localhost",
-        username="Administrator",
-        password="password",
-        bucket_name="langchain",
-        scope_name="_default", 
-        collection_name="llm_cache"
+        cluster=cluster,
+        bucket_name=BUCKET_NAME,
+        scope_name=SCOPE_NAME,
+        collection_name=COLLECTION_NAME,
     )
-    
+
+    set_llm_cache(cache)
+
+Semantic Cache
+--------------
+
+Semantic caching allows users to retrieve cached prompts based on the semantic similarity between the user input and previously cached inputs. 
+Under the hood it uses Couchbase as both a cache and a vectorstore. The `CouchbaseSemanticCache` needs a Search Index defined to work. 
+Please look at the usage example on how to set up the index.
+
+See a `complete semantic cache usage example <https://python.langchain.com/docs/integrations/llm_caching/#couchbase-caches>`_.
+
+.. code-block:: python
+
+    from langchain_couchbase.cache import CouchbaseSemanticCache
+    from langchain_core.globals import set_llm_cache
+    from langchain.embeddings import OpenAIEmbeddings
+
+    # use any embedding provider...
+    embeddings = OpenAIEmbeddings()
+
+    # Setup cache
+    cluster = couchbase_cluster_connection_object
+
+    cache = CouchbaseSemanticCache(
+                cluster=cluster,
+                embedding=embeddings,
+                bucket_name=BUCKET_NAME,
+                scope_name=SCOPE_NAME,
+                collection_name=COLLECTION_NAME,
+                index_name=INDEX_NAME,
+        )
+
     # Set as global cache
     set_llm_cache(cache)
 
-Chat Message History
--------------------
 
-Store chat history in Couchbase:
+Chat Message History
+--------------------
+
+Use Couchbase as the storage for your chat messages.
+
+See a `complete chat message history usage example <https://python.langchain.com/docs/integrations/memory/couchbase_chat_message_history/>`_.
 
 .. code-block:: python
 
     from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHistory
     
     message_history = CouchbaseChatMessageHistory(
-        connection_string="couchbase://localhost",
-        username="Administrator",
-        password="password",
-        bucket_name="langchain",
-        scope_name="_default",
-        collection_name="chat_history",
-        session_id="user-123"
+        cluster=cluster,
+        bucket_name=BUCKET_NAME,
+        scope_name=SCOPE_NAME,
+        collection_name=COLLECTION_NAME,
+        session_id="test-session",
     )
     
     # Add messages

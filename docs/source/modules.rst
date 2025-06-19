@@ -1,5 +1,5 @@
-langchain_couchbase
-===================
+API Reference
+=============
 
 .. toctree::
    :maxdepth: 4
