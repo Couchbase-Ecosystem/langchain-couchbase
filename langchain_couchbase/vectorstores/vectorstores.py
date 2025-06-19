@@ -32,6 +32,10 @@ from langchain_core.vectorstores import VectorStore
 class CouchbaseVectorStore(VectorStore):
     """__Couchbase__ vector store integration.
 
+    .. deprecated:: 0.1.0
+        This class is deprecated and will be removed in version 1.0.0.
+        Use :class:`CouchbaseSearchVectorStore` instead.
+
     Setup:
         Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
 

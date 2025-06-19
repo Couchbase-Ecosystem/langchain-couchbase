@@ -1,0 +1,55 @@
+name: Build and Deploy Sphinx Docs
+
+on:
+  push:
+    branches:
+      - main # Or your default branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' # Use a specific version if needed
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install . # Install project dependencies from pyproject.toml
+          pip install sphinx sphinx-rtd-theme tomli # Install Sphinx and theme
+
+      - name: Ensure build directory exists
+        run: mkdir -p docs/build
+
+      - name: Build Sphinx documentation
+        run: make -C docs html
+
+      - name: Check docs directory contents
+        run: ls -al docs # List contents of docs instead of docs/build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build/html
+
+  deploy-docs:
+    needs: build-docs
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 

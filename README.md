@@ -1,6 +1,8 @@
 # langchain-couchbase
 
-This package contains the LangChain integration with Couchbase
+This package contains the official [LangChain](https://python.langchain.com/docs/introduction/) integration with Couchbase
+
+The documentation and API Reference can be found on [Github Pages](https://couchbase-ecosystem.github.io/langchain-couchbase/index.html).
 
 ## Installation
 
@@ -132,6 +134,8 @@ To use the chat message history in your applications:
 ```python
 from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHistory
 
+cluster = couchbase_cluster_connection_object
+
 message_history = CouchbaseChatMessageHistory(
     cluster=cluster,
     bucket_name=BUCKET_NAME,
@@ -143,7 +147,76 @@ message_history = CouchbaseChatMessageHistory(
 message_history.add_user_message("hi!")
 ```
 
----
+### Documentation
+
+#### Generating Documentation Locally
+
+To generate the documentation locally, follow these steps:
+
+1. Ensure you have the project installed in your environment:
+```bash
+pip install -e .  # Install in development mode
+```
+
+2. Install the required documentation dependencies:
+```bash
+pip install sphinx sphinx-rtd-theme tomli
+```
+
+3. Navigate to the docs directory:
+```bash
+cd docs
+```
+
+4. Ensure the build directory exists:
+```bash
+mkdir -p source/build
+```
+
+5. Build the HTML documentation:
+```bash
+make html
+```
+
+6. The generated documentation will be available in the `docs/build/html` directory. You can open `index.html` in your browser to view it:
+```bash
+# On macOS
+open build/html/index.html
+# On Linux
+xdg-open build/html/index.html
+# On Windows
+start build/html/index.html
+```
+
+#### Additional Documentation Commands
+
+- To clean the build directory before rebuilding:
+```bash
+make clean html
+```
+
+- To check for broken links in the documentation:
+```bash
+make linkcheck
+```
+
+- To generate a PDF version of the documentation (requires LaTeX):
+```bash
+make latexpdf
+```
+
+- For help on available make commands:
+```bash
+make help
+```
+
+#### Troubleshooting
+
+- If you encounter errors about missing modules, ensure you have installed the project in your environment.
+- If Sphinx can't find your package modules, verify your `conf.py` has the correct path configuration.
+- For sphinx-specific errors, refer to the [Sphinx documentation](https://www.sphinx-doc.org/).
+- If you see an error about missing `tomli` module, make sure you've installed it with `pip install tomli`.
+
 
 ## 📢 Support Policy
 
