@@ -206,9 +206,10 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
     def _check_pre_filter(self, pre_filter: SearchQuery) -> bool:
         """Check if the pre-filter is a valid SearchQuery object.
         Raises a ValueError if the pre-filter is not valid."""
-        if not isinstance(pre_filter, SearchQuery):
-            raise ValueError("pre_filter must be a SearchQuery object.")
-        return True
+        if isinstance(pre_filter, SearchQuery):
+            return True
+        raise ValueError(f"pre_filter must be a SearchQuery object, got"
+                         f"{type(pre_filter)}")
 
     def __init__(
         self,
@@ -385,27 +386,18 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         if fields != ["*"] and self._text_key not in fields:
             fields.append(self._text_key)
 
-        if pre_filter:
-            search_req = search.SearchRequest.create(
-                VectorSearch.from_vector_query(
-                    VectorQuery(
-                        self._embedding_key,
-                        embedding,
-                        num_candidates=k,
-                        prefilter=pre_filter,
-                    )
-                )
-            )
-        else:
-            search_req = search.SearchRequest.create(
+        vector_query = VectorQuery(
+            self._embedding_key,
+            embedding,
+            num_candidates=k,
+            prefilter=pre_filter if pre_filter else None,
+        )
+
+        search_req = search.SearchRequest.create(
             VectorSearch.from_vector_query(
-                VectorQuery(
-                    self._embedding_key,
-                    embedding,
-                    num_candidates=k,
-                    )
-                )
+                vector_query
             )
+        )
 
         try:
             if self._scoped_index:
