@@ -111,6 +111,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
     Search with filter:
         .. code-block:: python
+        
             from couchbase.search import MatchQuery
             
             filter = MatchQuery("baz",field="metadata.bar")
