@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Type
 import couchbase.search as search
 from couchbase.cluster import Cluster
 from couchbase.options import SearchOptions
+from couchbase.search import SearchQuery
 from couchbase.vector_search import VectorQuery, VectorSearch
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
@@ -110,6 +111,19 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
     Search with filter:
         .. code-block:: python
+            from couchbase.search import MatchQuery
+            
+            filter = MatchQuery("baz",field="metadata.bar")
+            results = vector_store.similarity_search(query="thud",k=1,pre_filter=filter)
+            for doc in results:
+                print(f"* {doc.page_content} [{doc.metadata}]")
+
+        .. code-block:: python
+            
+            * thud [{'bar': 'baz'}]
+
+    Hybrid Search:
+        .. code-block:: python
 
             results = vector_store.similarity_search(query="thud",k=1,search_options={"query": {"field":"metadata.bar", "match": "baz"}})
             for doc in results:
@@ -186,6 +200,13 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                     " Please create the index before searching."
                 )
 
+        return True
+    
+    def _check_pre_filter(self, pre_filter: SearchQuery) -> bool:
+        """Check if the pre-filter is a valid SearchQuery object.
+        Raises a ValueError if the pre-filter is not valid."""
+        if not isinstance(pre_filter, SearchQuery):
+            raise ValueError("pre_filter must be a SearchQuery object.")
         return True
 
     def __init__(
@@ -266,6 +287,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         query: str,
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
+        pre_filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
         """Return documents most similar to embedding vector with their scores.
@@ -274,19 +296,36 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             query (str): Query to look up for similar documents
             k (int): Number of Documents to return.
                 Defaults to 4.
-            search_options (Optional[Dict[str, Any]]): Optional search options that are
-                passed to Couchbase search.
-                Defaults to empty dictionary
+            search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
+                that are passed to Couchbase search service. Used for combining vector 
+                similarity with text-based search criteria. Examples:
+                - {"query": {"field": "metadata.category", "match": "action"}}
+                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                Defaults to empty dictionary.
+            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+                vector search execution. It reduces the search space. Examples:
+                - NumericRangeQuery(field="year", min=2020, max=2023)
+                - TermQuery("search_term",field="category")
+                - ConjunctionQuery(query1, query2)
+                Defaults to None.
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to all the fields stored in the index.
 
         Returns:
             List of Documents most similar to the query.
+            
+        Note:
+            - Use search_options for hybrid search combining vector similarity with 
+                other supported search queries
+            - Use pre_filter for efficient pre-search filtering, especially with large 
+                datasets
+            - Both parameters can be used together for complex search scenarios
+
         """
         query_embedding = self.embeddings.embed_query(query)
         docs_with_scores = self.similarity_search_with_score_by_vector(
-            query_embedding, k, search_options, **kwargs
+            query_embedding, k, search_options, pre_filter, **kwargs
         )
         return [doc for doc, _ in docs_with_scores]
 
@@ -295,6 +334,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: List[float],
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
+        pre_filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
         """Return docs most similar to embedding vector with their scores.
@@ -303,32 +343,69 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             embedding (List[float]): Embedding vector to look up documents similar to.
             k (int): Number of Documents to return.
                 Defaults to 4.
-            search_options (Optional[Dict[str, Any]]): Optional search options that are
-                passed to Couchbase search.
+            search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
+                that are passed to Couchbase search service. Used for combining vector 
+                similarity with text-based search criteria. Examples:
+                - {"query": {"field": "metadata.category", "match": "action"}}
+                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
+            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+                vector search execution. It reduces the search space. Examples:
+                - NumericRangeQuery(field="year", min=2020, max=2023)
+                - TermQuery("search_term",field="category")
+                - ConjunctionQuery(query1, query2)
+                Defaults to None.
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
-                If nothing is specified, defaults to all the fields stored in the index.
+                    If nothing is specified, defaults to all the fields stored in 
+                    the index.
+       
 
         Returns:
             List of (Document, score) that are the most similar to the query vector.
+            
+        Note:
+            - Use search_options for hybrid search combining vector similarity with 
+                other supported search queries
+            - Use pre_filter for efficient pre-search filtering, especially with large 
+                datasets
+            - Both parameters can be used together for complex search scenarios
         """
 
         fields = kwargs.get("fields", ["*"])
+
+        if pre_filter:
+            try:
+                self._check_pre_filter(pre_filter)
+            except Exception as e:
+                raise ValueError(f"Invalid pre-filter: {e}")
 
         # Document text field needs to be returned from the search
         if fields != ["*"] and self._text_key not in fields:
             fields.append(self._text_key)
 
-        search_req = search.SearchRequest.create(
+        if pre_filter:
+            search_req = search.SearchRequest.create(
+                VectorSearch.from_vector_query(
+                    VectorQuery(
+                        self._embedding_key,
+                        embedding,
+                        num_candidates=k,
+                        prefilter=pre_filter,
+                    )
+                )
+            )
+        else:
+            search_req = search.SearchRequest.create(
             VectorSearch.from_vector_query(
                 VectorQuery(
                     self._embedding_key,
                     embedding,
-                    k,
+                    num_candidates=k,
+                    )
                 )
             )
-        )
+
         try:
             if self._scoped_index:
                 search_iter = self._scope.search(
@@ -378,6 +455,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         query: str,
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
+        pre_filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
         """Return documents that are most similar to the query with their scores.
@@ -386,19 +464,35 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             query (str): Query to look up for similar documents
             k (int): Number of Documents to return.
                 Defaults to 4.
-            search_options (Optional[Dict[str, Any]]): Optional search options that are
-                passed to Couchbase search.
+            search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
+                that are passed to Couchbase search service. Used for combining vector 
+                similarity with text-based search criteria. Examples:
+                - {"query": {"field": "metadata.category", "match": "action"}}
+                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
+            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+                vector search execution. It reduces the search space. Examples:
+                - NumericRangeQuery(field="year", min=2020, max=2023)
+                - TermQuery("search_term",field="category")
+                - ConjunctionQuery(query1, query2)
+                Defaults to None.
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to text and metadata fields.
 
         Returns:
             List of (Document, score) that are most similar to the query.
+            
+        Note:
+            - Use search_options for hybrid search combining vector similarity with 
+                other supported search queries
+            - Use pre_filter for efficient pre-search filtering, especially with large 
+                datasets
+            - Both parameters can be used together for complex search scenarios
         """
         query_embedding = self.embeddings.embed_query(query)
         docs_with_score = self.similarity_search_with_score_by_vector(
-            query_embedding, k, search_options, **kwargs
+            query_embedding, k, search_options, pre_filter, **kwargs
         )
         return docs_with_score
 
@@ -407,6 +501,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: List[float],
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
+        pre_filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
         """Return documents that are most similar to the vector embedding.
@@ -415,18 +510,34 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             embedding (List[float]): Embedding to look up documents similar to.
             k (int): Number of Documents to return.
                 Defaults to 4.
-            search_options (Optional[Dict[str, Any]]): Optional search options that are
-                passed to Couchbase search.
+            search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
+                that are passed to Couchbase search service. Used for combining vector 
+                similarity with text-based search criteria. Examples:
+                - {"query": {"field": "metadata.category", "match": "action"}}
+                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
+            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+                vector search execution. It reduces the search space. Examples:
+                - NumericRangeQuery(field="year", min=2020, max=2023)
+                - TermQuery("search_term",field="category")
+                - ConjunctionQuery(query1, query2)
+                Defaults to None.
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to document text and metadata fields.
 
         Returns:
             List of Documents most similar to the query.
+            
+        Note:
+            - Use search_options for hybrid search combining vector similarity with 
+                other supported search queries
+            - Use pre_filter for efficient pre-search filtering, especially with large 
+                datasets
+            - Both parameters can be used together for complex search scenarios
         """
         docs_with_score = self.similarity_search_with_score_by_vector(
-            embedding, k, search_options, **kwargs
+            embedding, k, search_options, pre_filter, **kwargs
         )
         return [doc for doc, _ in docs_with_score]
 
@@ -436,7 +547,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: Embeddings,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Initialize the Couchbase Searchvector store from keyword arguments for the
+        """Initialize the Couchbase Searchvector store from keyword arguments for the 
         vector store.
 
         Args:
@@ -521,9 +632,9 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             texts (List[str]): list of texts to add to the vector store.
             embedding (Embeddings): embedding function to use.
             metadatas (optional[List[Dict]): list of metadatas to add to documents.
-            **kwargs: Keyword arguments used to initialize the vector store with and/or
-                passed to `add_texts` method. Check the constructor and/or `add_texts`
-                for the list of accepted arguments.
+            **kwargs: Keyword arguments used to initialize the vector store 
+                with and/or passed to `add_texts` method. Check the constructor and/or
+                `add_texts` for the list of accepted arguments.
 
         Returns:
             A Couchbase Searchvector store.
