@@ -584,7 +584,7 @@ class TestCouchbaseSearchVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        pre_filter = search.MatchQuery("fo", field="text", fuzziness=1)
+        pre_filter = search.TermQuery("foo", field="text")
 
         # Only the first document should match the pre-filter
         output = vectorstore.similarity_search("abc", k=3, pre_filter=pre_filter)
