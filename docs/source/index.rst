@@ -8,10 +8,6 @@ Welcome to langchain-couchbase's documentation!
 
 Check out the :doc:`usage` section for usage information. 
 
-.. note::
-
-   This project is under active development.
-
 .. _installation:
 
 Installation

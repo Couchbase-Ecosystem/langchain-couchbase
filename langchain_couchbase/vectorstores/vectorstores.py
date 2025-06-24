@@ -701,35 +701,35 @@ class CouchbaseVectorStore(VectorStore):
         Example:
             .. code-block:: python
 
-            from langchain_couchbase import CouchbaseVectorStore
-            from langchain_openai import OpenAIEmbeddings
+                from langchain_couchbase import CouchbaseVectorStore
+                from langchain_openai import OpenAIEmbeddings
 
-            from couchbase.cluster import Cluster
-            from couchbase.auth import PasswordAuthenticator
-            from couchbase.options import ClusterOptions
-            from datetime import timedelta
+                from couchbase.cluster import Cluster
+                from couchbase.auth import PasswordAuthenticator
+                from couchbase.options import ClusterOptions
+                from datetime import timedelta
 
-            auth = PasswordAuthenticator(username, password)
-            options = ClusterOptions(auth)
-            connect_string = "couchbases://localhost"
-            cluster = Cluster(connect_string, options)
+                auth = PasswordAuthenticator(username, password)
+                options = ClusterOptions(auth)
+                connect_string = "couchbases://localhost"
+                cluster = Cluster(connect_string, options)
 
-            # Wait until the cluster is ready for use.
-            cluster.wait_until_ready(timedelta(seconds=5))
+                # Wait until the cluster is ready for use.
+                cluster.wait_until_ready(timedelta(seconds=5))
 
-            embeddings = OpenAIEmbeddings()
+                embeddings = OpenAIEmbeddings()
 
-            texts = ["hello", "world"]
+                texts = ["hello", "world"]
 
-            vectorstore = CouchbaseVectorStore.from_texts(
-                texts,
-                embedding=embeddings,
-                cluster=cluster,
-                bucket_name="",
-                scope_name="",
-                collection_name="",
-                index_name="vector-index",
-            )
+                vectorstore = CouchbaseVectorStore.from_texts(
+                    texts,
+                    embedding=embeddings,
+                    cluster=cluster,
+                    bucket_name="",
+                    scope_name="",
+                    collection_name="",
+                    index_name="vector-index",
+                )
 
         Args:
             texts (List[str]): list of texts to add to the vector store.

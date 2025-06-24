@@ -14,6 +14,7 @@ from datetime import timedelta
 from typing import Any, Dict, Optional, Union
 
 from couchbase.cluster import Cluster
+from couchbase.search import MatchQuery
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
 from langchain_core.embeddings import Embeddings
 from langchain_core.load.dump import dumps
@@ -339,8 +340,9 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
         """Look up from cache based on the semantic similarity of the prompt"""
+        pre_filter = MatchQuery(llm_string, field=f"metadata.{self.LLM}")
         search_results = self.similarity_search_with_score(
-            prompt, k=1, search_options={f"metadata.{self.LLM}": llm_string}
+            prompt, k=1, pre_filter=pre_filter
         )
         if search_results:
             selected_doc, score = search_results[0]
@@ -351,11 +353,6 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
         if self.score_threshold:
             if score < self.score_threshold:
                 return None
-
-        # Note that the llm_string might not match the vector search result.
-        # So if the llm_string does not match, do not return the result.
-        if selected_doc.metadata["llm_string"] != llm_string:
-            return None
 
         return _loads_generations(selected_doc.metadata[self.RETURN_VAL])
 

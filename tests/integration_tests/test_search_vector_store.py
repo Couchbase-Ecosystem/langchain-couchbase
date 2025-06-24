@@ -1,10 +1,11 @@
-"""Test Couchbase Vector Store functionality"""
+"""Test Couchbase Search Vector Store functionality"""
 
 import os
 import time
 from typing import Any
 
 import pytest
+from couchbase import search
 from langchain_core.documents import Document
 
 from langchain_couchbase import (
@@ -529,3 +530,218 @@ class TestCouchbaseSearchVectorStore:
         assert len(docs) == 1
 
         assert docs[0].page_content == "foo"
+
+    def test_filter_on_metadata(self, cluster: Any) -> None:
+        """Test filter on metadata field."""
+        documents = [
+            Document(page_content="foo", metadata={"page": 1}),
+            Document(page_content="foo", metadata={"page": 2}),
+            Document(page_content="foo", metadata={"page": 3}),
+        ]
+
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
+            documents,
+            ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            index_name=INDEX_NAME,
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        pre_filter = search.NumericRangeQuery(
+            field="metadata.page", min=0, max=2, 
+            inclusive_min=False, inclusive_max=False
+        )
+
+        output = vectorstore.similarity_search("foo", k=3, filter=pre_filter)
+        assert len(output) == 1
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["page"] == 1
+
+
+    def test_filter_on_text(self, cluster: Any) -> None:
+        """Test filter on text field."""
+        documents = [
+            Document(page_content="foo", metadata={"page": 1}),
+            Document(page_content="bar", metadata={"page": 2}),
+            Document(page_content="baz", metadata={"page": 3}),
+        ]
+
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
+            documents,
+            ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            index_name=INDEX_NAME,
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        pre_filter = search.TermQuery("foo", field="text")
+
+        # Only the first document should match the filter
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
+        assert len(output) == 1
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["page"] == 1
+
+    def test_combined_filter_with_or_operator(self, cluster: Any) -> None:
+        """Test combination of filters with OR operator."""
+        documents = [
+            Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
+            Document(page_content="bar", metadata={"page": 2, "topic": "banana"}),
+            Document(page_content="baz", metadata={"page": 3, "topic": "cherry"}),
+        ]
+
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
+            documents,
+            ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            index_name=INDEX_NAME,
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        # Only consider documents that have topic "apple" or "banana"
+        pre_filter = search.DisjunctionQuery(
+            search.TermQuery("apple", field="metadata.topic"),
+            search.TermQuery("banana", field="metadata.topic"),
+            min=1,
+        )
+
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
+        assert len(output) == 2
+        for result in output:
+            assert (
+                result.metadata["topic"] == "apple" 
+                or result.metadata["topic"] == "banana" 
+            )
+
+    def test_combined_filter_with_and_operator(self, cluster: Any) -> None:
+        """Test combination of filters with AND operator."""
+        documents = [
+            Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
+            Document(page_content="foo", metadata={"page": 2, "topic": "banana"}),
+            Document(page_content="foo", metadata={"page": 3, "topic": "cherry"}),
+        ]
+        
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
+            documents,
+            ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            index_name=INDEX_NAME,
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        # Only consider documents that have topic "apple" and page 1 or 2
+        pre_filter = search.ConjunctionQuery(
+            search.MatchQuery("apple", field="metadata.topic"),
+            search.NumericRangeQuery(
+                field="metadata.page", min=1, max=2, 
+                inclusive_min=True, inclusive_max=True
+                ),
+        )
+
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
+        assert len(output) == 1
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["page"] == 1
+        assert output[0].metadata["topic"] == "apple"
+
+
+    def test_invalid_filter(self, cluster: Any) -> None:
+        """Test invalid filter."""
+        documents = [
+            Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
+            Document(page_content="bar", metadata={"page": 2, "topic": "banana"}),
+            Document(page_content="baz", metadata={"page": 3, "topic": "cherry"}),
+        ]
+        
+        vectorstore = CouchbaseSearchVectorStore.from_documents(
+            documents,
+            ConsistentFakeEmbeddings(),
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            index_name=INDEX_NAME,
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        # Invalid filter
+        pre_filter = {"term":"apple", "field":"metadata.topic"}
+
+        with pytest.raises(ValueError, match="Invalid filter"):
+            _ = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
+
+
+    def test_filter_with_hybrid_search(self, cluster: Any) -> None:
+        """Test filter with hybrid search."""
+        
+        texts = [
+            "foo",
+            "foo",
+            "foo",
+        ]
+
+        metadatas = [
+            {"section": "index", "page": 1},
+            {"section": "glossary", "page": 2},
+            {"section": "appendix", "page": 3},
+        ]
+
+        vectorstore = CouchbaseSearchVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            index_name=INDEX_NAME,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+        )
+
+        vectorstore.add_texts(texts, metadatas=metadatas)
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        result = vectorstore.similarity_search("foo", k=3)
+
+        hybrid_result = vectorstore.similarity_search_with_score(
+            "foo",
+            k=3,
+            search_options={"query": {"match": "index", "field": "metadata.section"},
+                            },
+        )
+
+        hybrid_result_with_pre_filter = vectorstore.similarity_search(
+            "foo",
+            k=3,
+            search_options={"query": {"match": "index", "field": "metadata.section"},
+                            },
+            filter=search.TermQuery("index", field="metadata.section"),
+        )
+
+        assert len(result) == 3
+        assert len(hybrid_result) == 3
+        assert len(hybrid_result_with_pre_filter) == 1
+        assert hybrid_result_with_pre_filter[0].metadata["section"] == "index"
+        assert hybrid_result_with_pre_filter[0].metadata["page"] == 1
+        
