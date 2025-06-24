@@ -115,7 +115,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             from couchbase.search import MatchQuery
             
             filter = MatchQuery("baz",field="metadata.bar")
-            results = vector_store.similarity_search(query="thud",k=1,pre_filter=filter)
+            results = vector_store.similarity_search(query="thud",k=1,filter=filter)
             for doc in results:
                 print(f"* {doc.page_content} [{doc.metadata}]")
 
@@ -203,13 +203,13 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
         return True
     
-    def _check_pre_filter(self, pre_filter: SearchQuery) -> bool:
-        """Check if the pre-filter is a valid SearchQuery object.
-        Raises a ValueError if the pre-filter is not valid."""
-        if isinstance(pre_filter, SearchQuery):
+    def _check_filter(self, filter: SearchQuery) -> bool:
+        """Check if the filter is a valid SearchQuery object.
+        Raises a ValueError if the filter is not valid."""
+        if isinstance(filter, SearchQuery):
             return True
-        raise ValueError(f"pre_filter must be a SearchQuery object, got"
-                         f"{type(pre_filter)}")
+        raise ValueError(f"filter must be a SearchQuery object, got"
+                         f"{type(filter)}")
 
     def __init__(
         self,
@@ -289,7 +289,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         query: str,
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
-        pre_filter: Optional[SearchQuery] = None,
+        filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
         """Return documents most similar to embedding vector with their scores.
@@ -304,7 +304,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 - {"query": {"field": "metadata.category", "match": "action"}}
                 - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
-            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+            filter (Optional[SearchQuery]): Optional filter to apply before 
                 vector search execution. It reduces the search space. Examples:
                 - NumericRangeQuery(field="year", min=2020, max=2023)
                 - TermQuery("search_term",field="category")
@@ -320,14 +320,14 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Note:
             - Use search_options for hybrid search combining vector similarity with 
                 other supported search queries
-            - Use pre_filter for efficient pre-search filtering, especially with large 
+            - Use filter for efficient pre-search filtering, especially with large 
                 datasets
             - Both parameters can be used together for complex search scenarios
 
         """
         query_embedding = self.embeddings.embed_query(query)
         docs_with_scores = self.similarity_search_with_score_by_vector(
-            query_embedding, k, search_options, pre_filter, **kwargs
+            query_embedding, k, search_options, filter, **kwargs
         )
         return [doc for doc, _ in docs_with_scores]
 
@@ -336,7 +336,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: List[float],
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
-        pre_filter: Optional[SearchQuery] = None,
+        filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
         """Return docs most similar to embedding vector with their scores.
@@ -351,7 +351,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 - {"query": {"field": "metadata.category", "match": "action"}}
                 - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
-            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+            filter (Optional[SearchQuery]): Optional filter to apply before 
                 vector search execution. It reduces the search space. Examples:
                 - NumericRangeQuery(field="year", min=2020, max=2023)
                 - TermQuery("search_term",field="category")
@@ -369,18 +369,18 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Note:
             - Use search_options for hybrid search combining vector similarity with 
                 other supported search queries
-            - Use pre_filter for efficient pre-search filtering, especially with large 
+            - Use filter for efficient pre-search filtering, especially with large 
                 datasets
             - Both parameters can be used together for complex search scenarios
         """
 
         fields = kwargs.get("fields", ["*"])
 
-        if pre_filter:
+        if filter:
             try:
-                self._check_pre_filter(pre_filter)
+                self._check_filter(filter)
             except Exception as e:
-                raise ValueError(f"Invalid pre-filter: {e}")
+                raise ValueError(f"Invalid filter: {e}")
 
         # Document text field needs to be returned from the search
         if fields != ["*"] and self._text_key not in fields:
@@ -390,7 +390,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             self._embedding_key,
             embedding,
             num_candidates=k,
-            prefilter=pre_filter if pre_filter else None,
+            prefilter=filter if filter else None,
         )
 
         search_req = search.SearchRequest.create(
@@ -448,7 +448,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         query: str,
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
-        pre_filter: Optional[SearchQuery] = None,
+        filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
         """Return documents that are most similar to the query with their scores.
@@ -463,7 +463,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 - {"query": {"field": "metadata.category", "match": "action"}}
                 - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
-            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+            filter (Optional[SearchQuery]): Optional filter to apply before 
                 vector search execution. It reduces the search space. Examples:
                 - NumericRangeQuery(field="year", min=2020, max=2023)
                 - TermQuery("search_term",field="category")
@@ -479,13 +479,13 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Note:
             - Use search_options for hybrid search combining vector similarity with 
                 other supported search queries
-            - Use pre_filter for efficient pre-search filtering, especially with large 
+            - Use filter for efficient pre-search filtering, especially with large 
                 datasets
             - Both parameters can be used together for complex search scenarios
         """
         query_embedding = self.embeddings.embed_query(query)
         docs_with_score = self.similarity_search_with_score_by_vector(
-            query_embedding, k, search_options, pre_filter, **kwargs
+            query_embedding, k, search_options, filter, **kwargs
         )
         return docs_with_score
 
@@ -494,7 +494,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: List[float],
         k: int = 4,
         search_options: Optional[Dict[str, Any]] = {},
-        pre_filter: Optional[SearchQuery] = None,
+        filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
         """Return documents that are most similar to the vector embedding.
@@ -509,7 +509,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 - {"query": {"field": "metadata.category", "match": "action"}}
                 - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
                 Defaults to empty dictionary.
-            pre_filter (Optional[SearchQuery]): Optional pre-filter to apply before 
+            filter (Optional[SearchQuery]): Optional filter to apply before 
                 vector search execution. It reduces the search space. Examples:
                 - NumericRangeQuery(field="year", min=2020, max=2023)
                 - TermQuery("search_term",field="category")
@@ -525,12 +525,12 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Note:
             - Use search_options for hybrid search combining vector similarity with 
                 other supported search queries
-            - Use pre_filter for efficient pre-search filtering, especially with large 
+            - Use filter for efficient pre-search filtering, especially with large 
                 datasets
             - Both parameters can be used together for complex search scenarios
         """
         docs_with_score = self.similarity_search_with_score_by_vector(
-            embedding, k, search_options, pre_filter, **kwargs
+            embedding, k, search_options, filter, **kwargs
         )
         return [doc for doc, _ in docs_with_score]
 

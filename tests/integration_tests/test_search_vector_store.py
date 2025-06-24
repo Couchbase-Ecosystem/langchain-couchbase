@@ -557,7 +557,7 @@ class TestCouchbaseSearchVectorStore:
             inclusive_min=False, inclusive_max=False
         )
 
-        output = vectorstore.similarity_search("foo", k=3, pre_filter=pre_filter)
+        output = vectorstore.similarity_search("foo", k=3, filter=pre_filter)
         assert len(output) == 1
         assert output[0].page_content == "foo"
         assert output[0].metadata["page"] == 1
@@ -587,7 +587,7 @@ class TestCouchbaseSearchVectorStore:
         pre_filter = search.TermQuery("foo", field="text")
 
         # Only the first document should match the pre-filter
-        output = vectorstore.similarity_search("abc", k=3, pre_filter=pre_filter)
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
         assert len(output) == 1
         assert output[0].page_content == "foo"
         assert output[0].metadata["page"] == 1
@@ -620,7 +620,7 @@ class TestCouchbaseSearchVectorStore:
             min=1,
         )
 
-        output = vectorstore.similarity_search("abc", k=3, pre_filter=pre_filter)
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
         assert len(output) == 2
         for result in output:
             assert (
@@ -658,7 +658,7 @@ class TestCouchbaseSearchVectorStore:
                 ),
         )
 
-        output = vectorstore.similarity_search("abc", k=3, pre_filter=pre_filter)
+        output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
         assert len(output) == 1
         assert output[0].page_content == "foo"
         assert output[0].metadata["page"] == 1
@@ -690,7 +690,7 @@ class TestCouchbaseSearchVectorStore:
         pre_filter = {"term":"apple", "field":"metadata.topic"}
 
         with pytest.raises(ValueError, match="Invalid pre-filter"):
-            _ = vectorstore.similarity_search("abc", k=3, pre_filter=pre_filter)
+            _ = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
 
 
     def test_pre_filter_with_hybrid_search(self, cluster: Any) -> None:
@@ -736,7 +736,7 @@ class TestCouchbaseSearchVectorStore:
             k=3,
             search_options={"query": {"match": "index", "field": "metadata.section"},
                             },
-            pre_filter=search.TermQuery("index", field="metadata.section"),
+            filter=search.TermQuery("index", field="metadata.section"),
         )
 
         assert len(result) == 3
