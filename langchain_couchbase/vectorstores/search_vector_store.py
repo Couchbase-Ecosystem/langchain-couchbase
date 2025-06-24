@@ -300,16 +300,33 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
                 that are passed to Couchbase search service. Used for combining vector 
-                similarity with text-based search criteria. Examples:
-                - {"query": {"field": "metadata.category", "match": "action"}}
-                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                similarity with text-based search criteria. 
+                
                 Defaults to empty dictionary.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    {"query": {"field": "metadata.category", "match": "action"}}
+
+                    {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+
             filter (Optional[SearchQuery]): Optional filter to apply before 
-                vector search execution. It reduces the search space. Examples:
-                - NumericRangeQuery(field="year", min=2020, max=2023)
-                - TermQuery("search_term",field="category")
-                - ConjunctionQuery(query1, query2)
+                vector search execution. It reduces the search space. 
+                
                 Defaults to None.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    NumericRangeQuery(field="metadata.year", min=2020, max=2023)
+
+                    TermQuery("search_term",field="metadata.category")
+                    
+                    ConjunctionQuery(query1, query2)
+
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to all the fields stored in the index.
@@ -345,16 +362,33 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
                 that are passed to Couchbase search service. Used for combining vector 
-                similarity with text-based search criteria. Examples:
-                - {"query": {"field": "metadata.category", "match": "action"}}
-                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                similarity with text-based search criteria. 
+
                 Defaults to empty dictionary.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    {"query": {"field": "metadata.category", "match": "action"}}
+
+                    {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                
             filter (Optional[SearchQuery]): Optional filter to apply before 
-                vector search execution. It reduces the search space. Examples:
-                - NumericRangeQuery(field="year", min=2020, max=2023)
-                - TermQuery("search_term",field="category")
-                - ConjunctionQuery(query1, query2)
+                vector search execution. It reduces the search space. 
+
                 Defaults to None.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    NumericRangeQuery(field="metadata.year", min=2020, max=2023)
+
+                    TermQuery("search_term",field="metadata.category")
+
+                    ConjunctionQuery(query1, query2)
+
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                     If nothing is specified, defaults to all the fields stored in 
@@ -455,16 +489,35 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
                 that are passed to Couchbase search service. Used for combining vector 
-                similarity with text-based search criteria. Examples:
-                - {"query": {"field": "metadata.category", "match": "action"}}
-                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                similarity with text-based search criteria. 
+
                 Defaults to empty dictionary.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    {"query": {"field": "metadata.category", "match": "action"}}
+
+                    {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+
+                
             filter (Optional[SearchQuery]): Optional filter to apply before 
-                vector search execution. It reduces the search space. Examples:
-                - NumericRangeQuery(field="year", min=2020, max=2023)
-                - TermQuery("search_term",field="category")
-                - ConjunctionQuery(query1, query2)
+                vector search execution. It reduces the search space. 
+
                 Defaults to None.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    NumericRangeQuery(field="metadata.year", min=2020, max=2023)
+
+                    TermQuery("search_term",field="metadata.category")
+                    
+                    ConjunctionQuery(query1, query2)
+
+                
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to text and metadata fields.
@@ -499,16 +552,33 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
                 that are passed to Couchbase search service. Used for combining vector 
-                similarity with text-based search criteria. Examples:
-                - {"query": {"field": "metadata.category", "match": "action"}}
-                - {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+                similarity with text-based search criteria. 
+                
                 Defaults to empty dictionary.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    {"query": {"field": "metadata.category", "match": "action"}}
+
+                    {"query": {"field": "metadata.year", "min": 2020, "max": 2023}}
+
             filter (Optional[SearchQuery]): Optional filter to apply before 
-                vector search execution. It reduces the search space. Examples:
-                - NumericRangeQuery(field="year", min=2020, max=2023)
-                - TermQuery("search_term",field="category")
-                - ConjunctionQuery(query1, query2)
+                vector search execution. It reduces the search space. 
+                
                 Defaults to None.
+                
+                Examples:
+
+                .. code-block:: python
+
+                    NumericRangeQuery(field="metadata.year", min=2020, max=2023)
+
+                    TermQuery("search_term",field="metadata.category")
+
+                    ConjunctionQuery(query1, query2)
+
             fields (Optional[List[str]]): Optional list of fields to include in the
                 metadata of results. Note that these need to be stored in the index.
                 If nothing is specified, defaults to document text and metadata fields.
