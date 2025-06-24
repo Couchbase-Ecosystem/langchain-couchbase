@@ -531,8 +531,8 @@ class TestCouchbaseSearchVectorStore:
 
         assert docs[0].page_content == "foo"
 
-    def test_pre_filter_on_metadata(self, cluster: Any) -> None:
-        """Test pre-filter on metadata field."""
+    def test_filter_on_metadata(self, cluster: Any) -> None:
+        """Test filter on metadata field."""
         documents = [
             Document(page_content="foo", metadata={"page": 1}),
             Document(page_content="foo", metadata={"page": 2}),
@@ -563,8 +563,8 @@ class TestCouchbaseSearchVectorStore:
         assert output[0].metadata["page"] == 1
 
 
-    def test_pre_filter_on_text(self, cluster: Any) -> None:
-        """Test pre-filter on text field."""
+    def test_filter_on_text(self, cluster: Any) -> None:
+        """Test filter on text field."""
         documents = [
             Document(page_content="foo", metadata={"page": 1}),
             Document(page_content="bar", metadata={"page": 2}),
@@ -586,14 +586,14 @@ class TestCouchbaseSearchVectorStore:
 
         pre_filter = search.TermQuery("foo", field="text")
 
-        # Only the first document should match the pre-filter
+        # Only the first document should match the filter
         output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
         assert len(output) == 1
         assert output[0].page_content == "foo"
         assert output[0].metadata["page"] == 1
 
-    def test_combined_pre_filter_with_or_operator(self, cluster: Any) -> None:
-        """Test combination of pre-filters with OR operator."""
+    def test_combined_filter_with_or_operator(self, cluster: Any) -> None:
+        """Test combination of filters with OR operator."""
         documents = [
             Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
             Document(page_content="bar", metadata={"page": 2, "topic": "banana"}),
@@ -628,8 +628,8 @@ class TestCouchbaseSearchVectorStore:
                 or result.metadata["topic"] == "banana" 
             )
 
-    def test_combined_pre_filter_with_and_operator(self, cluster: Any) -> None:
-        """Test combination of pre-filters with AND operator."""
+    def test_combined_filter_with_and_operator(self, cluster: Any) -> None:
+        """Test combination of filters with AND operator."""
         documents = [
             Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
             Document(page_content="foo", metadata={"page": 2, "topic": "banana"}),
@@ -665,8 +665,8 @@ class TestCouchbaseSearchVectorStore:
         assert output[0].metadata["topic"] == "apple"
 
 
-    def test_invalid_pre_filter(self, cluster: Any) -> None:
-        """Test invalid pre-filter."""
+    def test_invalid_filter(self, cluster: Any) -> None:
+        """Test invalid filter."""
         documents = [
             Document(page_content="foo", metadata={"page": 1, "topic": "apple"}),
             Document(page_content="bar", metadata={"page": 2, "topic": "banana"}),
@@ -686,15 +686,15 @@ class TestCouchbaseSearchVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        # Invalid pre-filter
+        # Invalid filter
         pre_filter = {"term":"apple", "field":"metadata.topic"}
 
-        with pytest.raises(ValueError, match="Invalid pre-filter"):
+        with pytest.raises(ValueError, match="Invalid filter"):
             _ = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
 
 
-    def test_pre_filter_with_hybrid_search(self, cluster: Any) -> None:
-        """Test pre-filter with hybrid search."""
+    def test_filter_with_hybrid_search(self, cluster: Any) -> None:
+        """Test filter with hybrid search."""
         
         texts = [
             "foo",
