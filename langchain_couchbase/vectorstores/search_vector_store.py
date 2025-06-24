@@ -318,13 +318,11 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             List of Documents most similar to the query.
             
         Note:
-            - Use search_options for hybrid search combining vector similarity with 
-                other supported search queries
-            - Use filter for efficient pre-search filtering, especially with large 
-                datasets
+            - Use ``search_options`` for hybrid search combining vector similarity with other supported search queries
+            - Use ``filter`` for efficient pre-search filtering, especially with large datasets
             - Both parameters can be used together for complex search scenarios
 
-        """
+        """  # noqa: E501
         query_embedding = self.embeddings.embed_query(query)
         docs_with_scores = self.similarity_search_with_score_by_vector(
             query_embedding, k, search_options, filter, **kwargs
@@ -367,12 +365,10 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             List of (Document, score) that are the most similar to the query vector.
             
         Note:
-            - Use search_options for hybrid search combining vector similarity with 
-                other supported search queries
-            - Use filter for efficient pre-search filtering, especially with large 
-                datasets
+            - Use ``search_options`` for hybrid search combining vector similarity with other supported search queries
+            - Use ``filter`` for efficient pre-search filtering, especially with large datasets
             - Both parameters can be used together for complex search scenarios
-        """
+        """  # noqa: E501
 
         fields = kwargs.get("fields", ["*"])
 
@@ -477,12 +473,10 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             List of (Document, score) that are most similar to the query.
             
         Note:
-            - Use search_options for hybrid search combining vector similarity with 
-                other supported search queries
-            - Use filter for efficient pre-search filtering, especially with large 
-                datasets
+            - Use ``search_options`` for hybrid search combining vector similarity with other supported search queries
+            - Use ``filter`` for efficient pre-search filtering, especially with large datasets
             - Both parameters can be used together for complex search scenarios
-        """
+        """  # noqa: E501
         query_embedding = self.embeddings.embed_query(query)
         docs_with_score = self.similarity_search_with_score_by_vector(
             query_embedding, k, search_options, filter, **kwargs
@@ -523,12 +517,10 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             List of Documents most similar to the query.
             
         Note:
-            - Use search_options for hybrid search combining vector similarity with 
-                other supported search queries
-            - Use filter for efficient pre-search filtering, especially with large 
-                datasets
+            - Use ``search_options`` for hybrid search combining vector similarity with other supported search queries
+            - Use ``filter`` for efficient pre-search filtering, especially with large datasets
             - Both parameters can be used together for complex search scenarios
-        """
+        """  # noqa: E501
         docs_with_score = self.similarity_search_with_score_by_vector(
             embedding, k, search_options, filter, **kwargs
         )
@@ -591,35 +583,35 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Example:
             .. code-block:: python
 
-            from langchain_couchbase import CouchbaseSearchVectorStore
-            from langchain_openai import OpenAIEmbeddings
+                from langchain_couchbase import CouchbaseSearchVectorStore
+                from langchain_openai import OpenAIEmbeddings
 
-            from couchbase.cluster import Cluster
-            from couchbase.auth import PasswordAuthenticator
-            from couchbase.options import ClusterOptions
-            from datetime import timedelta
+                from couchbase.cluster import Cluster
+                from couchbase.auth import PasswordAuthenticator
+                from couchbase.options import ClusterOptions
+                from datetime import timedelta
 
-            auth = PasswordAuthenticator(username, password)
-            options = ClusterOptions(auth)
-            connect_string = "couchbases://localhost"
-            cluster = Cluster(connect_string, options)
+                auth = PasswordAuthenticator(username, password)
+                options = ClusterOptions(auth)
+                connect_string = "couchbases://localhost"
+                cluster = Cluster(connect_string, options)
 
-            # Wait until the cluster is ready for use.
-            cluster.wait_until_ready(timedelta(seconds=5))
+                # Wait until the cluster is ready for use.
+                cluster.wait_until_ready(timedelta(seconds=5))
 
-            embeddings = OpenAIEmbeddings()
+                embeddings = OpenAIEmbeddings()
 
-            texts = ["hello", "world"]
+                texts = ["hello", "world"]
 
-            vectorstore = CouchbaseSearchVectorStore.from_texts(
-                texts,
-                embedding=embeddings,
-                cluster=cluster,
-                bucket_name="",
-                scope_name="",
-                collection_name="",
-                index_name="vector-index",
-            )
+                vectorstore = CouchbaseSearchVectorStore.from_texts(
+                    texts,
+                    embedding=embeddings,
+                    cluster=cluster,
+                    bucket_name="",
+                    scope_name="",
+                    collection_name="",
+                    index_name="vector-index",
+                )
 
         Args:
             texts (List[str]): list of texts to add to the vector store.
