@@ -545,7 +545,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         metadatas: Optional[List[dict]] = None,
         **kwargs: Any,
     ) -> CouchbaseQueryVectorStore:
-        """Construct a Couchbase Query vector store from a list of texts.
+        """Construct a Couchbase Query Vector Store from a list of texts.
 
         Example:
             .. code-block:: python
@@ -590,7 +590,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 for the list of accepted arguments.
 
         Returns:
-            A Couchbase Query vector store.
+            A Couchbase Query Vector Store.
 
         """
         vector_store = cls._from_kwargs(embedding, **kwargs)

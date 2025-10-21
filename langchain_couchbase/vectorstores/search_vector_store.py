@@ -604,7 +604,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: Embeddings,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Initialize the Couchbase Searchvector store from keyword arguments for the 
+        """Initialize the Couchbase Search Vector Store from keyword arguments for the 
         vector store.
 
         Args:
@@ -650,7 +650,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         metadatas: Optional[List[dict]] = None,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Construct a Couchbase vector store from a list of texts.
+        """Construct a Couchbase Search Vector Store from a list of texts.
 
         Example:
             .. code-block:: python
