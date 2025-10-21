@@ -12,7 +12,60 @@ pip install -U langchain-couchbase
 
 ## Vector Store
 
-`CouchbaseVectorStore` class enables the usage of Couchbase for Vector Search.
+### CouchbaseQueryVectorStore
+`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It implements two different types of vector indices:
+ - [Hyperscale Vector Index](https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html)
+ - [Composite Vector Index](https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html)
+
+> Note: CouchbaseQueryVectorStore requires Couchbase Server version 8.0 and above.
+
+ To use this in an application:
+
+```python
+import getpass
+
+# Constants for the connection
+COUCHBASE_CONNECTION_STRING = getpass.getpass(
+    "Enter the connection string for the Couchbase cluster: "
+)
+DB_USERNAME = getpass.getpass("Enter the username for the Couchbase cluster: ")
+DB_PASSWORD = getpass.getpass("Enter the password for the Couchbase cluster: ")
+
+# Create Couchbase connection object
+from datetime import timedelta
+
+from couchbase.auth import PasswordAuthenticator
+from couchbase.cluster import Cluster
+from couchbase.options import ClusterOptions
+
+auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
+options = ClusterOptions(auth)
+cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
+
+# Wait until the cluster is ready for use.
+cluster.wait_until_ready(timedelta(seconds=5))
+
+from langchain_couchbase import CouchbaseQueryVectorStore
+from langchain_couchbase.vectorstores import DistanceStrategy
+
+vector_store = CouchbaseQueryVectorStore(
+    cluster=cluster,
+    bucket_name=BUCKET_NAME,
+    scope_name=SCOPE_NAME,
+    collection_name=COLLECTION_NAME,
+    embedding=my_embeddings,
+    distance_metric=DistanceStrategy.DOT
+)
+```
+
+See a [usage example](https://github.com/couchbaselabs/query-vector-search-demo)
+
+
+### CouchbaseSearchVectorStore
+
+`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using the [Search Service](https://docs.couchbase.com/server/current/vector-search/vector-search.html).
+
+> Note: CouchbaseSearchVectorStore requires Couchbase Server version 7.6 and above.
 
 ```python
 from langchain_couchbase import CouchbaseSearchVectorStore
@@ -44,6 +97,8 @@ cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
 # Wait until the cluster is ready for use.
 cluster.wait_until_ready(timedelta(seconds=5))
 
+from langchain_couchbase import CouchbaseSearchVectorStore
+
 vector_store = CouchbaseSearchVectorStore(
     cluster=cluster,
     bucket_name=BUCKET_NAME,
@@ -54,7 +109,7 @@ vector_store = CouchbaseSearchVectorStore(
 )
 ```
 
-See a [usage example](https://python.langchain.com/docs/integrations/vectorstores/couchbase/)
+See a [usage example](https://github.com/couchbase-examples/hybrid-search-demo)
 
 ## LLM Caches
 
@@ -147,7 +202,8 @@ message_history = CouchbaseChatMessageHistory(
 message_history.add_user_message("hi!")
 ```
 
-### Documentation
+<details>
+<summary><strong>Documentation</strong></summary>
 
 #### Generating Documentation Locally
 
@@ -216,6 +272,8 @@ make help
 - If Sphinx can't find your package modules, verify your `conf.py` has the correct path configuration.
 - For sphinx-specific errors, refer to the [Sphinx documentation](https://www.sphinx-doc.org/).
 - If you see an error about missing `tomli` module, make sure you've installed it with `pip install tomli`.
+<br/>
+</details>
 
 
 ## 📢 Support Policy

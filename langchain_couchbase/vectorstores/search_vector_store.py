@@ -17,7 +17,9 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
     """__Couchbase__ vector store integration using Search/FTS service.
 
     Setup:
-        Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
+        Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket, collection and a search index.
+
+        For more information on Search service, see the `Couchbase Search Service documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
 
         .. code-block:: bash
 
@@ -602,7 +604,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         embedding: Embeddings,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Initialize the Couchbase Searchvector store from keyword arguments for the 
+        """Initialize the Couchbase Search Vector Store from keyword arguments for the 
         vector store.
 
         Args:
@@ -648,7 +650,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         metadatas: Optional[List[dict]] = None,
         **kwargs: Any,
     ) -> CouchbaseSearchVectorStore:
-        """Construct a Couchbase vector store from a list of texts.
+        """Construct a Couchbase Search Vector Store from a list of texts.
 
         Example:
             .. code-block:: python

@@ -6,6 +6,7 @@ EXPECTED_ALL = [
     "CouchbaseSemanticCache",
     "CouchbaseChatMessageHistory",
     "CouchbaseSearchVectorStore",
+    "CouchbaseQueryVectorStore",
 ]
 
 
