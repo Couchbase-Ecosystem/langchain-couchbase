@@ -5,12 +5,71 @@ Usage
 
 ``langchain-couchbase`` is the official Couchbase integration for `LangChain <https://python.langchain.com/>`_.
 
-Vector Store
+Vector Stores
 ------------
-
 Use Couchbase as a vector store for your documents:
 
-See a `complete vector store usage example <https://python.langchain.com/docs/integrations/vectorstores/couchbase/>`_.
+Couchbase Query Vector Store
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Query vector store uses the Query and Index service to store and search document embeddings. For more information on the indexes, see `Hyperscale Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html>`_ or `Composite Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html>`_.
+
+.. Note::
+    This vector store is available in Couchbase Server versions 8.0 and above.
+
+See a `complete query vector store usage example <https://github.com/couchbaselabs/query-vector-search-demo>`_.
+
+.. code-block:: python
+
+        import getpass
+
+        # Constants for the connection
+        COUCHBASE_CONNECTION_STRING = getpass.getpass(
+            "Enter the connection string for the Couchbase cluster: "
+        )
+        DB_USERNAME = getpass.getpass("Enter the username for the Couchbase cluster: ")
+        DB_PASSWORD = getpass.getpass("Enter the password for the Couchbase cluster: ")
+
+        # Create Couchbase connection object
+        from datetime import timedelta
+
+        from couchbase.auth import PasswordAuthenticator
+        from couchbase.cluster import Cluster
+        from couchbase.options import ClusterOptions
+
+        auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
+        options = ClusterOptions(auth)
+        cluster = Cluster(COUCHBASE_CONNECTION_STRING, options)
+
+        # Wait until the cluster is ready for use.
+        cluster.wait_until_ready(timedelta(seconds=5))
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            embedding=my_embeddings,
+            distance_metric=DistanceStrategy.COSINE,
+        )
+        
+        # Add documents
+        texts = ["Couchbase is a NoSQL database", "LangChain is a framework for LLM applications"]
+        vectorstore.add_texts(texts)
+        
+        # Search
+        query = "What is Couchbase?"
+        docs = vectorstore.similarity_search(query)
+
+
+Couchbase Search Vector Store
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Search vector store uses the Search service to store and search document embeddings. For more information on Search service, see the `Couchbase Search Service documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
+
+.. Note::
+   This vector store is available in Couchbase Server versions 7.6 and above.
+
+
+See a `complete searchvector store usage example <https://python.langchain.com/docs/integrations/vectorstores/couchbase/>`_.
 
 .. code-block:: python
 

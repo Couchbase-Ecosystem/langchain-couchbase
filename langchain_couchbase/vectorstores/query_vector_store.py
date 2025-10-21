@@ -36,7 +36,9 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
     """__Couchbase__ vector store integration using Query and Index service.
 
     Setup:
-        Install ``langchain-couchbase`` and head over to the Couchbase [website](https://cloud.couchbase.com) and create a new connection, with a bucket, collection, and search index.
+        Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket and collection.
+
+        For more information on the indexes, see `Hyperscale Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html>`_ or `Composite Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html>`_.
 
         .. code-block:: bash
 
@@ -63,8 +65,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             Name of the scope in the bucket to store documents in.
         collection_name: str
             Name of the collection in the scope to store documents in.
-        index_name: str
-            Name of the Search index to use.
+        distance_metric: DistanceStrategy
+            Distance metric to use for the index. Options are: DOT, L2, EUCLIDEAN, COSINE, L2_SQUARED, EUCLIDEAN_SQUARED.
 
     Instantiate:
         .. code-block:: python
@@ -74,7 +76,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             from couchbase.auth import PasswordAuthenticator
             from couchbase.cluster import Cluster
             from couchbase.options import ClusterOptions
-            from langchain_couchbase import CouchbaseSearchVectorStore
+            from langchain_couchbase import CouchbaseQueryVectorStore
             from langchain_couchbase.vectorstores import DistanceStrategy
 
             auth = PasswordAuthenticator(DB_USERNAME, DB_PASSWORD)
@@ -406,14 +408,13 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 If not provided, it will be determined from the embedding object.
             fields (List[str]): List of fields to include in the index.
                 Defaults to the text field in the constructor.
-            where_clause (Optional[str]): Optional where clause to filter the documents
-                to index.
+            where_clause (Optional[str]): Optional where clause to filter the documents to index.
                 Defaults to None.
             index_scan_nprobes (Optional[int]): Number of probes to use for the index.
                 Defaults to None.
-            index_trainlist (Optional[int]): Number of training samples to use for the
-                index. Defaults to None.
-        """
+            index_trainlist (Optional[int]): Number of training samples to use for the index.
+                Defaults to None.
+        """  # noqa: E501
         if not isinstance(index_type, IndexType):
             raise ValueError(
                 f"Invalid index type. Got {type(index_type)}. Expected {IndexType}"
@@ -549,36 +550,36 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         Example:
             .. code-block:: python
 
-            from langchain_couchbase import CouchbaseQueryVectorStore
-            from langchain_couchbase.vectorstores import DistanceStrategy
-            from langchain_openai import OpenAIEmbeddings
+                from langchain_couchbase import CouchbaseQueryVectorStore
+                from langchain_couchbase.vectorstores import DistanceStrategy
+                from langchain_openai import OpenAIEmbeddings
 
-            from couchbase.cluster import Cluster
-            from couchbase.auth import PasswordAuthenticator
-            from couchbase.options import ClusterOptions
-            from datetime import timedelta
+                from couchbase.cluster import Cluster
+                from couchbase.auth import PasswordAuthenticator
+                from couchbase.options import ClusterOptions
+                from datetime import timedelta
 
-            auth = PasswordAuthenticator(username, password)
-            options = ClusterOptions(auth)
-            connect_string = "couchbases://localhost"
-            cluster = Cluster(connect_string, options)
+                auth = PasswordAuthenticator(username, password)
+                options = ClusterOptions(auth)
+                connect_string = "couchbases://localhost"
+                cluster = Cluster(connect_string, options)
 
-            # Wait until the cluster is ready for use.
-            cluster.wait_until_ready(timedelta(seconds=5))
+                # Wait until the cluster is ready for use.
+                cluster.wait_until_ready(timedelta(seconds=5))
 
-            embeddings = OpenAIEmbeddings()
+                embeddings = OpenAIEmbeddings()
 
-            texts = ["hello", "world"]
+                texts = ["hello", "world"]
 
-            vectorstore = CouchbaseQueryVectorStore.from_texts(
-                texts,
-                embedding=embeddings,
-                cluster=cluster,
-                bucket_name="",
-                scope_name="",
-                collection_name="",
-                distance_metric=DistanceStrategy.COSINE,
-            )
+                vectorstore = CouchbaseQueryVectorStore.from_texts(
+                    texts,
+                    embedding=embeddings,
+                    cluster=cluster,
+                    bucket_name="BUCKET_NAME",
+                    scope_name="SCOPE_NAME",
+                    collection_name="COLLECTION_NAME",
+                    distance_metric=DistanceStrategy.COSINE,
+                )
 
         Args:
             texts (List[str]): list of texts to add to the vector store.
