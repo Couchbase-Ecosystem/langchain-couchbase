@@ -510,7 +510,7 @@ class TestCouchbaseQueryVectorStore:
             IndexType.BHIVE,
             index_name=index_name,
             index_description=index_description,
-            distance_metric=DistanceStrategy.COSINE,
+            distance_metric=DistanceStrategy.L2,
         )
 
         # Wait for the index to be created
@@ -619,7 +619,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.COSINE,
+            distance_metric=DistanceStrategy.L2,
         )
 
         # Add some documents to the vector store
@@ -641,7 +641,7 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.create_index(
             IndexType.BHIVE,
             index_description=index_description,
-            distance_metric=DistanceStrategy.COSINE,
+            distance_metric=DistanceStrategy.L2,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
