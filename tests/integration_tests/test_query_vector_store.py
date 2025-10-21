@@ -2,13 +2,13 @@
 
 import os
 import time
-from typing import Any
+from typing import Any, Optional
 
 import pytest
 from langchain_core.documents import Document
 
 from langchain_couchbase import CouchbaseQueryVectorStore
-from langchain_couchbase.vectorstores import DistanceStrategy
+from langchain_couchbase.vectorstores import DistanceStrategy, IndexType
 from tests.utils import (
     ConsistentFakeEmbeddings,
 )
@@ -73,6 +73,32 @@ def delete_documents(
     query = f"DELETE FROM `{bucket_name}`.`{scope_name}`.`{collection_name}`"
     cluster.query(query).execute()
 
+
+def get_index(cluster: Any, index_name: str) -> Optional[dict]:
+    """Return index dict if exists, otherwise None."""
+    query = (
+        "SELECT * FROM system:indexes "
+        f"WHERE name = '{index_name}'"
+    )
+    rows = cluster.query(query).execute()
+    if len(rows) == 0:
+        return None
+    return rows[0]["indexes"]
+
+
+def delete_index(
+    cluster: Any,
+    bucket_name: str,
+    scope_name: str,
+    collection_name: str,
+    index_name: str,
+) -> None:
+    """Drop the given index from the specified collection."""
+    query = (
+        f"DROP INDEX `{index_name}` on "
+        f"{bucket_name}.{scope_name}.{collection_name}"
+    )
+    cluster.query(query).execute()
 
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
@@ -405,3 +431,247 @@ class TestCouchbaseQueryVectorStore:
 
         output = vectorstore.similarity_search("foo", k=1)
         assert output[0].id == ids[0]
+
+    def test_composite_index_creation(self, cluster: Any) -> None:
+        """Test composite index creation."""
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.L2,
+        )
+
+        # Add some documents to the vector store
+        vectorstore.add_texts(["foo", "bar", "baz"])
+
+        # Create the index
+        index_description = "IVF,SQ8"
+        index_name = "composite_test_index"
+        vectorstore.create_index(
+            IndexType.COMPOSITE,
+            index_name=index_name,
+            index_description=index_description,
+            distance_metric=DistanceStrategy.L2,
+        )
+
+        # Wait for the index to be created
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is created
+        index = get_index(cluster, index_name)
+        assert index is not None
+        assert index["name"] == "composite_test_index"
+        assert index["using"] == "gsi"
+        assert index["with"]["description"] == index_description
+        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
+        assert f"`{vectorstore._text_key}`" in index["index_key"]
+        
+
+        # Test the index
+        output = vectorstore.similarity_search("foo", k=1)
+        assert output[0].page_content == "foo"
+
+        # Delete the index
+        delete_index(
+            cluster,
+            BUCKET_NAME,
+            SCOPE_NAME,
+            COLLECTION_NAME,
+            index_name,
+        )
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is deleted
+        assert get_index(cluster, index_name) is None
+
+    def test_bhive_index_creation(self, cluster: Any) -> None:
+        """Test Bhive index creation."""
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.L2,
+        )
+
+        # Add some documents to the vector store
+        vectorstore.add_texts(["foo", "bar", "baz"])
+
+        # Create the index
+        index_description = "IVF,SQ8"
+        index_name = "bhive_test_index"
+        vectorstore.create_index(
+            IndexType.BHIVE,
+            index_name=index_name,
+            index_description=index_description,
+            distance_metric=DistanceStrategy.COSINE,
+        )
+
+        # Wait for the index to be created
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is created
+        index = get_index(cluster, index_name)
+        assert index is not None
+        assert index["name"] == "bhive_test_index"
+        assert index["using"] == "gsi"
+        assert index["with"]["description"] == index_description
+        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
+        assert f"`{vectorstore._text_key}`" not in index["index_key"]
+
+        # Test the index
+        output = vectorstore.similarity_search("bar", k=1)
+        assert output[0].page_content == "bar"
+
+        # Delete the index
+        delete_index(
+            cluster,
+            BUCKET_NAME,
+            SCOPE_NAME,
+            COLLECTION_NAME,
+            index_name,
+        )
+
+        # Check if the index is deleted
+        assert get_index(cluster, index_name) is None
+
+    def test_composite_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+        """Test composite index creation with custom parameters."""
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.L2,
+        )
+        
+        # Add some documents to the vector store
+        vectorstore.add_documents([
+            Document(page_content="foo", metadata={"text": "a"}),
+            Document(page_content="bar", metadata={"text": "b"}),
+            Document(page_content="baz", metadata={"text": "c"}),
+        ])
+
+        # Create the index
+        index_description = "IVF,SQ8"
+        index_name = "langchain_composite_query_index" # default index name
+        nprobes = 2
+        trainlist = 2
+        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        vector_field = "embedding"
+        indexing_fields = ["metadata.text"]
+
+        vectorstore.create_index(
+            IndexType.COMPOSITE,
+            index_description=index_description,
+            distance_metric=DistanceStrategy.L2,
+            index_scan_nprobes=nprobes,
+            index_trainlist=trainlist,
+            vector_field=vector_field,
+            vector_dimension=default_dimension,
+            fields=indexing_fields
+        )
+
+        # Wait for the index to be created
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is created
+        index = get_index(cluster, index_name)
+        # import pdb; pdb.set_trace()
+        assert index is not None
+        assert index["name"] == index_name
+        assert index["using"] == "gsi"
+        assert index["with"]["description"] == index_description
+        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["scan_nprobes"] == nprobes
+        assert index["with"]["train_list"] == trainlist
+        assert f"`{vector_field}` VECTOR" in index["index_key"]
+        assert f"`{vectorstore._text_key}`" in index["index_key"]
+        assert "(`metadata`.`text`)" in index["index_key"]
+
+        # Test the index
+        output = vectorstore.similarity_search("foo", k=1)
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["text"] == "a"
+
+        # Delete the index
+        delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is deleted
+        assert get_index(cluster, index_name) is None
+
+    def test_bhive_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+        """Test Bhive index creation with custom parameters."""
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.COSINE,
+        )
+
+        # Add some documents to the vector store
+        vectorstore.add_documents([
+            Document(page_content="foo", metadata={"text": "a"}),
+            Document(page_content="bar", metadata={"text": "b"}),
+            Document(page_content="baz", metadata={"text": "c"}),
+        ])
+
+        # Create the index
+        index_description = "IVF,SQ8"
+        index_name = "langchain_bhive_query_index" # default index name
+        nprobes = 2
+        trainlist = 2
+        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        vector_field = "embedding"
+        indexing_fields = ["metadata.text"]
+
+        vectorstore.create_index(
+            IndexType.BHIVE,
+            index_description=index_description,
+            distance_metric=DistanceStrategy.COSINE,
+            index_scan_nprobes=nprobes,
+            index_trainlist=trainlist,
+            vector_field=vector_field,
+            vector_dimension=default_dimension,
+            fields=indexing_fields
+        )
+
+        # Wait for the index to be created
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is created
+        index = get_index(cluster, index_name)
+        assert index is not None
+        assert index["name"] == index_name
+        assert index["using"] == "gsi"
+        assert index["with"]["description"] == index_description
+        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["scan_nprobes"] == nprobes
+        assert index["with"]["train_list"] == trainlist
+        assert f"`{vector_field}` VECTOR" in index["index_key"]
+        assert f"`{vectorstore._text_key}`" not in index["index_key"]
+
+        # Test the index
+        output = vectorstore.similarity_search("foo", k=1)
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["text"] == "a"
+    
+        # Delete the index
+        delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+        time.sleep(SLEEP_DURATION)
+
+        # Check if the index is deleted
+        assert get_index(cluster, index_name) is None
