@@ -202,7 +202,8 @@ message_history = CouchbaseChatMessageHistory(
 message_history.add_user_message("hi!")
 ```
 
-### Documentation
+<details>
+<summary><strong>Documentation</strong></summary>
 
 #### Generating Documentation Locally
 
@@ -271,6 +272,8 @@ make help
 - If Sphinx can't find your package modules, verify your `conf.py` has the correct path configuration.
 - For sphinx-specific errors, refer to the [Sphinx documentation](https://www.sphinx-doc.org/).
 - If you see an error about missing `tomli` module, make sure you've installed it with `pip install tomli`.
+<br/>
+</details>
 
 
 ## 📢 Support Policy
