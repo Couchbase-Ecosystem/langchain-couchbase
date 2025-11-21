@@ -343,6 +343,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
         """  # noqa: E501
         query_embedding = self.embeddings.embed_query(query)
+        print(f"query_embedding: {query_embedding}")
         docs_with_scores = self.similarity_search_with_score_by_vector(
             query_embedding, k, search_options, filter, **kwargs
         )

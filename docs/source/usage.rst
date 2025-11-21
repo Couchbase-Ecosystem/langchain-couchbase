@@ -148,7 +148,7 @@ See a `complete semantic cache usage example <https://python.langchain.com/docs/
 
     from langchain_couchbase.cache import CouchbaseSemanticCache
     from langchain_core.globals import set_llm_cache
-    from langchain.embeddings import OpenAIEmbeddings
+    from langchain_openai import OpenAIEmbeddings
 
     # use any embedding provider...
     embeddings = OpenAIEmbeddings()

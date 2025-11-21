@@ -1,0 +1,171 @@
+{
+	"type": "fulltext-index",
+	"name": "<<SCOPE_NAME>>.<COLLECTION_NAME>.<INDEX_NAME>",
+	"uuid": "10ea1f987957e6e8",
+	"sourceType": "gocbcore",
+	"sourceName": "b1",
+	"sourceUUID": "86387c2f5dcf6b70f5fe7689db9982d8",
+	"planParams": {
+		"maxPartitionsPerPIndex": 128,
+		"indexPartitions": 1
+	},
+	"params": {
+		"doc_config": {
+			"docid_prefix_delim": "",
+			"docid_regexp": "",
+			"mode": "scope.collection.type_field",
+			"type_field": "type"
+		},
+		"mapping": {
+			"analysis": {},
+			"default_analyzer": "standard",
+			"default_datetime_parser": "dateTimeOptional",
+			"default_field": "_all",
+			"default_mapping": {
+				"dynamic": false,
+				"enabled": false
+			},
+			"default_type": "_default",
+			"docvalues_dynamic": false,
+			"index_dynamic": true,
+			"store_dynamic": false,
+			"type_field": "_type",
+			"types": {
+				"<<SCOPE_NAME>>.<<COLLECTION_NAME>>": {
+					"dynamic": false,
+					"enabled": true,
+					"properties": {
+						"embedding": {
+							"dynamic": false,
+							"enabled": true,
+							"fields": [
+								{
+									"dims": 10,
+									"index": true,
+									"name": "embedding",
+									"similarity": "dot_product",
+									"type": "vector",
+									"vector_index_optimized_for": "recall"
+								}
+							]
+						},
+						"llm": {
+							"dynamic": false,
+							"enabled": true,
+							"fields": [
+								{
+									"analyzer": "keyword",
+									"docvalues": true,
+									"include_in_all": true,
+									"include_term_vectors": true,
+									"index": true,
+									"name": "llm",
+									"store": true,
+									"type": "text"
+								}
+							]
+						},
+						"metadata": {
+							"dynamic": false,
+							"enabled": true,
+							"properties": {
+								"llm_string": {
+									"dynamic": false,
+									"enabled": true,
+									"fields": [
+										{
+											"analyzer": "keyword",
+											"docvalues": true,
+											"include_in_all": true,
+											"include_term_vectors": true,
+											"index": true,
+											"name": "llm_string",
+											"store": true,
+											"type": "text"
+										}
+									]
+								},
+								"return_val": {
+									"dynamic": false,
+									"enabled": true,
+									"fields": [
+										{
+											"analyzer": "keyword",
+											"docvalues": true,
+											"include_in_all": true,
+											"include_term_vectors": true,
+											"index": true,
+											"name": "return_val",
+											"store": true,
+											"type": "text"
+										}
+									]
+								}
+							}
+						},
+						"prompt": {
+							"dynamic": false,
+							"enabled": true,
+							"fields": [
+								{
+									"analyzer": "keyword",
+									"docvalues": true,
+									"include_in_all": true,
+									"include_term_vectors": true,
+									"index": true,
+									"name": "prompt",
+									"store": true,
+									"type": "text"
+								}
+							]
+						},
+						"return_val": {
+							"dynamic": false,
+							"enabled": true,
+							"fields": [
+								{
+									"analyzer": "keyword",
+									"docvalues": true,
+									"include_in_all": true,
+									"include_term_vectors": true,
+									"index": true,
+									"name": "return_val",
+									"store": true,
+									"type": "text"
+								}
+							]
+						},
+						"text": {
+							"dynamic": false,
+							"enabled": true,
+							"fields": [
+								{
+									"analyzer": "keyword",
+									"docvalues": true,
+									"include_in_all": true,
+									"include_term_vectors": true,
+									"index": true,
+									"name": "text",
+									"store": true,
+									"type": "text"
+								}
+							]
+						}
+					}
+				}
+			}
+		},
+		"store": {
+			"indexType": "scorch",
+			"scorchMergePlanOptions": {
+				"floorSegmentFileSize": 139810133
+			},
+			"scorchPersisterOptions": {
+				"maxSizeInMemoryMergePerWorker": 419430400,
+				"numPersisterWorkers": 4
+			},
+			"segmentVersion": 16
+		}
+	},
+	"sourceParams": {}
+}

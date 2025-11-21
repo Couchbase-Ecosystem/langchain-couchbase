@@ -47,6 +47,7 @@ def get_cluster() -> Any:
 
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 
@@ -440,7 +441,7 @@ class TestCouchbaseVectorStore:
                     "store_dynamic": True,
                     "type_field": "_type",
                     "types": {
-                        "langchain.testing": {
+                        f"{SCOPE_NAME}.{COLLECTION_NAME}": {
                             "dynamic": False,
                             "enabled": True,
                             "properties": {

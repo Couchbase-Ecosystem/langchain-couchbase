@@ -51,6 +51,7 @@ def get_cluster() -> Any:
 
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 
@@ -102,9 +103,6 @@ def delete_index(
 
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
-)
-@pytest.mark.skipif(
-    check_capella(), reason="Couchbase Capella does not support Query Vector Store"
 )
 class TestCouchbaseQueryVectorStore:
     @classmethod

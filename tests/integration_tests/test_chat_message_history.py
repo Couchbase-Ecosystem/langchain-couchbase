@@ -9,7 +9,7 @@ import pytest
 from couchbase.auth import PasswordAuthenticator
 from couchbase.cluster import Cluster
 from couchbase.options import ClusterOptions
-from langchain.memory import ConversationBufferMemory
+from langchain_classic.memory import ConversationBufferMemory
 from langchain_core.messages import AIMessage, HumanMessage
 
 from langchain_couchbase.chat_message_histories import CouchbaseChatMessageHistory
@@ -44,6 +44,7 @@ def get_cluster() -> Any:
     """Get a couchbase cluster object"""
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 

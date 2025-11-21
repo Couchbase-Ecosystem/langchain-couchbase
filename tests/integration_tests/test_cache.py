@@ -53,6 +53,7 @@ def get_cluster() -> Any:
     """Get a couchbase cluster object"""
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 

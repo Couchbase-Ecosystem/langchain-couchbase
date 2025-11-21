@@ -161,7 +161,7 @@ from langchain_core.globals import set_llm_cache
 
 # use any embedding provider...
 
-from langchain_openai.Embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings()
 cluster = couchbase_cluster_connection_object
