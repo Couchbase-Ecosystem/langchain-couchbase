@@ -35,6 +35,16 @@ class IndexType(Enum):
 class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
     """__Couchbase__ vector store integration using Query and Index service.
 
+    This vector store supports two types of vector indexes:
+    
+    * **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents).
+      Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+    
+    * **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column.
+      Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+    For guidance on choosing the right index type, see `Choose the Right Vector Index <https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html>`_.
+
     Setup:
         Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket and collection.
 

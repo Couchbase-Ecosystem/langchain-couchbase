@@ -13,9 +13,13 @@ pip install -U langchain-couchbase
 ## Vector Store
 
 ### CouchbaseQueryVectorStore
-`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It implements two different types of vector indices:
- - [Hyperscale Vector Index](https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html)
- - [Composite Vector Index](https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html)
+`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It supports two different types of vector indexes:
+
+* **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents). Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+
+* **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column. Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+For guidance on choosing the right index type, see [Choose the Right Vector Index](https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html).
 
 > Note: CouchbaseQueryVectorStore requires Couchbase Server version 8.0 and above.
 
@@ -63,7 +67,7 @@ See a [usage example](https://github.com/couchbaselabs/query-vector-search-demo)
 
 ### CouchbaseSearchVectorStore
 
-`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using the [Search Service](https://docs.couchbase.com/server/current/vector-search/vector-search.html).
+`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using [Search Vector Indexes](https://docs.couchbase.com/server/current/vector-search/vector-search.html). Search Vector Indexes combine a Couchbase Search index with a vector column, allowing hybrid searches that combine vector searches with Full-Text Search (FTS) and geospatial searches.
 
 > Note: CouchbaseSearchVectorStore requires Couchbase Server version 7.6 and above.
 
@@ -354,7 +358,7 @@ Integration tests exercise a real Couchbase cluster. To run them locally:
      - one for chat history tests → set `COUCHBASE_CHAT_HISTORY_COLLECTION_NAME`.
 
 3. **Create the required Search indexes.**
-   - Copy `tests/fixtures/search_index_definition_for_vector_store_testing.json` and replace the `<<SCOPE_NAME>>`, `<<COLLECTION_NAME>>`, and `<<INDEX_NAME>>` placeholders with the values you created above. Apply the definition through the Couchbase UI (FTS → Import JSON).
+   - Copy `tests/fixtures/search_index_definition_for_vector_store_testing.json` and replace the `<<SCOPE_NAME>>`, `<<COLLECTION_NAME>>`, and `<<INDEX_NAME>>` placeholders with the values you created above. Apply the definition through the Couchbase UI (Search → Import JSON).
    - Repeat the process for `tests/fixtures/search_index_definition_for_cache_testing.json`, using a distinct `COUCHBASE_SEMANTIC_CACHE_INDEX_NAME`. (The semantic cache requires a Search index with vector fields.)
 
 4. **Export the environment variables** before running tests. The integration suite reads the following values:

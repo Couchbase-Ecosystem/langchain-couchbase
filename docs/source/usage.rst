@@ -11,7 +11,15 @@ Use Couchbase as a vector store for your documents:
 
 Couchbase Query Vector Store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Query vector store uses the Query and Index service to store and search document embeddings. For more information on the indexes, see `Hyperscale Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html>`_ or `Composite Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html>`_.
+Query vector store uses the Query and Index service to store and search document embeddings. It supports two types of vector indexes:
+
+* **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents). Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+
+* **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column. Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+For guidance on choosing the right index type, see `Choose the Right Vector Index <https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html>`_.
+
+For more information on the indexes, see `Hyperscale Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html>`_ or `Composite Vector Index documentation <https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html>`_.
 
 .. Note::
     This vector store is available in Couchbase Server versions 8.0 and above.
@@ -66,7 +74,9 @@ See a `complete query vector store usage example <https://github.com/couchbasela
 
 Couchbase Search Vector Store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Search vector store uses the Search service to store and search document embeddings. For more information on Search service, see the `Couchbase Search Service documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
+Search vector store uses Search Vector Indexes to store and search document embeddings. Search Vector Indexes combine a Couchbase Search index with a vector column, allowing hybrid searches that combine vector searches with Full-Text Search (FTS) and geospatial searches.
+
+For more information on Search Vector Indexes, see the `Couchbase Search Vector Index documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
 
 .. Note::
    This vector store is available in Couchbase Server versions 7.6 and above.
