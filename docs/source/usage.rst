@@ -43,6 +43,9 @@ See a `complete query vector store usage example <https://github.com/couchbasela
         # Wait until the cluster is ready for use.
         cluster.wait_until_ready(timedelta(seconds=5))
 
+        from langchain_couchbase import CouchbaseQueryVectorStore
+        from langchain_couchbase.vectorstores import DistanceStrategy
+
         vectorstore = CouchbaseQueryVectorStore(
             cluster=cluster,
             bucket_name=BUCKET_NAME,
@@ -69,7 +72,7 @@ Search vector store uses the Search service to store and search document embeddi
    This vector store is available in Couchbase Server versions 7.6 and above.
 
 
-See a `complete searchvector store usage example <https://python.langchain.com/docs/integrations/vectorstores/couchbase/>`_.
+See a `complete search vector store usage example <https://python.langchain.com/docs/integrations/vectorstores/couchbase/>`_.
 
 .. code-block:: python
 
@@ -96,6 +99,8 @@ See a `complete searchvector store usage example <https://python.langchain.com/d
     # Wait until the cluster is ready for use.
     cluster.wait_until_ready(timedelta(seconds=5))
 
+    from langchain_couchbase import CouchbaseSearchVectorStore
+
     vector_store = CouchbaseSearchVectorStore(
         cluster=cluster,
         bucket_name=BUCKET_NAME,
@@ -107,11 +112,11 @@ See a `complete searchvector store usage example <https://python.langchain.com/d
     
     # Add documents
     texts = ["Couchbase is a NoSQL database", "LangChain is a framework for LLM applications"]
-    vectorstore.add_texts(texts)
+    vector_store.add_texts(texts)
     
     # Search
     query = "What is Couchbase?"
-    docs = vectorstore.similarity_search(query)
+    docs = vector_store.similarity_search(query)
 
 Cache
 -----
