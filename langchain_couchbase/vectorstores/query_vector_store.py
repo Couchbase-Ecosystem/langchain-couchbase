@@ -124,6 +124,29 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             ids = ["1", "2", "3"]
             vector_store.add_documents(documents=documents, ids=ids)
 
+        .. Note::
+            **Important**: The vector index must be created AFTER adding documents to the vector store.
+            Use the ``create_index()`` method after adding your documents to enable efficient vector searches.
+
+    Create Index:
+        After adding documents, create the vector index:
+
+        .. code-block:: python
+
+            from langchain_couchbase.vectorstores import IndexType
+
+            # Create a Hyperscale Vector Index (BHIVE)
+            vector_store.create_index(
+                index_type=IndexType.BHIVE,
+                index_description="IVF,SQ8",
+            )
+
+            # Or create a Composite Vector Index
+            vector_store.create_index(
+                index_type=IndexType.COMPOSITE,
+                index_description="IVF,SQ8",
+            )
+
     Delete Documents:
         .. code-block:: python
 

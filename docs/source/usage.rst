@@ -63,13 +63,24 @@ See a `complete query vector store usage example <https://github.com/couchbasela
             distance_metric=DistanceStrategy.COSINE,
         )
         
-        # Add documents
+        # Add documents first
         texts = ["Couchbase is a NoSQL database", "LangChain is a framework for LLM applications"]
         vectorstore.add_texts(texts)
+        
+        # Important: Create the vector index AFTER adding documents
+        from langchain_couchbase.vectorstores import IndexType
+        vectorstore.create_index(
+            index_type=IndexType.BHIVE,
+            index_description="IVF,SQ8",
+        )
         
         # Search
         query = "What is Couchbase?"
         docs = vectorstore.similarity_search(query)
+
+.. Note::
+    **Important**: The vector index must be created **after** adding documents to the vector store.
+    This enables efficient vector searches. Use the ``create_index()`` method after adding your documents.
 
 
 Couchbase Search Vector Store
