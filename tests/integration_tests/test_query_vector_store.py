@@ -127,7 +127,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -154,7 +154,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -183,7 +183,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -212,7 +212,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         results = vectorstore.add_texts(
@@ -248,7 +248,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         results = vectorstore.add_texts(
@@ -278,7 +278,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -309,7 +309,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -343,7 +343,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         ids = vectorstore.add_texts(texts, metadatas)
@@ -379,7 +379,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -418,7 +418,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         ids = vectorstore.add_texts(texts, metadatas=metadatas)
@@ -439,7 +439,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -452,7 +452,7 @@ class TestCouchbaseQueryVectorStore:
             IndexType.COMPOSITE,
             index_name=index_name,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the index to be created
@@ -495,7 +495,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -508,7 +508,7 @@ class TestCouchbaseQueryVectorStore:
             IndexType.BHIVE,
             index_name=index_name,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the index to be created
@@ -549,7 +549,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
         
         # Add some documents to the vector store
@@ -571,7 +571,7 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.create_index(
             IndexType.COMPOSITE,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
@@ -617,7 +617,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -639,7 +639,7 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.create_index(
             IndexType.BHIVE,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
