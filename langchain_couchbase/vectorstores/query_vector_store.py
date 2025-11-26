@@ -29,7 +29,7 @@ class IndexType(Enum):
     """
 
     COMPOSITE = "composite"
-    BHIVE = "bhive"
+    HYPERSCALE = "hyperscale"
 
 
 class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
@@ -135,9 +135,9 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
 
             from langchain_couchbase.vectorstores import IndexType
 
-            # Create a Hyperscale Vector Index (BHIVE)
+            # Create a Hyperscale Vector Index
             vector_store.create_index(
-                index_type=IndexType.BHIVE,
+                index_type=IndexType.HYPERSCALE,
                 index_description="IVF,SQ8",
             )
 
@@ -429,7 +429,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         """Create a new index for the Query vector store.
 
         Args:
-            index_type (IndexType): Type of the index (BHIVE or COMPOSITE) to create.
+            index_type (IndexType): Type of the index (HYPERSCALE or COMPOSITE) to create.
             index_description (str): Description of the index like "IVF,SQ8".
             distance_metric (Optional[DistanceStrategy]): Distance metric to use for the
                 index. Defaults to the distance metric in the constructor.
@@ -501,9 +501,9 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         else:
             where_clause = ""
 
-        if index_type == IndexType.BHIVE:
+        if index_type == IndexType.HYPERSCALE:
             if not index_name:
-                index_name = "langchain_bhive_query_index"
+                index_name = "langchain_hyperscale_query_index"
             try:
                 INDEX_CREATE_QUERY = (
                     f"CREATE VECTOR INDEX {index_name} ON {self._collection_name} "

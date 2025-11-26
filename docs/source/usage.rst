@@ -70,7 +70,7 @@ See a `complete query vector store usage example <https://github.com/couchbasela
         # Important: Create the vector index AFTER adding documents
         from langchain_couchbase.vectorstores import IndexType
         vectorstore.create_index(
-            index_type=IndexType.BHIVE,
+            index_type=IndexType.HYPERSCALE,
             index_description="IVF,SQ8",
         )
         

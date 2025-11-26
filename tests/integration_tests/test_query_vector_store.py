@@ -486,8 +486,8 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_bhive_index_creation(self, cluster: Any) -> None:
-        """Test Bhive index creation."""
+    def test_hyperscale_index_creation(self, cluster: Any) -> None:
+        """Test Hyperscale index creation."""
 
         vectorstore = CouchbaseQueryVectorStore(
             cluster=cluster,
@@ -503,9 +503,9 @@ class TestCouchbaseQueryVectorStore:
 
         # Create the index
         index_description = "IVF,SQ8"
-        index_name = "bhive_test_index"
+        index_name = "hyperscale_test_index"
         vectorstore.create_index(
-            IndexType.BHIVE,
+            IndexType.HYPERSCALE,
             index_name=index_name,
             index_description=index_description,
             distance_metric=DistanceStrategy.EUCLIDEAN,
@@ -517,7 +517,7 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is created
         index = get_index(cluster, index_name)
         assert index is not None
-        assert index["name"] == "bhive_test_index"
+        assert index["name"] == "hyperscale_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
         assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
@@ -608,8 +608,8 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_bhive_index_creation_with_custom_parameters(self, cluster: Any) -> None:
-        """Test Bhive index creation with custom parameters."""
+    def test_hyperscale_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+        """Test Hyperscale index creation with custom parameters."""
 
         vectorstore = CouchbaseQueryVectorStore(
             cluster=cluster,
@@ -629,7 +629,7 @@ class TestCouchbaseQueryVectorStore:
 
         # Create the index
         index_description = "IVF,SQ8"
-        index_name = "langchain_bhive_query_index" # default index name
+        index_name = "langchain_hyperscale_query_index" # default index name
         nprobes = 2
         trainlist = 2
         default_dimension = 10 # ConsistentFakeEmbeddings default 
@@ -637,7 +637,7 @@ class TestCouchbaseQueryVectorStore:
         indexing_fields = ["metadata.text"]
 
         vectorstore.create_index(
-            IndexType.BHIVE,
+            IndexType.HYPERSCALE,
             index_description=index_description,
             distance_metric=DistanceStrategy.EUCLIDEAN,
             index_scan_nprobes=nprobes,
