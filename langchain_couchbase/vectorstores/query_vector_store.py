@@ -16,10 +16,10 @@ class DistanceStrategy(Enum):
     """
 
     DOT = "dot"
-    L2 = "l2"
+    # EUCLIDEAN is equivalent to L2
     EUCLIDEAN = "euclidean"
     COSINE = "cosine"
-    L2_SQUARED = "l2_squared"
+    # EUCLIDEAN_SQUARED is equivalent to L2_SQUARED
     EUCLIDEAN_SQUARED = "euclidean_squared"
 
 
