@@ -13,9 +13,13 @@ pip install -U langchain-couchbase
 ## Vector Store
 
 ### CouchbaseQueryVectorStore
-`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It implements two different types of vector indices:
- - [Hyperscale Vector Index](https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html)
- - [Composite Vector Index](https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html)
+`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It supports two different types of vector indexes:
+
+* **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents). Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+
+* **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column. Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+For guidance on choosing the right index type, see [Choose the Right Vector Index](https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html).
 
 > Note: CouchbaseQueryVectorStore requires Couchbase Server version 8.0 and above.
 
@@ -58,12 +62,14 @@ vector_store = CouchbaseQueryVectorStore(
 )
 ```
 
+> **Note**: The Hyperscale and Composite vector indexes must be created **after** adding documents to the vector store. This enables efficient vector searches.
+
 See a [usage example](https://github.com/couchbaselabs/query-vector-search-demo)
 
 
 ### CouchbaseSearchVectorStore
 
-`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using the [Search Service](https://docs.couchbase.com/server/current/vector-search/vector-search.html).
+`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using [Search Vector Indexes](https://docs.couchbase.com/server/current/vector-search/vector-search.html). Search Vector Indexes combine a Couchbase Search index with a vector column, allowing hybrid searches that combine vector searches with Full-Text Search (FTS) and geospatial searches.
 
 > Note: CouchbaseSearchVectorStore requires Couchbase Server version 7.6 and above.
 
@@ -275,105 +281,9 @@ make help
 <br/>
 </details>
 
-
 ## Contributing
 
-We welcome pull requests! The steps below are what we use locally when iterating on the project.
-
-### Local environment
-
-1. Install [Poetry](https://python-poetry.org/docs/#installation) if you do not already have it.
-2. Clone the repository and move into the project directory:
-
-```bash
-git clone https://github.com/Couchbase-Ecosystem/langchain-couchbase.git
-cd langchain-couchbase
-```
-
-3. Install the dependencies needed for development and testing:
-
-```bash
-poetry install --with test,test_integration,lint,typing
-```
-
-   The command above pulls in optional groups defined in `pyproject.toml` so you have pytest, linters, type checking, and spell checking tools available.
-
-4. Activate the virtual environment when you want an interactive shell:
-
-```bash
-poetry shell
-```
-
-### Running tests and quality checks
-
-- Run the fast unit-test suite (uses `pytest --disable-socket`):
-
-```bash
-make test
-```
-
-- Run the full integration tests (requires a running Couchbase cluster and the indexes defined in `tests/fixtures/`):
-
-```bash
-make integration_tests
-```
-
-- Execute an individual test file:
-
-```bash
-make test TEST_FILE=tests/path/to/test_file.py
-```
-
-- Run linting, formatting, and type checks together:
-
-```bash
-make lint
-```
-
-- Format Python files automatically:
-
-```bash
-make format
-```
-
-You can also invoke the underlying commands directly, e.g. `poetry run pytest` or `poetry run ruff check .`, if you prefer not to use `make`.
-
-### Couchbase setup for tests
-
-Integration tests exercise a real Couchbase cluster. To run them locally:
-
-1. **Run Couchbase Server 8.0+** (or Capella) with the Data, Query and Search services enabled. Make sure you can connect with a user that has at least admin privileges for the bucket you will use.
-
-2. **Create the data containers.**
-   - Bucket: choose any name (e.g. `langchain`).
-   - Scope: choose any name (e.g. `langchain`).
-   - Collections (within the scope):
-     - one for vector store tests → set `COUCHBASE_COLLECTION_NAME`.
-     - one for basic cache tests → set `COUCHBASE_CACHE_COLLECTION_NAME`.
-     - one for semantic cache tests → set `COUCHBASE_SEMANTIC_CACHE_COLLECTION_NAME`.
-     - one for chat history tests → set `COUCHBASE_CHAT_HISTORY_COLLECTION_NAME`.
-
-3. **Create the required Search indexes.**
-   - Copy `tests/fixtures/search_index_definition_for_vector_store_testing.json` and replace the `<<SCOPE_NAME>>`, `<<COLLECTION_NAME>>`, and `<<INDEX_NAME>>` placeholders with the values you created above. Apply the definition through the Couchbase UI (FTS → Import JSON).
-   - Repeat the process for `tests/fixtures/search_index_definition_for_cache_testing.json`, using a distinct `COUCHBASE_SEMANTIC_CACHE_INDEX_NAME`. (The semantic cache requires a Search index with vector fields.)
-
-4. **Export the environment variables** before running tests. The integration suite reads the following values:
-
-   ```bash
-   export COUCHBASE_CONNECTION_STRING="couchbase://localhost"
-   export COUCHBASE_USERNAME="Administrator"
-   export COUCHBASE_PASSWORD="password"
-   export COUCHBASE_BUCKET_NAME="langchain"
-   export COUCHBASE_SCOPE_NAME="langchain"
-   export COUCHBASE_COLLECTION_NAME="vector_docs"
-   export COUCHBASE_INDEX_NAME="langchain_vector_index"
-   export COUCHBASE_CACHE_COLLECTION_NAME="cache_docs"
-   export COUCHBASE_SEMANTIC_CACHE_COLLECTION_NAME="semantic_cache_docs"
-   export COUCHBASE_SEMANTIC_CACHE_INDEX_NAME="langchain_cache_index"
-   export COUCHBASE_CHAT_HISTORY_COLLECTION_NAME="chat_messages"
-   ```
-
-   Adjust the values to match your cluster. You can keep the integration tests skipped until all variables are defined.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## 📢 Support Policy
 
