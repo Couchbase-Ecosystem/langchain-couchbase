@@ -13,9 +13,13 @@ pip install -U langchain-couchbase
 ## Vector Store
 
 ### CouchbaseQueryVectorStore
-`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It implements two different types of vector indices:
- - [Hyperscale Vector Index](https://docs.couchbase.com/server/current/vector-index/hyperscale-vector-index.html)
- - [Composite Vector Index](https://docs.couchbase.com/server/current/vector-index/composite-vector-index.html)
+`CouchbaseQueryVectorStore` class enables the usage of Couchbase for Vector Search using the Query and Indexing Service. It supports two different types of vector indexes:
+
+* **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents). Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+
+* **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column. Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+For guidance on choosing the right index type, see [Choose the Right Vector Index](https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html).
 
 > Note: CouchbaseQueryVectorStore requires Couchbase Server version 8.0 and above.
 
@@ -58,12 +62,14 @@ vector_store = CouchbaseQueryVectorStore(
 )
 ```
 
+> **Note**: The Hyperscale and Composite vector indexes must be created **after** adding documents to the vector store. This enables efficient vector searches.
+
 See a [usage example](https://github.com/couchbaselabs/query-vector-search-demo)
 
 
 ### CouchbaseSearchVectorStore
 
-`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using the [Search Service](https://docs.couchbase.com/server/current/vector-search/vector-search.html).
+`CouchbaseSearchVectorStore` class enables the usage of Couchbase for Vector Search using [Search Vector Indexes](https://docs.couchbase.com/server/current/vector-search/vector-search.html). Search Vector Indexes combine a Couchbase Search index with a vector column, allowing hybrid searches that combine vector searches with Full-Text Search (FTS) and geospatial searches.
 
 > Note: CouchbaseSearchVectorStore requires Couchbase Server version 7.6 and above.
 
@@ -161,7 +167,7 @@ from langchain_core.globals import set_llm_cache
 
 # use any embedding provider...
 
-from langchain_openai.Embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings()
 cluster = couchbase_cluster_connection_object
@@ -275,6 +281,9 @@ make help
 <br/>
 </details>
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## 📢 Support Policy
 

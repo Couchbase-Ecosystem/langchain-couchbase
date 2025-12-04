@@ -47,6 +47,7 @@ def get_cluster() -> Any:
 
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 
@@ -124,6 +125,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
         )
+
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
@@ -440,7 +442,7 @@ class TestCouchbaseSearchVectorStore:
                     "store_dynamic": False,
                     "type_field": "_type",
                     "types": {
-                        "langchain.testing": {
+                        f"{SCOPE_NAME}.{COLLECTION_NAME}": {
                             "dynamic": False,
                             "enabled": True,
                             "properties": {

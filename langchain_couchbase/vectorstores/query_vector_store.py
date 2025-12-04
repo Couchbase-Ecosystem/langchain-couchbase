@@ -16,10 +16,10 @@ class DistanceStrategy(Enum):
     """
 
     DOT = "dot"
-    L2 = "l2"
+    # EUCLIDEAN is equivalent to L2
     EUCLIDEAN = "euclidean"
     COSINE = "cosine"
-    L2_SQUARED = "l2_squared"
+    # EUCLIDEAN_SQUARED is equivalent to L2_SQUARED
     EUCLIDEAN_SQUARED = "euclidean_squared"
 
 
@@ -29,11 +29,21 @@ class IndexType(Enum):
     """
 
     COMPOSITE = "composite"
-    BHIVE = "bhive"
+    HYPERSCALE = "hyperscale"
 
 
 class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
     """__Couchbase__ vector store integration using Query and Index service.
+
+    This vector store supports two types of vector indexes:
+    
+    * **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents).
+      Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
+    
+    * **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column.
+      Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
+
+    For guidance on choosing the right index type, see `Choose the Right Vector Index <https://docs.couchbase.com/cloud/vector-index/use-vector-indexes.html>`_.
 
     Setup:
         Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket and collection.
@@ -113,6 +123,29 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             documents = [document_1, document_2, document_3]
             ids = ["1", "2", "3"]
             vector_store.add_documents(documents=documents, ids=ids)
+
+        .. Note::
+            **Important**: The vector index must be created AFTER adding documents to the vector store.
+            Use the ``create_index()`` method after adding your documents to enable efficient vector searches.
+
+    Create Index:
+        After adding documents, create the vector index:
+
+        .. code-block:: python
+
+            from langchain_couchbase.vectorstores import IndexType
+
+            # Create a Hyperscale Vector Index
+            vector_store.create_index(
+                index_type=IndexType.HYPERSCALE,
+                index_description="IVF,SQ8",
+            )
+
+            # Or create a Composite Vector Index
+            vector_store.create_index(
+                index_type=IndexType.COMPOSITE,
+                index_description="IVF,SQ8",
+            )
 
     Delete Documents:
         .. code-block:: python
@@ -396,7 +429,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         """Create a new index for the Query vector store.
 
         Args:
-            index_type (IndexType): Type of the index (BHIVE or COMPOSITE) to create.
+            index_type (IndexType): Type of the index (HYPERSCALE or COMPOSITE) to create.
             index_description (str): Description of the index like "IVF,SQ8".
             distance_metric (Optional[DistanceStrategy]): Distance metric to use for the
                 index. Defaults to the distance metric in the constructor.
@@ -468,9 +501,9 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         else:
             where_clause = ""
 
-        if index_type == IndexType.BHIVE:
+        if index_type == IndexType.HYPERSCALE:
             if not index_name:
-                index_name = "langchain_bhive_query_index"
+                index_name = "langchain_hyperscale_query_index"
             try:
                 INDEX_CREATE_QUERY = (
                     f"CREATE VECTOR INDEX {index_name} ON {self._collection_name} "

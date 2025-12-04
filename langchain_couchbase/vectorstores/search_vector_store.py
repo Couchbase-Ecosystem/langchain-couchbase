@@ -14,12 +14,12 @@ from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVect
 
 
 class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
-    """__Couchbase__ vector store integration using Search/FTS service.
+    """__Couchbase__ vector store integration using Search Vector Index.
 
     Setup:
-        Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket, collection and a search index.
+        Install ``langchain-couchbase`` and head over to `Couchbase Capella <https://cloud.couchbase.com>`_ and create a new cluster with a bucket, collection and a Search Vector Index.
 
-        For more information on Search service, see the `Couchbase Search Service documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
+        For more information on Search Vector Indexes, see the `Couchbase Search Vector Index documentation <https://docs.couchbase.com/server/current/vector-search/vector-search.html>`_.
 
         .. code-block:: bash
 
@@ -47,7 +47,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         collection_name: str
             Name of the collection in the scope to store documents in.
         index_name: str
-            Name of the Search index to use.
+            Name of the Search Vector Index to use.
 
     Instantiate:
         .. code-block:: python
@@ -301,7 +301,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             k (int): Number of Documents to return.
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
-                that are passed to Couchbase search service. Used for combining vector 
+                that are passed to Couchbase Search Vector Index. Used for combining vector 
                 similarity with text-based search criteria. 
                 
                 Defaults to empty dictionary.
@@ -363,7 +363,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             k (int): Number of Documents to return.
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
-                that are passed to Couchbase search service. Used for combining vector 
+                that are passed to Couchbase Search Vector Index. Used for combining vector 
                 similarity with text-based search criteria. 
 
                 Defaults to empty dictionary.
@@ -490,7 +490,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             k (int): Number of Documents to return.
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
-                that are passed to Couchbase search service. Used for combining vector 
+                that are passed to Couchbase Search Vector Index. Used for combining vector 
                 similarity with text-based search criteria. 
 
                 Defaults to empty dictionary.
@@ -553,7 +553,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             k (int): Number of Documents to return.
                 Defaults to 4.
             search_options (Optional[Dict[str, Any]]): Optional hybrid search options 
-                that are passed to Couchbase search service. Used for combining vector 
+                that are passed to Couchbase Search Vector Index. Used for combining vector 
                 similarity with text-based search criteria. 
                 
                 Defaults to empty dictionary.

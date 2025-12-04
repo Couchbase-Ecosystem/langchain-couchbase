@@ -51,6 +51,7 @@ def get_cluster() -> Any:
 
     auth = PasswordAuthenticator(USERNAME, PASSWORD)
     options = ClusterOptions(auth)
+    options.apply_profile("wan_development")
     connect_string = CONNECTION_STRING
     cluster = Cluster(connect_string, options)
 
@@ -103,9 +104,6 @@ def delete_index(
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
 )
-@pytest.mark.skipif(
-    check_capella(), reason="Couchbase Capella does not support Query Vector Store"
-)
 class TestCouchbaseQueryVectorStore:
     @classmethod
     def setup_method(self) -> None:
@@ -129,7 +127,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -156,7 +154,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -185,7 +183,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the documents to be indexed
@@ -214,7 +212,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         results = vectorstore.add_texts(
@@ -250,7 +248,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         results = vectorstore.add_texts(
@@ -280,7 +278,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -311,7 +309,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -345,7 +343,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         ids = vectorstore.add_texts(texts, metadatas)
@@ -381,7 +379,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -420,7 +418,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         ids = vectorstore.add_texts(texts, metadatas=metadatas)
@@ -441,7 +439,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -454,7 +452,7 @@ class TestCouchbaseQueryVectorStore:
             IndexType.COMPOSITE,
             index_name=index_name,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the index to be created
@@ -488,8 +486,8 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_bhive_index_creation(self, cluster: Any) -> None:
-        """Test Bhive index creation."""
+    def test_hyperscale_index_creation(self, cluster: Any) -> None:
+        """Test Hyperscale index creation."""
 
         vectorstore = CouchbaseQueryVectorStore(
             cluster=cluster,
@@ -497,7 +495,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -505,12 +503,12 @@ class TestCouchbaseQueryVectorStore:
 
         # Create the index
         index_description = "IVF,SQ8"
-        index_name = "bhive_test_index"
+        index_name = "hyperscale_test_index"
         vectorstore.create_index(
-            IndexType.BHIVE,
+            IndexType.HYPERSCALE,
             index_name=index_name,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Wait for the index to be created
@@ -519,7 +517,7 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is created
         index = get_index(cluster, index_name)
         assert index is not None
-        assert index["name"] == "bhive_test_index"
+        assert index["name"] == "hyperscale_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
         assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
@@ -551,7 +549,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
         
         # Add some documents to the vector store
@@ -573,7 +571,7 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.create_index(
             IndexType.COMPOSITE,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
@@ -610,8 +608,8 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_bhive_index_creation_with_custom_parameters(self, cluster: Any) -> None:
-        """Test Bhive index creation with custom parameters."""
+    def test_hyperscale_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+        """Test Hyperscale index creation with custom parameters."""
 
         vectorstore = CouchbaseQueryVectorStore(
             cluster=cluster,
@@ -619,7 +617,7 @@ class TestCouchbaseQueryVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
         )
 
         # Add some documents to the vector store
@@ -631,7 +629,7 @@ class TestCouchbaseQueryVectorStore:
 
         # Create the index
         index_description = "IVF,SQ8"
-        index_name = "langchain_bhive_query_index" # default index name
+        index_name = "langchain_hyperscale_query_index" # default index name
         nprobes = 2
         trainlist = 2
         default_dimension = 10 # ConsistentFakeEmbeddings default 
@@ -639,9 +637,9 @@ class TestCouchbaseQueryVectorStore:
         indexing_fields = ["metadata.text"]
 
         vectorstore.create_index(
-            IndexType.BHIVE,
+            IndexType.HYPERSCALE,
             index_description=index_description,
-            distance_metric=DistanceStrategy.L2,
+            distance_metric=DistanceStrategy.EUCLIDEAN,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,

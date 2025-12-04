@@ -15,7 +15,7 @@ on:
         default: "3.11"
 
 env:
-  POETRY_VERSION: "1.8.4"
+  POETRY_VERSION: "1.8.5"
 
 jobs:
   build:
