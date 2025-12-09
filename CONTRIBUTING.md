@@ -46,7 +46,7 @@ cd langchain-couchbase
 2. **Install dependencies:**
 
 ```bash
-poetry install --with test,test_integration,lint,typing
+poetry install --with test_integration,typing
 ```
 
 This installs all development dependencies including pytest, linters, type checkers, and other tools defined in `pyproject.toml`.
@@ -82,6 +82,29 @@ git push origin feature/your-feature-name
 ```
 
 7. **Create a Pull Request** on GitHub
+
+### Versioning
+
+We follow [Semantic Versioning](https://semver.org/) rules. When updating the version, use Poetry's built-in versioning command:
+
+```bash
+# Bump patch version (0.0.x) - for bug fixes
+poetry version patch
+
+# Bump minor version (0.x.0) - for new features (backwards compatible)
+poetry version minor
+
+# Bump major version (x.0.0) - for breaking changes
+poetry version major
+
+# Or set a specific version
+poetry version 1.2.3
+```
+
+**Version guidelines:**
+- **Patch** (0.0.x): Bug fixes and minor improvements that don't change the API
+- **Minor** (0.x.0): New features that are backwards compatible
+- **Major** (x.0.0): Breaking changes that require users to update their code
 
 ### Formatting
 
