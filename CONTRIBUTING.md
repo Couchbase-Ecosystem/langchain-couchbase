@@ -46,7 +46,7 @@ cd langchain-couchbase
 2. **Install dependencies:**
 
 ```bash
-poetry install --with test,lint
+poetry install --with test_integration,typing
 ```
 
 This installs all development dependencies including pytest, linters, type checkers, and other tools defined in `pyproject.toml`.
