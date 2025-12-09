@@ -673,3 +673,116 @@ class TestCouchbaseQueryVectorStore:
 
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
+
+    def test_custom_text_key_with_hyphen(self, cluster: Any) -> None:
+        """Test that field names with hyphens work correctly.
+        
+        This test verifies that using hyphenated field names like 'text-to-embed'
+        for text_key and 'text-embedding' for embedding_key work correctly.
+        Field names with special characters need proper escaping in N1QL queries.
+        """
+        texts = [
+            "foo",
+            "bar",
+            "baz",
+        ]
+
+        metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
+
+        # Use hyphenated field names
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.COSINE,
+            text_key="text-to-embed",
+            embedding_key="text-embedding",
+        )
+
+        ids = vectorstore.add_texts(texts, metadatas=metadatas)
+        assert len(ids) == len(texts)
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        # Test similarity search with hyphenated field names
+        output = vectorstore.similarity_search("foo", k=1)
+        assert len(output) == 1
+        assert output[0].page_content == "foo"
+        assert output[0].metadata["a"] == 1
+
+    def test_from_texts_with_hyphenated_field_names(self, cluster: Any) -> None:
+        """Test from_texts class method with hyphenated field names."""
+        texts = [
+            "foo",
+            "bar",
+            "baz",
+        ]
+
+        metadatas = [{"a": 1}, {"b": 2}, {"c": 3}]
+
+        vectorstore = CouchbaseQueryVectorStore.from_texts(
+            texts,
+            ConsistentFakeEmbeddings(),
+            metadatas=metadatas,
+            cluster=cluster,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.COSINE,
+            text_key="text-to-embed",
+            embedding_key="text-embedding",
+        )
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        output = vectorstore.similarity_search("baz", k=1)
+        assert output[0].page_content == "baz"
+        assert output[0].metadata["c"] == 3
+
+    def test_hybrid_search_with_hyphenated_field_names(self, cluster: Any) -> None:
+        """Test hybrid search with hyphenated field names."""
+        texts = [
+            "foo",
+            "bar",
+            "baz",
+        ]
+
+        metadatas = [
+            {"section-1": "index"},
+            {"section-1": "glossary"},
+            {"section-1": "appendix"},
+        ]
+
+        vectorstore = CouchbaseQueryVectorStore(
+            cluster=cluster,
+            embedding=ConsistentFakeEmbeddings(),
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            collection_name=COLLECTION_NAME,
+            distance_metric=DistanceStrategy.COSINE,
+            text_key="text-to-embed",
+            embedding_key="text-embedding",
+        )
+
+        vectorstore.add_texts(texts, metadatas=metadatas)
+
+        # Wait for the documents to be indexed
+        time.sleep(SLEEP_DURATION)
+
+        result, score = vectorstore.similarity_search_with_score("foo", k=1)[0]
+
+        # Wait for the documents to be indexed for hybrid search
+        time.sleep(SLEEP_DURATION)
+
+        hybrid_result, hybrid_score = vectorstore.similarity_search_with_score(
+            "foo",
+            k=1,
+            where_str="`metadata`.`section-1` = 'index'",
+        )[0]
+
+        assert result == hybrid_result
+        assert score <= hybrid_score
