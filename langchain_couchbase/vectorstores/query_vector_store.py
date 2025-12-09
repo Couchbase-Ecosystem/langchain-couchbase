@@ -32,31 +32,25 @@ class IndexType(Enum):
     HYPERSCALE = "hyperscale"
 
 
-def _escape_field(field: str, always_escape: bool = True) -> str:
-    """Escape a field name for N1QL queries.
+def _escape_field(field: str) -> str:
+    """Escape a field name for SQL++ queries.
 
     Handles:
     - Simple field names: "text" -> "`text`"
     - Hyphenated names: "text-to-embed" -> "`text-to-embed`"
-    - Nested paths: "metadata.page" -> "(`metadata`.`page`)"
+    - Nested paths: "metadata.page" -> "`metadata`.`page`"
 
     Args:
         field: The field name to escape.
-        always_escape: If False, only escape when field contains special characters.
 
     Returns:
-        The properly escaped field name for N1QL.
+        The properly escaped field name for SQL++.
     """
     if "." in field:
         parts = field.split(".")
-        return "(" + ".".join(f"`{part}`" for part in parts) + ")"
+        return ".".join(f"`{part}`" for part in parts)
 
-    # Check if field needs escaping (contains special characters)
-    needs_escape = always_escape or "-" in field or " " in field
-
-    if needs_escape:
-        return f"`{field}`"
-    return field
+    return f"`{field}`"
 
 
 class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
@@ -337,7 +331,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             fields.append(self._text_key)
 
         similarity_search_string = (
-            f"ANN_DISTANCE({_escape_field(self._embedding_key, always_escape=False)}, {embedding}, "
+            f"ANN_DISTANCE({_escape_field(self._embedding_key)}, {embedding}, "
             f"'{self._distance_metric.value}')"
         )
 
@@ -371,19 +365,10 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 distance = row.pop("distance", 0)
                 metadata = {}
 
-                # Format the remaining fields as metadata
                 if self._metadata_key in row:
                     metadata = row.pop(self._metadata_key)
                 else:
-                    # Handle dot-notation fields (e.g., "metadata.page")
-                    # by extracting just the nested field name
-                    for key, value in row.items():
-                        if key.startswith(f"{self._metadata_key}."):
-                            # Strip "metadata." prefix to get the actual field name
-                            nested_key = key[len(f"{self._metadata_key}."):]
-                            metadata[nested_key] = value
-                        else:
-                            metadata[key] = value
+                    metadata = row
 
                 doc = Document(id=id, page_content=text, metadata=metadata)
                 docs_with_score.append((doc, distance))

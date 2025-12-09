@@ -752,9 +752,9 @@ class TestCouchbaseQueryVectorStore:
         ]
 
         metadatas = [
-            {"section": "index"},
-            {"section": "glossary"},
-            {"section": "appendix"},
+            {"section-1": "index"},
+            {"section-1": "glossary"},
+            {"section-1": "appendix"},
         ]
 
         vectorstore = CouchbaseQueryVectorStore(
@@ -781,7 +781,7 @@ class TestCouchbaseQueryVectorStore:
         hybrid_result, hybrid_score = vectorstore.similarity_search_with_score(
             "foo",
             k=1,
-            where_str="metadata.section = 'index'",
+            where_str="`metadata`.`section-1` = 'index'",
         )[0]
 
         assert result == hybrid_result
