@@ -210,8 +210,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         Raises a ValueError if the filter is not valid."""
         if isinstance(filter, SearchQuery):
             return True
-        raise ValueError(f"filter must be a SearchQuery object, got"
-                         f"{type(filter)}")
+        raise ValueError(f"filter must be a SearchQuery object, got {type(filter)}")
 
     def __init__(
         self,
@@ -261,10 +260,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self._scoped_index = scoped_index
 
         # Check if the index exists. Throws ValueError if it doesn't
-        try:
-            self._check_index_exists()
-        except Exception as e:
-            raise e
+        self._check_index_exists()
 
     def _format_metadata(self, row_fields: Dict[str, Any]) -> Dict[str, Any]:
         """Helper method to format the metadata from the Couchbase Search API.
@@ -290,7 +286,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self,
         query: str,
         k: int = 4,
-        search_options: Optional[Dict[str, Any]] = {},
+        search_options: Optional[Dict[str, Any]] = None,
         filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
@@ -352,7 +348,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self,
         embedding: List[float],
         k: int = 4,
-        search_options: Optional[Dict[str, Any]] = {},
+        search_options: Optional[Dict[str, Any]] = None,
         filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
@@ -405,6 +401,8 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             - Use ``filter`` for efficient pre-search filtering, especially with large datasets
             - Both parameters can be used together for complex search scenarios
         """  # noqa: E501
+        if search_options is None:
+            search_options = {}
 
         fields = kwargs.get("fields", ["*"])
 
@@ -479,7 +477,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self,
         query: str,
         k: int = 4,
-        search_options: Optional[Dict[str, Any]] = {},
+        search_options: Optional[Dict[str, Any]] = None,
         filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Tuple[Document, float]]:
@@ -542,7 +540,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self,
         embedding: List[float],
         k: int = 4,
-        search_options: Optional[Dict[str, Any]] = {},
+        search_options: Optional[Dict[str, Any]] = None,
         filter: Optional[SearchQuery] = None,
         **kwargs: Any,
     ) -> List[Document]:
