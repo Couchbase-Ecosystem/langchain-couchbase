@@ -162,8 +162,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
 
             try:
                 self._scope.query(index_creation_query).execute()
-            except Exception as e:
-                logger.error(f"Error creating index: {e}")
+            except Exception:
+                logger.exception("Error creating index")
 
     def add_message(self, message: BaseMessage) -> None:
         """Add a message to the cache"""
@@ -193,8 +193,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                         self._ts_key: timestamp,
                     },
                 )
-        except Exception as e:
-            logger.error(f"Error adding message: {e}")
+        except Exception:
+            logger.exception("Error adding message")
 
     def add_messages(self, messages: Sequence[BaseMessage]) -> None:
         """Add messages to the cache in a batched manner"""
@@ -224,8 +224,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                     self._collection.insert_multi(insert_batch, expiry=self._ttl)
                 else:
                     self._collection.insert_multi(insert_batch)
-        except Exception as e:
-            logger.error(f"Error adding messages: {e}")
+        except Exception:
+            logger.exception("Error adding messages")
 
     def clear(self) -> None:
         """Clear the cache"""
@@ -236,8 +236,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         )
         try:
             self._scope.query(clear_query, session_id=self._session_id).execute()
-        except Exception as e:
-            logger.error(f"Error clearing cache: {e}")
+        except Exception:
+            logger.exception("Error clearing cache")
 
     @property
     def messages(self) -> List[BaseMessage]:
@@ -253,8 +253,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             result = self._scope.query(fetch_query, session_id=self._session_id)
             for document in result:
                 message_items.append(document[f"{self._message_key}"])
-        except Exception as e:
-            logger.error(f"Error fetching messages: {e}")
+        except Exception:
+            logger.exception("Error fetching messages")
 
         return messages_from_dict(message_items)
 

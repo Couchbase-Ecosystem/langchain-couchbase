@@ -237,7 +237,7 @@ class CouchbaseCache(BaseCache):
             else:
                 self._collection.upsert(key=document_key, value=doc)
         except Exception:
-            logger.error("Error updating cache")
+            logger.exception("Error updating cache")
 
     def clear(self, **kwargs: Any) -> None:
         """Clear the cache.
@@ -248,7 +248,7 @@ class CouchbaseCache(BaseCache):
             query = f"DELETE FROM `{self._collection_name}`"
             self._scope.query(query).execute()
         except Exception:
-            logger.error("Error clearing cache. Please check if you have an index.")
+            logger.exception("Error clearing cache. Please check if you have an index.")
 
 
 class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
@@ -364,7 +364,7 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
                 ttl=self._ttl,
             )
         except Exception:
-            logger.error("Error updating cache")
+            logger.exception("Error updating cache")
 
     def clear(self, **kwargs: Any) -> None:
         """Clear the cache.
@@ -375,4 +375,4 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
             query = f"DELETE FROM `{self._collection_name}`"
             self._scope.query(query).execute()
         except Exception:
-            logger.error("Error clearing cache. Please check if you have an index.")
+            logger.exception("Error clearing cache. Please check if you have an index.")
