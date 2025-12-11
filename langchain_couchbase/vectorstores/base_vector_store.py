@@ -6,7 +6,6 @@ import uuid
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
     List,
     Optional,
 )
@@ -15,6 +14,11 @@ from couchbase.cluster import Cluster
 from couchbase.exceptions import DocumentExistsException, DocumentNotFoundException
 from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import VectorStore
+
+from langchain_couchbase.utils import (
+    check_bucket_exists,
+    check_scope_and_collection_exists,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -31,44 +35,6 @@ class BaseCouchbaseVectorStore(VectorStore):
     _metadata_key = "metadata"
     _default_text_key = "text"
     _default_embedding_key = "embedding"
-
-    def _check_bucket_exists(self) -> bool:
-        """Check if the bucket exists in the linked Couchbase cluster"""
-        bucket_manager = self._cluster.buckets()
-        try:
-            bucket_manager.get_bucket(self._bucket_name)
-            return True
-        except Exception:
-            return False
-
-    def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
-        scope_collection_map: Dict[str, Any] = {}
-
-        # Get a list of all scopes in the bucket
-        for scope in self._bucket.collections().get_all_scopes():
-            scope_collection_map[scope.name] = []
-
-            # Get a list of all the collections in the scope
-            for collection in scope.collections:
-                scope_collection_map[scope.name].append(collection.name)
-
-        # Check if the scope exists
-        if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
-                f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
-            )
-
-        # Check if the collection exists in the scope
-        if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
-                f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket {self._bucket_name}"
-            )
-
-        return True
 
     def __init__(
         self,
@@ -123,10 +89,10 @@ class BaseCouchbaseVectorStore(VectorStore):
         self._embedding_key = embedding_key
 
         # Check if the bucket exists
-        if not self._check_bucket_exists():
+        if not check_bucket_exists(cluster, bucket_name):
             raise ValueError(
-                f"Bucket {self._bucket_name} does not exist. "
-                " Please create the bucket before searching."
+                f"Bucket {bucket_name} does not exist. "
+                "Please create the bucket before searching."
             )
 
         try:
@@ -140,7 +106,9 @@ class BaseCouchbaseVectorStore(VectorStore):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        self._check_scope_and_collection_exists()
+        check_scope_and_collection_exists(
+            self._bucket, scope_name, collection_name, bucket_name
+        )
 
     def add_texts(
         self,

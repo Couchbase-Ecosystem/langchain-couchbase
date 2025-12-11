@@ -4,7 +4,7 @@ import logging
 import time
 import uuid
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, Sequence
+from typing import List, Optional, Sequence
 
 from couchbase.cluster import Cluster
 from langchain_core.chat_history import BaseChatMessageHistory
@@ -12,6 +12,12 @@ from langchain_core.messages import (
     BaseMessage,
     message_to_dict,
     messages_from_dict,
+)
+
+from langchain_couchbase.utils import (
+    check_bucket_exists,
+    check_scope_and_collection_exists,
+    validate_ttl,
 )
 
 logger = logging.getLogger(__name__)
@@ -23,59 +29,10 @@ DEFAULT_INDEX_NAME = "LANGCHAIN_CHAT_HISTORY"
 DEFAULT_BATCH_SIZE = 100
 
 
-def _validate_ttl(ttl: Optional[timedelta]) -> None:
-    """Validate the time to live"""
-    if not isinstance(ttl, timedelta):
-        raise ValueError(f"ttl should be of type timedelta but was {type(ttl)}.")
-    if ttl <= timedelta(seconds=0):
-        raise ValueError(
-            f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds."
-        )
-
-
 class CouchbaseChatMessageHistory(BaseChatMessageHistory):
     """Couchbase Chat Message History
     Chat message history that uses Couchbase as the storage
     """
-
-    def _check_bucket_exists(self) -> bool:
-        """Check if the bucket exists in the linked Couchbase cluster"""
-        bucket_manager = self._cluster.buckets()
-        try:
-            bucket_manager.get_bucket(self._bucket_name)
-            return True
-        except Exception:
-            return False
-
-    def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
-        scope_collection_map: Dict[str, Any] = {}
-
-        # Get a list of all scopes in the bucket
-        for scope in self._bucket.collections().get_all_scopes():
-            scope_collection_map[scope.name] = []
-
-            # Get a list of all the collections in the scope
-            for collection in scope.collections:
-                scope_collection_map[scope.name].append(collection.name)
-
-        # Check if the scope exists
-        if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
-                f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
-            )
-
-        # Check if the collection exists in the scope
-        if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
-                f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket "
-                f"{self._bucket_name}"
-            )
-
-        return True
 
     def __init__(
         self,
@@ -121,10 +78,10 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         self._ttl = None
 
         # Check if the bucket exists
-        if not self._check_bucket_exists():
+        if not check_bucket_exists(cluster, bucket_name):
             raise ValueError(
-                f"Bucket {self._bucket_name} does not exist. "
-                " Please create the bucket before searching."
+                f"Bucket {bucket_name} does not exist. "
+                "Please create the bucket before searching."
             )
 
         try:
@@ -138,7 +95,9 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        self._check_scope_and_collection_exists()
+        check_scope_and_collection_exists(
+            self._bucket, scope_name, collection_name, bucket_name
+        )
 
         self._session_id_key = session_id_key
         self._message_key = message_key
@@ -147,7 +106,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         self._ts_key = DEFAULT_TS_KEY
 
         if ttl is not None:
-            _validate_ttl(ttl)
+            validate_ttl(ttl)
             self._ttl = ttl
 
         # Create an index if it does not exist if requested
