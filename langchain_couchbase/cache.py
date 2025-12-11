@@ -11,7 +11,7 @@ import hashlib
 import json
 import logging
 from datetime import timedelta
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from couchbase.cluster import Cluster
 from couchbase.search import MatchQuery
@@ -51,7 +51,7 @@ def _dumps_generations(generations: RETURN_VAL_TYPE) -> str:
     return json.dumps([dumps(_item) for _item in generations])
 
 
-def _loads_generations(generations_str: str) -> Union[RETURN_VAL_TYPE, None]:
+def _loads_generations(generations_str: str) -> Optional[RETURN_VAL_TYPE]:
     """
     Deserialization of a string into a generic RETURN_VAL_TYPE
     (i.e. a sequence of `Generation`).
@@ -154,7 +154,7 @@ class CouchbaseCache(BaseCache):
         scope_name: str,
         collection_name: str,
         ttl: Optional[timedelta] = None,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         """Initialize the Couchbase LLM Cache
         Args:
@@ -198,10 +198,7 @@ class CouchbaseCache(BaseCache):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        self._check_scope_and_collection_exists()
 
         # Check if the time to live is provided and valid
         if ttl is not None:
@@ -317,10 +314,7 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        self._check_scope_and_collection_exists()
 
         self.score_threshold = score_threshold
 

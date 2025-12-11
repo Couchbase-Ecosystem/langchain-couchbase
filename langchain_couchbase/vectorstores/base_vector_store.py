@@ -85,19 +85,15 @@ class BaseCouchbaseVectorStore(VectorStore):
         Initialize the Couchbase Base Vector Store for data input and output.
 
         Args:
-
             cluster (Cluster): couchbase cluster object with active connection.
             bucket_name (str): name of bucket to store documents in.
             scope_name (str): name of scope in the bucket to store documents in.
             collection_name (str): name of collection in the scope to store documents in
             embedding (Embeddings): embedding function to use.
-            index_name (str): name of the Search index to use.
             text_key (optional[str]): key in document to use as text.
                 Set to text by default.
             embedding_key (optional[str]): key in document to use for the embeddings.
                 Set to embedding by default.
-            scoped_index (optional[bool]): specify whether the index is a scoped index.
-                Set to True by default.
         """
         if not isinstance(cluster, Cluster):
             raise ValueError(
@@ -144,10 +140,7 @@ class BaseCouchbaseVectorStore(VectorStore):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        self._check_scope_and_collection_exists()
 
     def add_texts(
         self,
