@@ -23,14 +23,15 @@ DEFAULT_INDEX_NAME = "LANGCHAIN_CHAT_HISTORY"
 DEFAULT_BATCH_SIZE = 100
 
 
-def _validate_ttl(ttl: Optional[timedelta]) -> None:
+def _validate_ttl(ttl: Optional[timedelta]) -> bool:
     """Validate the time to live"""
     if not isinstance(ttl, timedelta):
-        raise ValueError(f"ttl should be of type timedelta but was {type(ttl)}.")
+        logger.debug(f"ttl should be of type timedelta but was {type(ttl)}.")
+        return False
     if ttl <= timedelta(seconds=0):
-        raise ValueError(
-            f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds."
-        )
+        logger.debug(f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds.")
+        return False
+    return True
 
 
 class CouchbaseChatMessageHistory(BaseChatMessageHistory):
@@ -48,8 +49,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             return False
 
     def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
+        """Check if the scope and collection exists in the linked Couchbase bucket"""
         scope_collection_map: Dict[str, Any] = {}
 
         # Get a list of all scopes in the bucket
@@ -62,18 +62,22 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
 
         # Check if the scope exists
         if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
+            logger.error(
                 f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
+                f"bucket {self._bucket_name}",
+                exc_info=True,
             )
+            return False
 
         # Check if the collection exists in the scope
         if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
+            logger.error(
                 f"Collection {self._collection_name} not found in scope "
                 f"{self._scope_name} in Couchbase bucket "
-                f"{self._bucket_name}"
+                f"{self._bucket_name}",
+                exc_info=True,
             )
+            return False
 
         return True
 
@@ -106,6 +110,9 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             create_index (bool): create an index if True. Set to True by default.
             ttl (timedelta): time to live for the documents in the collection.
                 When set, the documents are automatically deleted after the ttl expires.
+
+        Raises:
+            ValueError: If cluster, bucket, scope, collection, index creation, or ttl configuration is invalid.
         """
         if not isinstance(cluster, Cluster):
             raise ValueError(
@@ -132,21 +139,16 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             self._scope = self._bucket.scope(self._scope_name)
             self._collection = self._scope.collection(self._collection_name)
         except Exception as e:
-            logger.error(
-                "Error connecting to Couchbase bucket, scope, or collection.",
-                exc_info=True,
-            )
             raise ValueError(
                 "Error connecting to couchbase. "
                 "Please check the connection and credentials."
             ) from e
 
-        # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            logger.error("Scope or collection validation failed.", exc_info=True)
-            raise e
+        if not self._check_scope_and_collection_exists():
+            raise ValueError(
+                "Scope or collection configuration is invalid. "
+                "Check the previous error logs for available scopes and collections."
+            )
 
         self._session_id_key = session_id_key
         self._message_key = message_key
@@ -155,7 +157,10 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         self._ts_key = DEFAULT_TS_KEY
 
         if ttl is not None:
-            _validate_ttl(ttl)
+            if not _validate_ttl(ttl):
+                raise ValueError(
+                    "Invalid ttl value. ttl should be a positive timedelta object."
+                )
             self._ttl = ttl
 
         # Create an index if it does not exist if requested
@@ -171,7 +176,9 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             try:
                 self._scope.query(index_creation_query).execute()
             except Exception as e:
-                logger.error("Error creating index.", exc_info=True)
+                raise ValueError(
+                    f"Failed creating index for chat history: {e}"
+                ) from e
 
     def add_message(self, message: BaseMessage) -> None:
         """Add a message to the cache"""
@@ -202,7 +209,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                     },
                 )
         except Exception as e:
-            logger.error("Error adding message.", exc_info=True)
+            logger.error("Unable to add message with error: %s", e, exc_info=True)
+            return
 
     def add_messages(self, messages: Sequence[BaseMessage]) -> None:
         """Add messages to the cache in a batched manner"""
@@ -233,7 +241,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                 else:
                     self._collection.insert_multi(insert_batch)
         except Exception as e:
-            logger.error("Error adding messages.", exc_info=True)
+            logger.error("Unable to add messages with error: %s", e, exc_info=True)
+            return
 
     def clear(self) -> None:
         """Clear the cache"""
@@ -245,7 +254,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         try:
             self._scope.query(clear_query, session_id=self._session_id).execute()
         except Exception as e:
-            logger.error("Error clearing cache.", exc_info=True)
+            logger.error("Unable to clear cache with error: %s", e, exc_info=True)
+            return
 
     @property
     def messages(self) -> List[BaseMessage]:
@@ -262,7 +272,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             for document in result:
                 message_items.append(document[f"{self._message_key}"])
         except Exception as e:
-            logger.error("Error fetching messages.", exc_info=True)
+            logger.error("Unable to fetch messages with error: %s", e, exc_info=True)
+            return []
 
         return messages_from_dict(message_items)
 
@@ -270,5 +281,5 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
     def messages(self, messages: List[BaseMessage]) -> None:
         raise NotImplementedError(
             "Direct assignment to 'messages' is not allowed."
-            " Use the 'add_messages' instead."
+            " Use the 'add_messages' method instead."
         )

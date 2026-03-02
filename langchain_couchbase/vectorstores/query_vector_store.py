@@ -273,7 +273,6 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 f"CREATE PRIMARY INDEX IF NOT EXISTS ON {self._collection_name}"
             ).execute()
         except Exception as e:
-            logger.error("Primary index creation failed.", exc_info=True)
             raise ValueError(f"Primary index creation failed with error: {e}")
 
     def similarity_search(
@@ -379,8 +378,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 docs_with_score.append((doc, distance))
 
         except Exception as e:
-            logger.error("Similarity search query execution failed.", exc_info=True)
-            raise ValueError(f"Search failed with error: {e}")
+            logger.error("Similarity search query execution failed with error: %s", e, exc_info=True)
+            return []
 
         return docs_with_score
 
@@ -477,16 +476,17 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 Defaults to None.
         """  # noqa: E501
         if not isinstance(index_type, IndexType):
-            raise ValueError(
-                f"Invalid index type. Got {type(index_type)}. Expected {IndexType}"
+            logger.error(
+                f"Invalid index type: {index_type}. Expected an instance of IndexType Enum.",
+                exc_info=True,
             )
+            return
 
         similarity_metric = distance_metric or self._distance_metric
 
         if not index_description:
-            raise ValueError(
-                "Index description is required for creating Vector Query index."
-            )
+            logger.error("Index description is required for creating vector index.", exc_info=True)
+            return
 
         # Get the vector field for the index
         vector_field = vector_field or self._embedding_key
@@ -500,12 +500,13 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                     )
                 )
             except Exception as e:
-                logger.error("Failed to infer vector dimension from embeddings.", exc_info=True)
-                raise ValueError(
+                logger.error(
                     "Vector dimension is required for creating Query index. "
                     f"Unable to determine the dimension from the embedding object. "
-                    f"Error: {e}"
+                    f"Error: {e}",
+                    exc_info=True,
                 )
+                return
 
         # Create the index parameters for the index creation query
         index_params = {}
@@ -543,8 +544,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()
             except Exception as e:
-                logger.error("Hyperscale vector index creation failed.", exc_info=True)
-                raise ValueError(f"Index creation failed with error: {e}")
+                logger.error(f"Index creation failed with error: {e}", exc_info=True)
+                return
 
         elif index_type == IndexType.COMPOSITE:
             if not index_name:
@@ -559,8 +560,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()
             except Exception as e:
-                logger.error("Composite vector index creation failed.", exc_info=True)
-                raise ValueError(f"Index creation failed with error: {e}")
+                logger.error(f"Index creation failed with error: {e}", exc_info=True)
+                return
 
     @classmethod
     def _from_kwargs(

@@ -46,8 +46,7 @@ class BaseCouchbaseVectorStore(VectorStore):
             return False
 
     def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
+        """Check if the scope and collection exists in the linked Couchbase bucket"""
         scope_collection_map: Dict[str, Any] = {}
 
         # Get a list of all scopes in the bucket
@@ -60,17 +59,22 @@ class BaseCouchbaseVectorStore(VectorStore):
 
         # Check if the scope exists
         if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
-                f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
+            logger.error(
+                f"Scope {self._scope_name} not found in Couchbase bucket {self._bucket_name}. "
+                f"Available scopes: {list(scope_collection_map.keys())}",
+                exc_info=True
             )
+            return False
 
         # Check if the collection exists in the scope
         if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
-                f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket {self._bucket_name}"
+            logger.error(
+                f"Collection {self._collection_name} not found in scope {self._scope_name} "
+                f"in Couchbase bucket {self._bucket_name}. "
+                f"Available collections: {scope_collection_map[self._scope_name]}",
+                exc_info=True
             )
+            return False
 
         return True
 
@@ -142,21 +146,16 @@ class BaseCouchbaseVectorStore(VectorStore):
             self._scope = self._bucket.scope(self._scope_name)
             self._collection = self._scope.collection(self._collection_name)
         except Exception as e:
-            logger.error(
-                "Error connecting to Couchbase bucket, scope, or collection.",
-                exc_info=True,
-            )
             raise ValueError(
                 "Error connecting to couchbase. "
                 "Please check the connection and credentials."
             ) from e
 
-        # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            logger.error("Scope or collection validation failed.", exc_info=True)
-            raise e
+        if not self._check_scope_and_collection_exists():
+            raise ValueError(
+                "Scope or collection configuration is invalid. "
+                "Check the previous error logs for available scopes and collections."
+            )
 
     def add_texts(
         self,
@@ -226,11 +225,18 @@ class BaseCouchbaseVectorStore(VectorStore):
                 if result.all_ok:
                     doc_ids.extend(batch_docs.keys())
                 else:
-                    logger.error("Failed to insert one or more documents in batch.")
-                    raise ValueError("Failed to insert documents.", result.exceptions)
+                    logger.error(
+                        "Failed to add texts to the vector store with errors: %s",
+                        result.exceptions,
+                        exc_info=True,
+                    )
+                    return []
             except DocumentExistsException as e:
-                logger.error("Document already exists during upsert_multi.", exc_info=True)
-                raise ValueError(f"Document already exists: {e}")
+                logger.error("texts already exist in the vector store", exc_info=True)
+                return []
+            except Exception as e:
+                logger.error("Unable to add texts to the vector store with error: %s", e, exc_info=True)
+                return []
 
         return doc_ids
 
@@ -247,7 +253,8 @@ class BaseCouchbaseVectorStore(VectorStore):
         """
 
         if ids is None:
-            raise ValueError("No document ids provided to delete.")
+            logger.error("No document ids provided for deletion.", exc_info=True)
+            return False
 
         batch_size = kwargs.get("batch_size", self.DEFAULT_BATCH_SIZE)
         deletion_status = True
@@ -257,10 +264,9 @@ class BaseCouchbaseVectorStore(VectorStore):
             batch = ids[i : i + batch_size]
             try:
                 result = self._collection.remove_multi(batch)
-            except DocumentNotFoundException as e:
+            except Exception as e:
                 deletion_status = False
-                logger.error("Document not found during remove_multi.", exc_info=True)
-                raise ValueError(f"Document not found: {e}")
+                logger.error("Unable to perform deletion with error: %s", e, exc_info=True)
 
             deletion_status &= result.all_ok
 

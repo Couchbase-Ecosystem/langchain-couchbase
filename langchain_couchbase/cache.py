@@ -90,14 +90,15 @@ def _loads_generations(generations_str: str) -> Union[RETURN_VAL_TYPE, None]:
         return None
 
 
-def _validate_ttl(ttl: Optional[timedelta]) -> None:
+def _validate_ttl(ttl: Optional[timedelta]) -> bool:
     """Validate the time to live"""
     if not isinstance(ttl, timedelta):
-        raise ValueError(f"ttl should be of type timedelta but was {type(ttl)}.")
+        logger.debug(f"ttl should be of type timedelta but was {type(ttl)}.")
+        return False
     if ttl <= timedelta(seconds=0):
-        raise ValueError(
-            f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds."
-        )
+        logger.debug(f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds.")
+        return False
+    return True
 
 
 class CouchbaseCache(BaseCache):
@@ -119,8 +120,7 @@ class CouchbaseCache(BaseCache):
             return False
 
     def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
+        """Check if the scope and collection exists in the linked Couchbase bucket"""
         scope_collection_map: Dict[str, Any] = {}
 
         # Get a list of all scopes in the bucket
@@ -133,17 +133,21 @@ class CouchbaseCache(BaseCache):
 
         # Check if the scope exists
         if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
+            logger.error(
                 f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
+                f"bucket {self._bucket_name}",
+                exc_info=True
             )
+            return False
 
         # Check if the collection exists in the scope
         if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
+            logger.error(
                 f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket {self._bucket_name}"
+                f"{self._scope_name} in Couchbase bucket {self._bucket_name}",
+                exc_info=True
             )
+            return False
 
         return True
 
@@ -165,6 +169,9 @@ class CouchbaseCache(BaseCache):
                 documents in.
             ttl (Optional[timedelta]): TTL or time for the document to live in the cache
                 After this time, the document will get deleted from the cache.
+
+        Raises:
+            ValueError: If cluster, bucket, scope, collection, or ttl configuration is invalid.
         """
         if not isinstance(cluster, Cluster):
             raise ValueError(
@@ -197,15 +204,18 @@ class CouchbaseCache(BaseCache):
                 "Please check the connection and credentials."
             ) from e
 
-        # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        if not self._check_scope_and_collection_exists():
+            raise ValueError(
+                "Scope or collection configuration is invalid. "
+                "Check the previous error logs for available scopes and collections."
+            )
 
         # Check if the time to live is provided and valid
         if ttl is not None:
-            _validate_ttl(ttl)
+            if not _validate_ttl(ttl):
+                raise ValueError(
+                    "Invalid ttl value. ttl should be a positive timedelta object."
+                )
             self._ttl = ttl
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
@@ -239,8 +249,9 @@ class CouchbaseCache(BaseCache):
                 )
             else:
                 self._collection.upsert(key=document_key, value=doc)
-        except Exception:
-            logger.error("Error updating cache")
+        except Exception as e:
+            logger.error("Unable to update cache with error: %s", e, exc_info=True)
+            return
 
     def clear(self, **kwargs: Any) -> None:
         """Clear the cache.
@@ -250,8 +261,9 @@ class CouchbaseCache(BaseCache):
         try:
             query = f"DELETE FROM `{self._collection_name}`"
             self._scope.query(query).execute()
-        except Exception:
-            logger.error("Error clearing cache. Please check if you have an index.")
+        except Exception as e:
+            logger.error("Unable to clear cache with error: %s", e, exc_info=True)
+            return
 
 
 class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
@@ -285,6 +297,9 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
             score_threshold (float): score threshold to use for filtering results.
             ttl (Optional[timedelta]): TTL or time for the document to live in the cache
                 After this time, the document will get deleted from the cache.
+
+        Raises:
+            ValueError: If cluster, bucket, scope, collection, index, or ttl configuration is invalid.
         """
         if not isinstance(cluster, Cluster):
             raise ValueError(
@@ -316,16 +331,19 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
                 "Please check the connection and credentials."
             ) from e
 
-        # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        if not self._check_scope_and_collection_exists():
+            raise ValueError(
+                "Scope or collection configuration is invalid. "
+                "Check the previous error logs for available scopes and collections."
+            )
 
         self.score_threshold = score_threshold
 
         if ttl is not None:
-            _validate_ttl(ttl)
+            if not _validate_ttl(ttl):
+                raise ValueError(
+                    "Invalid ttl value. ttl should be a positive timedelta object."
+                )
             self._ttl = ttl
 
         # Initialize the vector store
@@ -369,8 +387,9 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
                 ],
                 ttl=self._ttl,
             )
-        except Exception:
-            logger.error("Error updating cache")
+        except Exception as e:
+            logger.error("Unable to update cache with error: %s", e, exc_info=True)
+            return
 
     def clear(self, **kwargs: Any) -> None:
         """Clear the cache.
@@ -380,5 +399,6 @@ class CouchbaseSemanticCache(BaseCache, CouchbaseSearchVectorStore):
         try:
             query = f"DELETE FROM `{self._collection_name}`"
             self._scope.query(query).execute()
-        except Exception:
-            logger.error("Error clearing cache. Please check if you have an index.")
+        except Exception as e:
+            logger.error("Unable to clear cache with error: %s", e, exc_info=True)
+            return

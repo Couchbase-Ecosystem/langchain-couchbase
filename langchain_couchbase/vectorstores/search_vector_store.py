@@ -186,36 +186,30 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
     """  # noqa: E501
 
     def _check_index_exists(self) -> bool:
-        """Check if the Search index exists in the linked Couchbase cluster
-        Raises a ValueError if the index does not exist"""
+        """Check if the Search index exists in the linked Couchbase cluster"""
         if self._scoped_index:
             all_indexes = [
                 index.name for index in self._scope.search_indexes().get_all_indexes()
             ]
             if self._index_name not in all_indexes:
-                raise ValueError(
-                    f"Index {self._index_name} does not exist. "
-                    " Please create the index before searching."
-                )
+                logger.info(f"Index {self._index_name} does not exist. ")
+                return False
         else:
             all_indexes = [
                 index.name for index in self._cluster.search_indexes().get_all_indexes()
             ]
             if self._index_name not in all_indexes:
-                raise ValueError(
-                    f"Index {self._index_name} does not exist. "
-                    " Please create the index before searching."
-                )
+                logger.info(f"Index {self._index_name} does not exist. ")
+                return False
 
         return True
     
     def _check_filter(self, filter: SearchQuery) -> bool:
-        """Check if the filter is a valid SearchQuery object.
-        Raises a ValueError if the filter is not valid."""
+        """Check if the filter is a valid SearchQuery object."""
         if isinstance(filter, SearchQuery):
             return True
-        raise ValueError(f"filter must be a SearchQuery object, got"
-                         f"{type(filter)}")
+        logger.info(f"Invalid filter type: {type(filter)}. Filter must be a SearchQuery object.")
+        return False
 
     def __init__(
         self,
@@ -264,12 +258,10 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         self._index_name = index_name
         self._scoped_index = scoped_index
 
-        # Check if the index exists. Throws ValueError if it doesn't
-        try:
-            self._check_index_exists()
-        except Exception as e:
-            logger.error("Search index validation failed.", exc_info=True)
-            raise e
+        if not self._check_index_exists():
+            raise ValueError(
+                f"Search index '{self._index_name}' does not exist for the configured scope/cluster."
+            )
 
     def _format_metadata(self, row_fields: Dict[str, Any]) -> Dict[str, Any]:
         """Helper method to format the metadata from the Couchbase Search API.
@@ -413,12 +405,12 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
 
         fields = kwargs.get("fields", ["*"])
 
-        if filter:
-            try:
-                self._check_filter(filter)
-            except Exception as e:
-                logger.error("Invalid SearchQuery filter provided.", exc_info=True)
-                raise ValueError(f"Invalid filter: {e}")
+        if filter and not self._check_filter(filter):
+            logger.error(
+                "Invalid filter provided. Filter must be a SearchQuery object.",
+                exc_info=True,
+            )
+            return []
 
         # Document text field needs to be returned from the search
         if fields != ["*"] and self._text_key not in fields:
@@ -471,14 +463,16 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                     doc = Document(id=id, page_content=text, metadata=metadata)
                     docs_with_score.append((doc, score))
                 else:
-                    raise ValueError(
+                    logger.error(
                         "Search results do not contain the fields from the document. "
                         "Please check if the Search index contains the required fields:"
-                        f"{self._text_key}"
+                        f"{self._text_key}",
+                        exc_info=True,
                     )
+                    return []
         except Exception as e:
-            logger.error("Vector search execution failed.", exc_info=True)
-            raise ValueError(f"Search failed with error: {e}")
+            logger.error("Vector search execution failed with error: %s", e, exc_info=True)
+            return []
 
         return docs_with_score
 
