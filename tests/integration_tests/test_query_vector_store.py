@@ -101,6 +101,19 @@ def delete_index(
     )
     cluster.query(query).execute()
 
+
+def delete_index_if_exists(
+    cluster: Any,
+    bucket_name: str,
+    scope_name: str,
+    collection_name: str,
+    index_name: str,
+) -> None:
+    """Drop the given index from the specified collection if it exists."""
+    index = get_index(cluster, index_name)
+    if index is not None:
+        delete_index(cluster, bucket_name, scope_name, collection_name, index_name)
+
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
 )
@@ -110,6 +123,21 @@ class TestCouchbaseQueryVectorStore:
         cluster = get_cluster()
         # Delete all the documents in the collection
         delete_documents(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME)
+        # Delete test indexes that may linger from previous/interrupted runs
+        index_names = [
+            "composite_test_index",
+            "hyperscale_test_index",
+            "langchain_composite_query_index",
+            "langchain_hyperscale_query_index",
+        ]
+        for index_name in index_names:
+            delete_index_if_exists(
+                cluster,
+                BUCKET_NAME,
+                SCOPE_NAME,
+                COLLECTION_NAME,
+                index_name,
+            )
 
     def test_from_documents(self, cluster: Any) -> None:
         """Test end to end search using a list of documents."""
@@ -597,9 +625,13 @@ class TestCouchbaseQueryVectorStore:
         assert "(`metadata`.`text`)" in index["index_key"]
 
         # Test the index
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["text"] == "a"
+        # Hyperscale IVF/SQ8 with low custom probe/train settings can be approximate,
+        # so validate recall in top-k instead of strict top-1 rank.
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("text") == "a"
+            for doc in output
+        )
 
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
@@ -663,9 +695,13 @@ class TestCouchbaseQueryVectorStore:
         assert f"`{vectorstore._text_key}`" not in index["index_key"]
 
         # Test the index
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["text"] == "a"
+        # Hyperscale IVF/SQ8 with low custom probe/train settings can be approximate,
+        # so validate recall in top-k instead of strict top-1 rank.
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("text") == "a"
+            for doc in output
+        )
     
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
