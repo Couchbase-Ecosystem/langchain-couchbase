@@ -23,7 +23,7 @@ from langchain_core.outputs import Generation
 
 from langchain_couchbase.vectorstores import CouchbaseSearchVectorStore
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 def _hash(_input: str) -> str:

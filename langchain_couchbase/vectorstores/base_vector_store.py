@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import (
     TYPE_CHECKING,
@@ -18,6 +19,9 @@ from langchain_core.vectorstores import VectorStore
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseCouchbaseVectorStore(VectorStore):
@@ -138,6 +142,10 @@ class BaseCouchbaseVectorStore(VectorStore):
             self._scope = self._bucket.scope(self._scope_name)
             self._collection = self._scope.collection(self._collection_name)
         except Exception as e:
+            logger.error(
+                "Error connecting to Couchbase bucket, scope, or collection.",
+                exc_info=True,
+            )
             raise ValueError(
                 "Error connecting to couchbase. "
                 "Please check the connection and credentials."
@@ -147,6 +155,7 @@ class BaseCouchbaseVectorStore(VectorStore):
         try:
             self._check_scope_and_collection_exists()
         except Exception as e:
+            logger.error("Scope or collection validation failed.", exc_info=True)
             raise e
 
     def add_texts(
@@ -217,8 +226,10 @@ class BaseCouchbaseVectorStore(VectorStore):
                 if result.all_ok:
                     doc_ids.extend(batch_docs.keys())
                 else:
+                    logger.error("Failed to insert one or more documents in batch.")
                     raise ValueError("Failed to insert documents.", result.exceptions)
             except DocumentExistsException as e:
+                logger.error("Document already exists during upsert_multi.", exc_info=True)
                 raise ValueError(f"Document already exists: {e}")
 
         return doc_ids
@@ -248,6 +259,7 @@ class BaseCouchbaseVectorStore(VectorStore):
                 result = self._collection.remove_multi(batch)
             except DocumentNotFoundException as e:
                 deletion_status = False
+                logger.error("Document not found during remove_multi.", exc_info=True)
                 raise ValueError(f"Document not found: {e}")
 
             deletion_status &= result.all_ok

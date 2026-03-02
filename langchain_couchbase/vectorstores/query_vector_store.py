@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+import logging
 from typing import Any, List, Optional, Tuple, Type
 
 from couchbase.cluster import Cluster
@@ -8,6 +9,9 @@ from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
 from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVectorStore
+
+
+logger = logging.getLogger(__name__)
 
 
 class DistanceStrategy(Enum):
@@ -269,6 +273,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 f"CREATE PRIMARY INDEX IF NOT EXISTS ON {self._collection_name}"
             ).execute()
         except Exception as e:
+            logger.error("Primary index creation failed.", exc_info=True)
             raise ValueError(f"Primary index creation failed with error: {e}")
 
     def similarity_search(
@@ -374,6 +379,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 docs_with_score.append((doc, distance))
 
         except Exception as e:
+            logger.error("Similarity search query execution failed.", exc_info=True)
             raise ValueError(f"Search failed with error: {e}")
 
         return docs_with_score
@@ -494,6 +500,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                     )
                 )
             except Exception as e:
+                logger.error("Failed to infer vector dimension from embeddings.", exc_info=True)
                 raise ValueError(
                     "Vector dimension is required for creating Query index. "
                     f"Unable to determine the dimension from the embedding object. "
@@ -536,6 +543,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()
             except Exception as e:
+                logger.error("Hyperscale vector index creation failed.", exc_info=True)
                 raise ValueError(f"Index creation failed with error: {e}")
 
         elif index_type == IndexType.COMPOSITE:
@@ -551,6 +559,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()
             except Exception as e:
+                logger.error("Composite vector index creation failed.", exc_info=True)
                 raise ValueError(f"Index creation failed with error: {e}")
 
     @classmethod

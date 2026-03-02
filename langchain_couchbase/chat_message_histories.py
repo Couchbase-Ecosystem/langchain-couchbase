@@ -132,6 +132,10 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             self._scope = self._bucket.scope(self._scope_name)
             self._collection = self._scope.collection(self._collection_name)
         except Exception as e:
+            logger.error(
+                "Error connecting to Couchbase bucket, scope, or collection.",
+                exc_info=True,
+            )
             raise ValueError(
                 "Error connecting to couchbase. "
                 "Please check the connection and credentials."
@@ -141,6 +145,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         try:
             self._check_scope_and_collection_exists()
         except Exception as e:
+            logger.error("Scope or collection validation failed.", exc_info=True)
             raise e
 
         self._session_id_key = session_id_key
@@ -166,7 +171,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             try:
                 self._scope.query(index_creation_query).execute()
             except Exception as e:
-                logger.error("Error creating index: ", e)
+                logger.error("Error creating index.", exc_info=True)
 
     def add_message(self, message: BaseMessage) -> None:
         """Add a message to the cache"""
@@ -197,7 +202,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                     },
                 )
         except Exception as e:
-            logger.error("Error adding message: ", e)
+            logger.error("Error adding message.", exc_info=True)
 
     def add_messages(self, messages: Sequence[BaseMessage]) -> None:
         """Add messages to the cache in a batched manner"""
@@ -228,7 +233,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                 else:
                     self._collection.insert_multi(insert_batch)
         except Exception as e:
-            logger.error("Error adding messages: ", e)
+            logger.error("Error adding messages.", exc_info=True)
 
     def clear(self) -> None:
         """Clear the cache"""
@@ -240,7 +245,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         try:
             self._scope.query(clear_query, session_id=self._session_id).execute()
         except Exception as e:
-            logger.error("Error clearing cache: ", e)
+            logger.error("Error clearing cache.", exc_info=True)
 
     @property
     def messages(self) -> List[BaseMessage]:
@@ -257,7 +262,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             for document in result:
                 message_items.append(document[f"{self._message_key}"])
         except Exception as e:
-            logger.error("Error fetching messages: ", e)
+            logger.error("Error fetching messages.", exc_info=True)
 
         return messages_from_dict(message_items)
 

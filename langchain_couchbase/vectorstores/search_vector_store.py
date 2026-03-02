@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 import couchbase.search as search
@@ -11,6 +12,9 @@ from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
 from langchain_couchbase.vectorstores.base_vector_store import BaseCouchbaseVectorStore
+
+
+logger = logging.getLogger(__name__)
 
 
 class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
@@ -264,6 +268,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
         try:
             self._check_index_exists()
         except Exception as e:
+            logger.error("Search index validation failed.", exc_info=True)
             raise e
 
     def _format_metadata(self, row_fields: Dict[str, Any]) -> Dict[str, Any]:
@@ -412,6 +417,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
             try:
                 self._check_filter(filter)
             except Exception as e:
+                logger.error("Invalid SearchQuery filter provided.", exc_info=True)
                 raise ValueError(f"Invalid filter: {e}")
 
         # Document text field needs to be returned from the search
@@ -471,6 +477,7 @@ class CouchbaseSearchVectorStore(BaseCouchbaseVectorStore):
                         f"{self._text_key}"
                     )
         except Exception as e:
+            logger.error("Vector search execution failed.", exc_info=True)
             raise ValueError(f"Search failed with error: {e}")
 
         return docs_with_score
