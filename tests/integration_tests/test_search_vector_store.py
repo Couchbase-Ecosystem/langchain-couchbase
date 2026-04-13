@@ -1,7 +1,9 @@
 """Test Couchbase Search Vector Store functionality"""
 
+import json
 import os
 import time
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -19,7 +21,13 @@ SCOPE_NAME = os.getenv("COUCHBASE_SCOPE_NAME", "")
 COLLECTION_NAME = os.getenv("COUCHBASE_COLLECTION_NAME", "")
 USERNAME = os.getenv("COUCHBASE_USERNAME", "")
 PASSWORD = os.getenv("COUCHBASE_PASSWORD", "")
-INDEX_NAME = os.getenv("COUCHBASE_INDEX_NAME", "")
+RAW_INDEX_NAME = os.getenv("COUCHBASE_INDEX_NAME", "")
+INDEX_SHORT_NAME = RAW_INDEX_NAME.split(".")[-1] if RAW_INDEX_NAME else ""
+if INDEX_SHORT_NAME:
+    INDEX_NAME = f"{BUCKET_NAME}.{SCOPE_NAME}.{INDEX_SHORT_NAME}"
+else:
+    INDEX_NAME = ""
+USE_SCOPED_INDEX = False
 SLEEP_DURATION = 1
 
 
@@ -71,6 +79,32 @@ def delete_documents(
     cluster.query(query).execute()
 
 
+def ensure_vector_search_index(cluster: Any) -> None:
+    from couchbase.exceptions import QueryIndexAlreadyExistsException
+    from couchbase.management.search import SearchIndex
+
+    fixture_path = (
+        Path(__file__).resolve().parent.parent
+        / "fixtures"
+        / "search_index_definition_for_vector_store_testing.json"
+    )
+    definition = fixture_path.read_text()
+    definition = definition.replace("<<BUCKET_NAME>>", BUCKET_NAME)
+    definition = definition.replace("<<SCOPE_NAME>>", SCOPE_NAME)
+    definition = definition.replace("<<COLLECTION_NAME>>", COLLECTION_NAME)
+    definition = definition.replace("<<INDEX_NAME>>", INDEX_SHORT_NAME)
+
+    index_definition = json.loads(definition)
+    index_definition["name"] = INDEX_SHORT_NAME
+    try:
+        cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes().upsert_index(
+            SearchIndex.from_json(index_definition)
+        )
+    except QueryIndexAlreadyExistsException:
+        pass
+    time.sleep(SLEEP_DURATION)
+
+
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
 )
@@ -78,6 +112,7 @@ class TestCouchbaseSearchVectorStore:
     @classmethod
     def setup_method(self) -> None:
         cluster = get_cluster()
+        ensure_vector_search_index(cluster)
         # Delete all the documents in the collection
         delete_documents(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME)
 
@@ -98,6 +133,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -124,6 +160,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
 
@@ -154,6 +191,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -183,6 +221,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         results = vectorstore.add_texts(
@@ -219,6 +258,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         results = vectorstore.add_texts(
@@ -249,6 +289,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -279,6 +320,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -313,6 +355,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         ids = vectorstore.add_texts(texts, metadatas)
@@ -348,6 +391,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -387,6 +431,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         ids = vectorstore.add_texts(texts, metadatas=metadatas)
@@ -416,6 +461,12 @@ class TestCouchbaseSearchVectorStore:
             cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes()
         )
         INVALID_INDEX_NAME = "langchain-vs-testing-invalid-index"
+        INVALID_INDEX_NAME_FULL = f"{BUCKET_NAME}.{SCOPE_NAME}.{INVALID_INDEX_NAME}"
+        try:
+            scope_index_manager.drop_index(INVALID_INDEX_NAME)
+            time.sleep(SLEEP_DURATION)
+        except Exception:
+            pass
 
         index_definition = {
             "type": "fulltext-index",
@@ -476,10 +527,11 @@ class TestCouchbaseSearchVectorStore:
         invalid_index_vs = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
-            index_name=INVALID_INDEX_NAME,
+            index_name=INVALID_INDEX_NAME_FULL,
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=False,
         )
 
         ids = invalid_index_vs.add_texts(texts, metadatas=metadatas)
@@ -504,6 +556,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         output = vectorstore.similarity_search("foo", k=1)
@@ -520,6 +573,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -549,6 +603,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -581,6 +636,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -610,6 +666,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -646,6 +703,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -683,6 +741,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         # Wait for the documents to be indexed
@@ -717,6 +776,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
+            scoped_index=USE_SCOPED_INDEX,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
