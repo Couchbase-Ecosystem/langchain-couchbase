@@ -1,9 +1,9 @@
 {
 	"type": "fulltext-index",
-	"name": "<<SCOPE_NAME>>.<COLLECTION_NAME>.<INDEX_NAME>",
+	"name": "<<SCOPE_NAME>>.<<COLLECTION_NAME>>.<<INDEX_NAME>>",
 	"uuid": "3db854338520bbe4",
 	"sourceType": "gocbcore",
-	"sourceName": "b1",
+	"sourceName": "<<BUCKET_NAME>>",
 	"sourceUUID": "86387c2f5dcf6b70f5fe7689db9982d8",
 	"planParams": {
 		"maxPartitionsPerPIndex": 128,
