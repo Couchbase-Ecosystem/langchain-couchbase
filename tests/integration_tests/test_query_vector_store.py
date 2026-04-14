@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import pytest
 from langchain_core.documents import Document
@@ -92,12 +92,45 @@ def fetch_documents_by_ids(
     return {row["id"]: row for row in rows}
 
 
+def rerank_query_results(
+    cluster: Any,
+    query_text: str,
+    metric: DistanceStrategy,
+    *,
+    vector_field: str = "embedding",
+    text_field: str = "text",
+    metadata_field: str = "metadata",
+    nprobes: int = 2,
+    k: int = 3,
+) -> list[Document]:
+    query_embedding = ConsistentFakeEmbeddings().embed_query(query_text)
+    query = (
+        "SELECT META().id AS id, "
+        f"`{text_field}` AS text, "
+        f"`{metadata_field}` AS metadata, "
+        f"APPROX_VECTOR_DISTANCE(`{vector_field}`, {query_embedding}, "
+        f"'{metric.value.upper()}', {nprobes}, TRUE) AS distance "
+        f"FROM `{BUCKET_NAME}`.`{SCOPE_NAME}`.`{COLLECTION_NAME}` "
+        f"ORDER BY distance LIMIT {k}"
+    )
+    rows = cluster.query(query).execute()
+
+    docs = []
+    for row in rows:
+        metadata = cast(dict[str, Any], row.get("metadata", {}))
+        docs.append(
+            Document(
+                id=row.get("id", ""),
+                page_content=row.get("text", ""),
+                metadata=metadata,
+            )
+        )
+    return docs
+
+
 def get_index(cluster: Any, index_name: str) -> Optional[dict]:
     """Return index dict if exists, otherwise None."""
-    query = (
-        "SELECT * FROM system:indexes "
-        f"WHERE name = '{index_name}'"
-    )
+    query = f"SELECT * FROM system:indexes WHERE name = '{index_name}'"
     rows = cluster.query(query).execute()
     if len(rows) == 0:
         return None
@@ -112,11 +145,9 @@ def delete_index(
     index_name: str,
 ) -> None:
     """Drop the given index from the specified collection."""
-    query = (
-        f"DROP INDEX `{index_name}` on "
-        f"{bucket_name}.{scope_name}.{collection_name}"
-    )
+    query = f"DROP INDEX `{index_name}` on {bucket_name}.{scope_name}.{collection_name}"
     cluster.query(query).execute()
+
 
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
@@ -209,8 +240,7 @@ class TestCouchbaseQueryVectorStore:
 
         output = vectorstore.similarity_search("baz", k=3)
         assert any(
-            doc.page_content == "baz" and doc.metadata.get("c") == 3
-            for doc in output
+            doc.page_content == "baz" and doc.metadata.get("c") == 3 for doc in output
         )
 
     def test_add_texts_with_ids_and_metadatas(self, cluster: Any) -> None:
@@ -493,14 +523,18 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == "composite_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert index["with"]["dimension"] == 10  # ConsistentFakeEmbeddings default
         assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
         assert f"`{vectorstore._text_key}`" in index["index_key"]
-        
 
         # Test the index
         output = vectorstore.similarity_search("foo", k=3)
         assert any(doc.page_content == "foo" for doc in output)
+        reranked_output = rerank_query_results(
+            cluster, "foo", DistanceStrategy.EUCLIDEAN
+        )
+        assert len(reranked_output) >= 1
+        assert reranked_output[0].page_content == "foo"
 
         # Delete the index
         delete_index(
@@ -554,13 +588,18 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == "hyperscale_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert index["with"]["dimension"] == 10  # ConsistentFakeEmbeddings default
         assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
         assert f"`{vectorstore._text_key}`" not in index["index_key"]
 
         # Test the index
         output = vectorstore.similarity_search("bar", k=3)
         assert any(doc.page_content == "bar" for doc in output)
+        reranked_output = rerank_query_results(
+            cluster, "bar", DistanceStrategy.EUCLIDEAN
+        )
+        assert len(reranked_output) >= 1
+        assert reranked_output[0].page_content == "bar"
 
         # Delete the index
         delete_index(
@@ -587,20 +626,22 @@ class TestCouchbaseQueryVectorStore:
             collection_name=COLLECTION_NAME,
             distance_metric=DistanceStrategy.EUCLIDEAN,
         )
-        
+
         # Add some documents to the vector store
-        vectorstore.add_documents([
-            Document(page_content="foo", metadata={"text": "a"}),
-            Document(page_content="bar", metadata={"text": "b"}),
-            Document(page_content="baz", metadata={"text": "c"}),
-        ])
+        vectorstore.add_documents(
+            [
+                Document(page_content="foo", metadata={"text": "a"}),
+                Document(page_content="bar", metadata={"text": "b"}),
+                Document(page_content="baz", metadata={"text": "c"}),
+            ]
+        )
 
         # Create the index
         index_description = "IVF1,SQ8"
         index_name = "langchain_composite_query_index_custom"
         nprobes = 2
         trainlist = 2
-        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        default_dimension = 10  # ConsistentFakeEmbeddings default
         vector_field = "embedding"
         indexing_fields = ["metadata.text"]
 
@@ -619,7 +660,7 @@ class TestCouchbaseQueryVectorStore:
             index_trainlist=trainlist,
             vector_field=vector_field,
             vector_dimension=default_dimension,
-            fields=indexing_fields
+            fields=indexing_fields,
         )
 
         # Wait for the index to be created
@@ -632,7 +673,7 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == index_name
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["dimension"] == default_dimension
         assert index["with"]["scan_nprobes"] == nprobes
         assert index["with"]["train_list"] == trainlist
         assert f"`{vector_field}` VECTOR" in index["index_key"]
@@ -645,6 +686,12 @@ class TestCouchbaseQueryVectorStore:
             doc.page_content == "foo" and doc.metadata.get("text") == "a"
             for doc in output
         )
+        reranked_output = rerank_query_results(
+            cluster, "foo", DistanceStrategy.EUCLIDEAN, nprobes=nprobes, k=3
+        )
+        assert len(reranked_output) >= 1
+        assert reranked_output[0].page_content == "foo"
+        assert reranked_output[0].metadata.get("text") == "a"
 
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
@@ -668,18 +715,20 @@ class TestCouchbaseQueryVectorStore:
         )
 
         # Add some documents to the vector store
-        vectorstore.add_documents([
-            Document(page_content="foo", metadata={"text": "a"}),
-            Document(page_content="bar", metadata={"text": "b"}),
-            Document(page_content="baz", metadata={"text": "c"}),
-        ])
+        vectorstore.add_documents(
+            [
+                Document(page_content="foo", metadata={"text": "a"}),
+                Document(page_content="bar", metadata={"text": "b"}),
+                Document(page_content="baz", metadata={"text": "c"}),
+            ]
+        )
 
         # Create the index
         index_description = "IVF1,SQ8"
         index_name = "langchain_hyperscale_query_index_custom"
         nprobes = 2
         trainlist = 2
-        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        default_dimension = 10  # ConsistentFakeEmbeddings default
         vector_field = "embedding"
         indexing_fields = ["metadata.text"]
 
@@ -698,7 +747,7 @@ class TestCouchbaseQueryVectorStore:
             index_trainlist=trainlist,
             vector_field=vector_field,
             vector_dimension=default_dimension,
-            fields=indexing_fields
+            fields=indexing_fields,
         )
 
         # Wait for the index to be created
@@ -710,7 +759,7 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == index_name
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["dimension"] == default_dimension
         assert index["with"]["scan_nprobes"] == nprobes
         assert index["with"]["train_list"] == trainlist
         assert f"`{vector_field}` VECTOR" in index["index_key"]
@@ -722,7 +771,13 @@ class TestCouchbaseQueryVectorStore:
             doc.page_content == "foo" and doc.metadata.get("text") == "a"
             for doc in output
         )
-    
+        reranked_output = rerank_query_results(
+            cluster, "foo", DistanceStrategy.EUCLIDEAN, nprobes=nprobes, k=3
+        )
+        assert len(reranked_output) >= 1
+        assert reranked_output[0].page_content == "foo"
+        assert reranked_output[0].metadata.get("text") == "a"
+
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
         time.sleep(SLEEP_DURATION)
@@ -732,7 +787,7 @@ class TestCouchbaseQueryVectorStore:
 
     def test_custom_text_key_with_hyphen(self, cluster: Any) -> None:
         """Test that field names with hyphens work correctly.
-        
+
         This test verifies that using hyphenated field names like 'text-to-embed'
         for text_key and 'text-embedding' for embedding_key work correctly.
         Field names with special characters need proper escaping in N1QL queries.
@@ -766,8 +821,7 @@ class TestCouchbaseQueryVectorStore:
         # Test similarity search with hyphenated field names
         output = vectorstore.similarity_search("foo", k=3)
         assert any(
-            doc.page_content == "foo" and doc.metadata.get("a") == 1
-            for doc in output
+            doc.page_content == "foo" and doc.metadata.get("a") == 1 for doc in output
         )
 
     def test_from_texts_with_hyphenated_field_names(self, cluster: Any) -> None:
@@ -798,8 +852,7 @@ class TestCouchbaseQueryVectorStore:
 
         output = vectorstore.similarity_search("baz", k=3)
         assert any(
-            doc.page_content == "baz" and doc.metadata.get("c") == 3
-            for doc in output
+            doc.page_content == "baz" and doc.metadata.get("c") == 3 for doc in output
         )
 
     def test_hybrid_search_with_hyphenated_field_names(self, cluster: Any) -> None:

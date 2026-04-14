@@ -27,7 +27,6 @@ if INDEX_SHORT_NAME:
     INDEX_NAME = f"{BUCKET_NAME}.{SCOPE_NAME}.{INDEX_SHORT_NAME}"
 else:
     INDEX_NAME = ""
-USE_SCOPED_INDEX = False
 SLEEP_DURATION = 1
 
 
@@ -80,7 +79,6 @@ def delete_documents(
 
 
 def ensure_vector_search_index(cluster: Any) -> None:
-    from couchbase.exceptions import QueryIndexAlreadyExistsException
     from couchbase.management.search import SearchIndex
 
     fixture_path = (
@@ -96,12 +94,12 @@ def ensure_vector_search_index(cluster: Any) -> None:
 
     index_definition = json.loads(definition)
     index_definition["name"] = INDEX_SHORT_NAME
-    try:
+    scope_index_manager = cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes()
+    existing_indexes = {index.name for index in scope_index_manager.get_all_indexes()}
+    if INDEX_SHORT_NAME not in existing_indexes:
         cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes().upsert_index(
             SearchIndex.from_json(index_definition)
         )
-    except QueryIndexAlreadyExistsException:
-        pass
     time.sleep(SLEEP_DURATION)
 
 
@@ -133,7 +131,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -160,9 +158,8 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
-
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
@@ -191,7 +188,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -221,7 +218,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         results = vectorstore.add_texts(
@@ -258,7 +255,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         results = vectorstore.add_texts(
@@ -289,7 +286,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -320,7 +317,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -355,7 +352,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         ids = vectorstore.add_texts(texts, metadatas)
@@ -391,7 +388,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -431,7 +428,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         ids = vectorstore.add_texts(texts, metadatas=metadatas)
@@ -556,7 +553,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         output = vectorstore.similarity_search("foo", k=1)
@@ -573,7 +570,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -603,22 +600,24 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
         pre_filter = search.NumericRangeQuery(
-            field="metadata.page", min=0, max=2, 
-            inclusive_min=False, inclusive_max=False
+            field="metadata.page",
+            min=0,
+            max=2,
+            inclusive_min=False,
+            inclusive_max=False,
         )
 
         output = vectorstore.similarity_search("foo", k=3, filter=pre_filter)
         assert len(output) == 1
         assert output[0].page_content == "foo"
         assert output[0].metadata["page"] == 1
-
 
     def test_filter_on_text(self, cluster: Any) -> None:
         """Test filter on text field."""
@@ -636,7 +635,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -666,7 +665,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -683,8 +682,8 @@ class TestCouchbaseSearchVectorStore:
         assert len(output) == 2
         for result in output:
             assert (
-                result.metadata["topic"] == "apple" 
-                or result.metadata["topic"] == "banana" 
+                result.metadata["topic"] == "apple"
+                or result.metadata["topic"] == "banana"
             )
 
     def test_combined_filter_with_and_operator(self, cluster: Any) -> None:
@@ -694,7 +693,7 @@ class TestCouchbaseSearchVectorStore:
             Document(page_content="foo", metadata={"page": 2, "topic": "banana"}),
             Document(page_content="foo", metadata={"page": 3, "topic": "cherry"}),
         ]
-        
+
         vectorstore = CouchbaseSearchVectorStore.from_documents(
             documents,
             ConsistentFakeEmbeddings(),
@@ -703,7 +702,7 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -713,9 +712,12 @@ class TestCouchbaseSearchVectorStore:
         pre_filter = search.ConjunctionQuery(
             search.MatchQuery("apple", field="metadata.topic"),
             search.NumericRangeQuery(
-                field="metadata.page", min=1, max=2, 
-                inclusive_min=True, inclusive_max=True
-                ),
+                field="metadata.page",
+                min=1,
+                max=2,
+                inclusive_min=True,
+                inclusive_max=True,
+            ),
         )
 
         output = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
@@ -724,7 +726,6 @@ class TestCouchbaseSearchVectorStore:
         assert output[0].metadata["page"] == 1
         assert output[0].metadata["topic"] == "apple"
 
-
     def test_invalid_filter(self, cluster: Any) -> None:
         """Test invalid filter."""
         documents = [
@@ -732,7 +733,7 @@ class TestCouchbaseSearchVectorStore:
             Document(page_content="bar", metadata={"page": 2, "topic": "banana"}),
             Document(page_content="baz", metadata={"page": 3, "topic": "cherry"}),
         ]
-        
+
         vectorstore = CouchbaseSearchVectorStore.from_documents(
             documents,
             ConsistentFakeEmbeddings(),
@@ -741,22 +742,21 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
         # Invalid filter
-        pre_filter = {"term":"apple", "field":"metadata.topic"}
+        pre_filter = {"term": "apple", "field": "metadata.topic"}
 
         with pytest.raises(ValueError, match="Invalid filter"):
             _ = vectorstore.similarity_search("abc", k=3, filter=pre_filter)
 
-
     def test_filter_with_hybrid_search(self, cluster: Any) -> None:
         """Test filter with hybrid search."""
-        
+
         texts = [
             "foo",
             "foo",
@@ -776,7 +776,7 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=USE_SCOPED_INDEX,
+            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -789,15 +789,17 @@ class TestCouchbaseSearchVectorStore:
         hybrid_result = vectorstore.similarity_search_with_score(
             "foo",
             k=3,
-            search_options={"query": {"match": "index", "field": "metadata.section"},
-                            },
+            search_options={
+                "query": {"match": "index", "field": "metadata.section"},
+            },
         )
 
         hybrid_result_with_pre_filter = vectorstore.similarity_search(
             "foo",
             k=3,
-            search_options={"query": {"match": "index", "field": "metadata.section"},
-                            },
+            search_options={
+                "query": {"match": "index", "field": "metadata.section"},
+            },
             filter=search.TermQuery("index", field="metadata.section"),
         )
 
@@ -806,4 +808,3 @@ class TestCouchbaseSearchVectorStore:
         assert len(hybrid_result_with_pre_filter) == 1
         assert hybrid_result_with_pre_filter[0].metadata["section"] == "index"
         assert hybrid_result_with_pre_filter[0].metadata["page"] == 1
-        
