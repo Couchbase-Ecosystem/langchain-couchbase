@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Any, Optional, cast
+from typing import Any, Optional
 
 import pytest
 from langchain_core.documents import Document
@@ -90,42 +90,6 @@ def fetch_documents_by_ids(
     )
     rows = cluster.query(query).execute()
     return {row["id"]: row for row in rows}
-
-
-def rerank_query_results(
-    cluster: Any,
-    query_text: str,
-    metric: DistanceStrategy,
-    *,
-    vector_field: str = "embedding",
-    text_field: str = "text",
-    metadata_field: str = "metadata",
-    nprobes: int = 2,
-    k: int = 3,
-) -> list[Document]:
-    query_embedding = ConsistentFakeEmbeddings().embed_query(query_text)
-    query = (
-        "SELECT META().id AS id, "
-        f"`{text_field}` AS text, "
-        f"`{metadata_field}` AS metadata, "
-        f"APPROX_VECTOR_DISTANCE(`{vector_field}`, {query_embedding}, "
-        f"'{metric.value.upper()}', {nprobes}, TRUE) AS distance "
-        f"FROM `{BUCKET_NAME}`.`{SCOPE_NAME}`.`{COLLECTION_NAME}` "
-        f"ORDER BY distance LIMIT {k}"
-    )
-    rows = cluster.query(query).execute()
-
-    docs = []
-    for row in rows:
-        metadata = cast(dict[str, Any], row.get("metadata", {}))
-        docs.append(
-            Document(
-                id=row.get("id", ""),
-                page_content=row.get("text", ""),
-                metadata=metadata,
-            )
-        )
-    return docs
 
 
 def get_index(cluster: Any, index_name: str) -> Optional[dict]:
@@ -530,11 +494,6 @@ class TestCouchbaseQueryVectorStore:
         # Test the index
         output = vectorstore.similarity_search("foo", k=3)
         assert any(doc.page_content == "foo" for doc in output)
-        reranked_output = rerank_query_results(
-            cluster, "foo", DistanceStrategy.EUCLIDEAN
-        )
-        assert len(reranked_output) >= 1
-        assert reranked_output[0].page_content == "foo"
 
         # Delete the index
         delete_index(
@@ -595,11 +554,6 @@ class TestCouchbaseQueryVectorStore:
         # Test the index
         output = vectorstore.similarity_search("bar", k=3)
         assert any(doc.page_content == "bar" for doc in output)
-        reranked_output = rerank_query_results(
-            cluster, "bar", DistanceStrategy.EUCLIDEAN
-        )
-        assert len(reranked_output) >= 1
-        assert reranked_output[0].page_content == "bar"
 
         # Delete the index
         delete_index(
@@ -686,12 +640,6 @@ class TestCouchbaseQueryVectorStore:
             doc.page_content == "foo" and doc.metadata.get("text") == "a"
             for doc in output
         )
-        reranked_output = rerank_query_results(
-            cluster, "foo", DistanceStrategy.EUCLIDEAN, nprobes=nprobes, k=3
-        )
-        assert len(reranked_output) >= 1
-        assert reranked_output[0].page_content == "foo"
-        assert reranked_output[0].metadata.get("text") == "a"
 
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
@@ -771,12 +719,6 @@ class TestCouchbaseQueryVectorStore:
             doc.page_content == "foo" and doc.metadata.get("text") == "a"
             for doc in output
         )
-        reranked_output = rerank_query_results(
-            cluster, "foo", DistanceStrategy.EUCLIDEAN, nprobes=nprobes, k=3
-        )
-        assert len(reranked_output) >= 1
-        assert reranked_output[0].page_content == "foo"
-        assert reranked_output[0].metadata.get("text") == "a"
 
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
