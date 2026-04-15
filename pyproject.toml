@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "langchain-couchbase"
-version = "1.0.1"
+version = "1.0.2"
 description = "An integration package connecting Couchbase and LangChain"
 authors = ["Couchbase Developer Experience Team <devadvocates@couchbase.com>"]
 readme = "README.md"
@@ -22,7 +22,7 @@ ignore_missing_imports = "True"
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 langchain-core = "^1.0.7"
-couchbase = "^4.5.0"
+couchbase = ">=4.4.0,<4.6.0"
 langchain-classic = "^1.0.0"
 
 [tool.ruff.lint]

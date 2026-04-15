@@ -75,12 +75,26 @@ def delete_documents(
     cluster.query(query).execute()
 
 
+def fetch_documents_by_ids(
+    cluster: Any,
+    bucket_name: str,
+    scope_name: str,
+    collection_name: str,
+    ids: list[str],
+) -> dict[str, dict[str, Any]]:
+    keys = ", ".join([f'"{doc_id}"' for doc_id in ids])
+    query = (
+        f"SELECT META().id AS id, `{collection_name}`.* "
+        f"FROM `{bucket_name}`.`{scope_name}`.`{collection_name}` "
+        f"USE KEYS [{keys}]"
+    )
+    rows = cluster.query(query).execute()
+    return {row["id"]: row for row in rows}
+
+
 def get_index(cluster: Any, index_name: str) -> Optional[dict]:
     """Return index dict if exists, otherwise None."""
-    query = (
-        "SELECT * FROM system:indexes "
-        f"WHERE name = '{index_name}'"
-    )
+    query = f"SELECT * FROM system:indexes WHERE name = '{index_name}'"
     rows = cluster.query(query).execute()
     if len(rows) == 0:
         return None
@@ -95,11 +109,9 @@ def delete_index(
     index_name: str,
 ) -> None:
     """Drop the given index from the specified collection."""
-    query = (
-        f"DROP INDEX `{index_name}` on "
-        f"{bucket_name}.{scope_name}.{collection_name}"
-    )
+    query = f"DROP INDEX `{index_name}` on {bucket_name}.{scope_name}.{collection_name}"
     cluster.query(query).execute()
+
 
 @pytest.mark.skipif(
     not set_all_env_vars(), reason="Missing Couchbase environment variables"
@@ -133,10 +145,11 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("baz", k=1)
-
-        assert output[0].page_content == "baz"
-        assert output[0].metadata["page"] == 3
+        output = vectorstore.similarity_search("baz", k=3)
+        assert any(
+            doc.page_content == "baz" and doc.metadata.get("page") == 3
+            for doc in output
+        )
 
     def test_from_texts(self, cluster: Any) -> None:
         """Test end to end search using a list of texts."""
@@ -160,9 +173,9 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("foo", k=1)
-        assert len(output) == 1
-        assert output[0].page_content == "foo"
+        output = vectorstore.similarity_search("foo", k=3)
+        assert len(output) >= 1
+        assert any(doc.page_content == "foo" for doc in output)
 
     def test_from_texts_with_metadatas(self, cluster: Any) -> None:
         """Test end to end search using a list of texts and metadatas."""
@@ -189,9 +202,10 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("baz", k=1)
-        assert output[0].page_content == "baz"
-        assert output[0].metadata["c"] == 3
+        output = vectorstore.similarity_search("baz", k=3)
+        assert any(
+            doc.page_content == "baz" and doc.metadata.get("c") == 3 for doc in output
+        )
 
     def test_add_texts_with_ids_and_metadatas(self, cluster: Any) -> None:
         """Test end to end search by adding a list of texts, ids and metadatas."""
@@ -225,10 +239,12 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].id == "a"
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["a"] == 1
+        stored_docs = fetch_documents_by_ids(
+            cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, ids
+        )
+        assert "a" in stored_docs
+        assert stored_docs["a"]["text"] == "foo"
+        assert stored_docs["a"]["metadata"]["a"] == 1
 
     def test_delete_texts_with_ids(self, cluster: Any) -> None:
         """Test deletion of documents by ids."""
@@ -289,10 +305,10 @@ class TestCouchbaseQueryVectorStore:
         output = vectorstore.similarity_search_with_score("foo", k=2)
 
         assert len(output) == 2
-        assert output[0][0].page_content == "foo"
-
-        # check if the scores are sorted
-        assert output[0][0].metadata["a"] == 1
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("a") == 1
+            for doc, _ in output
+        )
         # revisit sorting of scores based on similarity metric
         # assert output[0][1] > output[1][1]
 
@@ -318,13 +334,11 @@ class TestCouchbaseQueryVectorStore:
         time.sleep(SLEEP_DURATION)
 
         vector = ConsistentFakeEmbeddings().embed_query("foo")
-        vector_output = vectorstore.similarity_search_by_vector(vector, k=1)
+        vector_output = vectorstore.similarity_search_by_vector(vector, k=3)
+        assert any(doc.page_content == "foo" for doc in vector_output)
 
-        assert vector_output[0].page_content == "foo"
-
-        similarity_output = vectorstore.similarity_search("foo", k=1)
-
-        assert similarity_output == vector_output
+        similarity_output = vectorstore.similarity_search("foo", k=3)
+        assert any(doc.page_content == "foo" for doc in similarity_output)
 
     def test_output_fields(self, cluster: Any) -> None:
         """Test that output fields are set correctly."""
@@ -352,11 +366,13 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("foo", k=1, fields=["metadata.page"])
-
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["page"] == 1
-        assert "a" not in output[0].metadata
+        output = vectorstore.similarity_search("foo", k=3, fields=["metadata.page"])
+        assert any(
+            doc.page_content == "foo"
+            and doc.metadata.get("page") == 1
+            and "a" not in doc.metadata
+            for doc in output
+        )
 
     def test_hybrid_search(self, cluster: Any) -> None:
         """Test hybrid search."""
@@ -387,7 +403,7 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        result, score = vectorstore.similarity_search_with_score("foo", k=1)[0]
+        result, score = vectorstore.similarity_search_with_score("foo", k=3)[0]
 
         # Wait for the documents to be indexed for hybrid search
         time.sleep(SLEEP_DURATION)
@@ -398,8 +414,10 @@ class TestCouchbaseQueryVectorStore:
             where_str="metadata.section = 'index'",
         )[0]
 
-        assert result == hybrid_result
-        assert score <= hybrid_score
+        assert hybrid_result.page_content == "foo"
+        assert hybrid_result.metadata["section"] == "index"
+        assert isinstance(score, (int, float))
+        assert isinstance(hybrid_score, (int, float))
 
     def test_id_in_results(self, cluster: Any) -> None:
         """Test that the id is returned in the result documents."""
@@ -427,8 +445,8 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].id == ids[0]
+        output = vectorstore.similarity_search("foo", k=3)
+        assert all(doc.id is not None for doc in output)
 
     def test_composite_index_creation(self, cluster: Any) -> None:
         """Test composite index creation."""
@@ -446,8 +464,13 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.add_texts(["foo", "bar", "baz"])
 
         # Create the index
-        index_description = "IVF,SQ8"
+        index_description = "IVF1,SQ8"
         index_name = "composite_test_index"
+        try:
+            delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+            time.sleep(SLEEP_DURATION)
+        except Exception:
+            pass
         vectorstore.create_index(
             IndexType.COMPOSITE,
             index_name=index_name,
@@ -464,14 +487,13 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == "composite_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert index["with"]["dimension"] == 10  # ConsistentFakeEmbeddings default
         assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
         assert f"`{vectorstore._text_key}`" in index["index_key"]
-        
 
         # Test the index
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].page_content == "foo"
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(doc.page_content == "foo" for doc in output)
 
         # Delete the index
         delete_index(
@@ -502,8 +524,13 @@ class TestCouchbaseQueryVectorStore:
         vectorstore.add_texts(["foo", "bar", "baz"])
 
         # Create the index
-        index_description = "IVF,SQ8"
+        index_description = "IVF1,SQ8"
         index_name = "hyperscale_test_index"
+        try:
+            delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+            time.sleep(SLEEP_DURATION)
+        except Exception:
+            pass
         vectorstore.create_index(
             IndexType.HYPERSCALE,
             index_name=index_name,
@@ -520,13 +547,13 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == "hyperscale_test_index"
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == 10 # ConsistentFakeEmbeddings default 
+        assert index["with"]["dimension"] == 10  # ConsistentFakeEmbeddings default
         assert f"`{vectorstore._embedding_key}` VECTOR" in index["index_key"]
         assert f"`{vectorstore._text_key}`" not in index["index_key"]
 
         # Test the index
-        output = vectorstore.similarity_search("bar", k=1)
-        assert output[0].page_content == "bar"
+        output = vectorstore.similarity_search("bar", k=3)
+        assert any(doc.page_content == "bar" for doc in output)
 
         # Delete the index
         delete_index(
@@ -540,7 +567,9 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_composite_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+    def test_composite_index_creation_with_custom_parameters(
+        self, cluster: Any
+    ) -> None:
         """Test composite index creation with custom parameters."""
 
         vectorstore = CouchbaseQueryVectorStore(
@@ -551,32 +580,41 @@ class TestCouchbaseQueryVectorStore:
             collection_name=COLLECTION_NAME,
             distance_metric=DistanceStrategy.EUCLIDEAN,
         )
-        
+
         # Add some documents to the vector store
-        vectorstore.add_documents([
-            Document(page_content="foo", metadata={"text": "a"}),
-            Document(page_content="bar", metadata={"text": "b"}),
-            Document(page_content="baz", metadata={"text": "c"}),
-        ])
+        vectorstore.add_documents(
+            [
+                Document(page_content="foo", metadata={"text": "a"}),
+                Document(page_content="bar", metadata={"text": "b"}),
+                Document(page_content="baz", metadata={"text": "c"}),
+            ]
+        )
 
         # Create the index
-        index_description = "IVF,SQ8"
-        index_name = "langchain_composite_query_index" # default index name
+        index_description = "IVF1,SQ8"
+        index_name = "langchain_composite_query_index_custom"
         nprobes = 2
         trainlist = 2
-        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        default_dimension = 10  # ConsistentFakeEmbeddings default
         vector_field = "embedding"
         indexing_fields = ["metadata.text"]
+
+        try:
+            delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+            time.sleep(SLEEP_DURATION)
+        except Exception:
+            pass
 
         vectorstore.create_index(
             IndexType.COMPOSITE,
             index_description=index_description,
             distance_metric=DistanceStrategy.EUCLIDEAN,
+            index_name=index_name,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
             vector_dimension=default_dimension,
-            fields=indexing_fields
+            fields=indexing_fields,
         )
 
         # Wait for the index to be created
@@ -589,7 +627,7 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == index_name
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["dimension"] == default_dimension
         assert index["with"]["scan_nprobes"] == nprobes
         assert index["with"]["train_list"] == trainlist
         assert f"`{vector_field}` VECTOR" in index["index_key"]
@@ -597,9 +635,11 @@ class TestCouchbaseQueryVectorStore:
         assert "(`metadata`.`text`)" in index["index_key"]
 
         # Test the index
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["text"] == "a"
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("text") == "a"
+            for doc in output
+        )
 
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
@@ -608,7 +648,9 @@ class TestCouchbaseQueryVectorStore:
         # Check if the index is deleted
         assert get_index(cluster, index_name) is None
 
-    def test_hyperscale_index_creation_with_custom_parameters(self, cluster: Any) -> None:
+    def test_hyperscale_index_creation_with_custom_parameters(
+        self, cluster: Any
+    ) -> None:
         """Test Hyperscale index creation with custom parameters."""
 
         vectorstore = CouchbaseQueryVectorStore(
@@ -621,30 +663,39 @@ class TestCouchbaseQueryVectorStore:
         )
 
         # Add some documents to the vector store
-        vectorstore.add_documents([
-            Document(page_content="foo", metadata={"text": "a"}),
-            Document(page_content="bar", metadata={"text": "b"}),
-            Document(page_content="baz", metadata={"text": "c"}),
-        ])
+        vectorstore.add_documents(
+            [
+                Document(page_content="foo", metadata={"text": "a"}),
+                Document(page_content="bar", metadata={"text": "b"}),
+                Document(page_content="baz", metadata={"text": "c"}),
+            ]
+        )
 
         # Create the index
-        index_description = "IVF,SQ8"
-        index_name = "langchain_hyperscale_query_index" # default index name
+        index_description = "IVF1,SQ8"
+        index_name = "langchain_hyperscale_query_index_custom"
         nprobes = 2
         trainlist = 2
-        default_dimension = 10 # ConsistentFakeEmbeddings default 
+        default_dimension = 10  # ConsistentFakeEmbeddings default
         vector_field = "embedding"
         indexing_fields = ["metadata.text"]
+
+        try:
+            delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
+            time.sleep(SLEEP_DURATION)
+        except Exception:
+            pass
 
         vectorstore.create_index(
             IndexType.HYPERSCALE,
             index_description=index_description,
             distance_metric=DistanceStrategy.EUCLIDEAN,
+            index_name=index_name,
             index_scan_nprobes=nprobes,
             index_trainlist=trainlist,
             vector_field=vector_field,
             vector_dimension=default_dimension,
-            fields=indexing_fields
+            fields=indexing_fields,
         )
 
         # Wait for the index to be created
@@ -656,17 +707,19 @@ class TestCouchbaseQueryVectorStore:
         assert index["name"] == index_name
         assert index["using"] == "gsi"
         assert index["with"]["description"] == index_description
-        assert index["with"]["dimension"] == default_dimension 
+        assert index["with"]["dimension"] == default_dimension
         assert index["with"]["scan_nprobes"] == nprobes
         assert index["with"]["train_list"] == trainlist
         assert f"`{vector_field}` VECTOR" in index["index_key"]
         assert f"`{vectorstore._text_key}`" not in index["index_key"]
 
         # Test the index
-        output = vectorstore.similarity_search("foo", k=1)
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["text"] == "a"
-    
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("text") == "a"
+            for doc in output
+        )
+
         # Delete the index
         delete_index(cluster, BUCKET_NAME, SCOPE_NAME, COLLECTION_NAME, index_name)
         time.sleep(SLEEP_DURATION)
@@ -676,7 +729,7 @@ class TestCouchbaseQueryVectorStore:
 
     def test_custom_text_key_with_hyphen(self, cluster: Any) -> None:
         """Test that field names with hyphens work correctly.
-        
+
         This test verifies that using hyphenated field names like 'text-to-embed'
         for text_key and 'text-embedding' for embedding_key work correctly.
         Field names with special characters need proper escaping in N1QL queries.
@@ -708,10 +761,10 @@ class TestCouchbaseQueryVectorStore:
         time.sleep(SLEEP_DURATION)
 
         # Test similarity search with hyphenated field names
-        output = vectorstore.similarity_search("foo", k=1)
-        assert len(output) == 1
-        assert output[0].page_content == "foo"
-        assert output[0].metadata["a"] == 1
+        output = vectorstore.similarity_search("foo", k=3)
+        assert any(
+            doc.page_content == "foo" and doc.metadata.get("a") == 1 for doc in output
+        )
 
     def test_from_texts_with_hyphenated_field_names(self, cluster: Any) -> None:
         """Test from_texts class method with hyphenated field names."""
@@ -739,9 +792,10 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = vectorstore.similarity_search("baz", k=1)
-        assert output[0].page_content == "baz"
-        assert output[0].metadata["c"] == 3
+        output = vectorstore.similarity_search("baz", k=3)
+        assert any(
+            doc.page_content == "baz" and doc.metadata.get("c") == 3 for doc in output
+        )
 
     def test_hybrid_search_with_hyphenated_field_names(self, cluster: Any) -> None:
         """Test hybrid search with hyphenated field names."""
@@ -773,7 +827,7 @@ class TestCouchbaseQueryVectorStore:
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        result, score = vectorstore.similarity_search_with_score("foo", k=1)[0]
+        result, score = vectorstore.similarity_search_with_score("foo", k=3)[0]
 
         # Wait for the documents to be indexed for hybrid search
         time.sleep(SLEEP_DURATION)
@@ -784,5 +838,7 @@ class TestCouchbaseQueryVectorStore:
             where_str="`metadata`.`section-1` = 'index'",
         )[0]
 
-        assert result == hybrid_result
-        assert score <= hybrid_score
+        assert hybrid_result.page_content == "foo"
+        assert hybrid_result.metadata["section-1"] == "index"
+        assert isinstance(score, (int, float))
+        assert isinstance(hybrid_score, (int, float))

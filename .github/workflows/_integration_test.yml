@@ -26,6 +26,8 @@ jobs:
     name: Python ${{ inputs.python-version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up Python ${{ inputs.python-version }} + Poetry ${{ env.POETRY_VERSION }}
         uses: "./.github/actions/poetry_setup"
@@ -67,3 +69,16 @@ jobs:
           # grep will exit non-zero if the target message isn't found,
           # and `set -e` above will cause the step to fail.
           echo "$STATUS" | grep 'nothing to commit, working tree clean'
+
+      - name: Notify Slack on scheduled run failure
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        shell: bash
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.DA_SLACK_WEBHOOK_URL }}
+          FAILED_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+            curl -sS -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d "{\"text\": \"Error occured in the CI tests ran for the langchain-couchbase -> $FAILED_RUN_URL\"}"
+          fi
