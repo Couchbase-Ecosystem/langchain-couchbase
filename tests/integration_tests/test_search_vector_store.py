@@ -21,12 +21,7 @@ SCOPE_NAME = os.getenv("COUCHBASE_SCOPE_NAME", "")
 COLLECTION_NAME = os.getenv("COUCHBASE_COLLECTION_NAME", "")
 USERNAME = os.getenv("COUCHBASE_USERNAME", "")
 PASSWORD = os.getenv("COUCHBASE_PASSWORD", "")
-RAW_INDEX_NAME = os.getenv("COUCHBASE_INDEX_NAME", "")
-INDEX_SHORT_NAME = RAW_INDEX_NAME.split(".")[-1] if RAW_INDEX_NAME else ""
-if INDEX_SHORT_NAME:
-    INDEX_NAME = f"{BUCKET_NAME}.{SCOPE_NAME}.{INDEX_SHORT_NAME}"
-else:
-    INDEX_NAME = ""
+INDEX_NAME = os.getenv("COUCHBASE_INDEX_NAME", "")
 SLEEP_DURATION = 1
 
 
@@ -90,13 +85,13 @@ def ensure_vector_search_index(cluster: Any) -> None:
     definition = definition.replace("<<BUCKET_NAME>>", BUCKET_NAME)
     definition = definition.replace("<<SCOPE_NAME>>", SCOPE_NAME)
     definition = definition.replace("<<COLLECTION_NAME>>", COLLECTION_NAME)
-    definition = definition.replace("<<INDEX_NAME>>", INDEX_SHORT_NAME)
+    definition = definition.replace("<<INDEX_NAME>>", INDEX_NAME)
 
     index_definition = json.loads(definition)
-    index_definition["name"] = INDEX_SHORT_NAME
+    index_definition["name"] = INDEX_NAME
     scope_index_manager = cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes()
     existing_indexes = {index.name for index in scope_index_manager.get_all_indexes()}
-    if INDEX_SHORT_NAME not in existing_indexes:
+    if INDEX_NAME not in existing_indexes:
         cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes().upsert_index(
             SearchIndex.from_json(index_definition)
         )
@@ -131,7 +126,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -158,7 +152,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -188,7 +181,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -218,7 +210,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         results = vectorstore.add_texts(
@@ -255,7 +246,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         results = vectorstore.add_texts(
@@ -286,7 +276,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -317,7 +306,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -352,7 +340,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         ids = vectorstore.add_texts(texts, metadatas)
@@ -388,7 +375,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
@@ -428,7 +414,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         ids = vectorstore.add_texts(texts, metadatas=metadatas)
@@ -458,7 +443,6 @@ class TestCouchbaseSearchVectorStore:
             cluster.bucket(BUCKET_NAME).scope(SCOPE_NAME).search_indexes()
         )
         INVALID_INDEX_NAME = "langchain-vs-testing-invalid-index"
-        INVALID_INDEX_NAME_FULL = f"{BUCKET_NAME}.{SCOPE_NAME}.{INVALID_INDEX_NAME}"
         try:
             scope_index_manager.drop_index(INVALID_INDEX_NAME)
             time.sleep(SLEEP_DURATION)
@@ -524,11 +508,10 @@ class TestCouchbaseSearchVectorStore:
         invalid_index_vs = CouchbaseSearchVectorStore(
             cluster=cluster,
             embedding=ConsistentFakeEmbeddings(),
-            index_name=INVALID_INDEX_NAME_FULL,
+            index_name=INVALID_INDEX_NAME,
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         ids = invalid_index_vs.add_texts(texts, metadatas=metadatas)
@@ -553,7 +536,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         output = vectorstore.similarity_search("foo", k=1)
@@ -570,7 +552,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -600,7 +581,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -635,7 +615,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -665,7 +644,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -702,7 +680,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -742,7 +719,6 @@ class TestCouchbaseSearchVectorStore:
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
             index_name=INDEX_NAME,
-            scoped_index=False,
         )
 
         # Wait for the documents to be indexed
@@ -776,7 +752,6 @@ class TestCouchbaseSearchVectorStore:
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
             collection_name=COLLECTION_NAME,
-            scoped_index=False,
         )
 
         vectorstore.add_texts(texts, metadatas=metadatas)
