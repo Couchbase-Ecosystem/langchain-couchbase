@@ -43,10 +43,10 @@ git clone https://github.com/Couchbase-Ecosystem/langchain-couchbase.git
 cd langchain-couchbase
 ```
 
-2. **Install dependencies:**
+2. **Install dependencies for development and testing:**
 
 ```bash
-poetry install --with test_integration,typing
+poetry install --with dev,test_integration,typing,test
 ```
 
 This installs all development dependencies including pytest, linters, type checkers, and other tools defined in `pyproject.toml`.
@@ -168,7 +168,7 @@ Integration tests exercise a real Couchbase cluster. To run them locally:
      - one for chat history tests → set `COUCHBASE_CHAT_HISTORY_COLLECTION_NAME`
 
 3. **Create the required Search indexes:**
-   - Copy `tests/fixtures/search_index_definition_for_vector_store_testing.json` and replace the `<<SCOPE_NAME>>`, `<<COLLECTION_NAME>>`, and `<<INDEX_NAME>>` placeholders with the values you created above. Apply the definition through the Couchbase UI (Search → Import JSON).
+   - Copy `tests/fixtures/search_index_definition_for_vector_store_testing.json` and replace the `<<BUCKET_NAME>>`, `<<SCOPE_NAME>>`, `<<COLLECTION_NAME>>`, and `<<INDEX_NAME>>` placeholders with the values you created above. Apply the definition through the Couchbase UI (Search → Import JSON).
    - Repeat the process for `tests/fixtures/search_index_definition_for_cache_testing.json`, using a distinct `COUCHBASE_SEMANTIC_CACHE_INDEX_NAME`. (The semantic cache requires a Search index with vector fields.)
 
 4. **Export the environment variables** before running tests:
