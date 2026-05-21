@@ -49,4 +49,10 @@ exclude_patterns = ["tests/*", "test_app/*", "scripts/*"]
 
 html_theme = "sphinx_rtd_theme"
 
+html_context = {
+    "gtm_id": "GTM-MVPNN2",
+    "onetrust_id": "748511ff-10bf-44bf-88b8-36382e5b5fd9",
+}
+
 html_static_path = ["_static"]
+
