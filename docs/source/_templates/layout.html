@@ -2,6 +2,12 @@
 
 {%- block extrahead %}
 {{ super() }}
+{# OneTrust Cookies Consent Notice start for couchbase-ecosystem.github.io #}
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charset="UTF-8" data-domain-script="019e7462-a4f0-7c2a-b3ce-5d7fe1a704ee"></script>
+<script type="text/javascript">
+function OptanonWrapper() { }
+</script>
+{# OneTrust Cookies Consent Notice end for couchbase-ecosystem.github.io #}
 
 {# Google Analytics (gtag.js) #}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id }}"></script>
@@ -12,4 +18,12 @@
   gtag('config', '{{ ga_id }}', { 'anonymize_ip': true });
 </script>
 
+{%- endblock %}
+
+{%- block footer %}
+{{ super() }}
+{# OneTrust cookies settings button #}
+<div style="text-align: center; padding: 10px 0;">
+    <button id="ot-sdk-btn" class="ot-sdk-show-settings">{{ _('Cookie settings') }}</button>
+</div>
 {%- endblock %}
