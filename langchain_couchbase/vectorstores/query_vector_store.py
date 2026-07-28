@@ -335,7 +335,10 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             f"'{self._distance_metric.value}')"
         )
 
-        escaped_fields = ", ".join(_escape_field(field) for field in fields) + ", " if fields else ""
+        if fields:
+            escaped_fields = ", ".join(_escape_field(field) for field in fields) + ", "
+        else:
+            escaped_fields = ""
 
         if not where_str:
             search_query = (
@@ -360,7 +363,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
 
             # Parse the results
             for row in search_iter.rows():
-                text = row.pop(self._text_key)
+                text = row.pop(self._text_key, "")
                 id = row.pop("id", "")
                 distance = row.pop("distance", 0)
                 metadata = {}
@@ -531,7 +534,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             try:
                 INDEX_CREATE_QUERY = (
                     f"CREATE VECTOR INDEX {index_name} ON {self._collection_name} "
-                    f"({_escape_field(vector_field)} VECTOR) INCLUDE ({escaped_index_fields}) "
+                    f"({_escape_field(vector_field)} VECTOR) "
+                    f"INCLUDE ({escaped_index_fields}) "
                     f"{where_clause} USING GSI WITH {index_params}"
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()

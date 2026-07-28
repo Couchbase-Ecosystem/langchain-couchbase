@@ -4,7 +4,7 @@ import logging
 import time
 import uuid
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, Sequence
+from typing import List, Optional, Sequence
 
 from couchbase.cluster import Cluster
 from langchain_core.chat_history import BaseChatMessageHistory
@@ -12,6 +12,12 @@ from langchain_core.messages import (
     BaseMessage,
     message_to_dict,
     messages_from_dict,
+)
+
+from langchain_couchbase.utils import (
+    check_bucket_exists,
+    check_scope_and_collection_exists,
+    validate_ttl,
 )
 
 logger = logging.getLogger(__name__)
@@ -23,59 +29,10 @@ DEFAULT_INDEX_NAME = "LANGCHAIN_CHAT_HISTORY"
 DEFAULT_BATCH_SIZE = 100
 
 
-def _validate_ttl(ttl: Optional[timedelta]) -> None:
-    """Validate the time to live"""
-    if not isinstance(ttl, timedelta):
-        raise ValueError(f"ttl should be of type timedelta but was {type(ttl)}.")
-    if ttl <= timedelta(seconds=0):
-        raise ValueError(
-            f"ttl must be greater than 0 but was {ttl.total_seconds()} seconds."
-        )
-
-
 class CouchbaseChatMessageHistory(BaseChatMessageHistory):
     """Couchbase Chat Message History
     Chat message history that uses Couchbase as the storage
     """
-
-    def _check_bucket_exists(self) -> bool:
-        """Check if the bucket exists in the linked Couchbase cluster"""
-        bucket_manager = self._cluster.buckets()
-        try:
-            bucket_manager.get_bucket(self._bucket_name)
-            return True
-        except Exception:
-            return False
-
-    def _check_scope_and_collection_exists(self) -> bool:
-        """Check if the scope and collection exists in the linked Couchbase bucket
-        Raises a ValueError if either is not found"""
-        scope_collection_map: Dict[str, Any] = {}
-
-        # Get a list of all scopes in the bucket
-        for scope in self._bucket.collections().get_all_scopes():
-            scope_collection_map[scope.name] = []
-
-            # Get a list of all the collections in the scope
-            for collection in scope.collections:
-                scope_collection_map[scope.name].append(collection.name)
-
-        # Check if the scope exists
-        if self._scope_name not in scope_collection_map.keys():
-            raise ValueError(
-                f"Scope {self._scope_name} not found in Couchbase "
-                f"bucket {self._bucket_name}"
-            )
-
-        # Check if the collection exists in the scope
-        if self._collection_name not in scope_collection_map[self._scope_name]:
-            raise ValueError(
-                f"Collection {self._collection_name} not found in scope "
-                f"{self._scope_name} in Couchbase bucket "
-                f"{self._bucket_name}"
-            )
-
-        return True
 
     def __init__(
         self,
@@ -121,10 +78,10 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         self._ttl = None
 
         # Check if the bucket exists
-        if not self._check_bucket_exists():
+        if not check_bucket_exists(cluster, bucket_name):
             raise ValueError(
-                f"Bucket {self._bucket_name} does not exist. "
-                " Please create the bucket before searching."
+                f"Bucket {bucket_name} does not exist. "
+                "Please create the bucket before searching."
             )
 
         try:
@@ -138,10 +95,9 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             ) from e
 
         # Check if the scope and collection exists. Throws ValueError if they don't
-        try:
-            self._check_scope_and_collection_exists()
-        except Exception as e:
-            raise e
+        check_scope_and_collection_exists(
+            self._bucket, scope_name, collection_name, bucket_name
+        )
 
         self._session_id_key = session_id_key
         self._message_key = message_key
@@ -150,7 +106,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
         self._ts_key = DEFAULT_TS_KEY
 
         if ttl is not None:
-            _validate_ttl(ttl)
+            validate_ttl(ttl)
             self._ttl = ttl
 
         # Create an index if it does not exist if requested
@@ -165,8 +121,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
 
             try:
                 self._scope.query(index_creation_query).execute()
-            except Exception as e:
-                logger.error("Error creating index: ", e)
+            except Exception:
+                logger.exception("Error creating index")
 
     def add_message(self, message: BaseMessage) -> None:
         """Add a message to the cache"""
@@ -196,8 +152,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                         self._ts_key: timestamp,
                     },
                 )
-        except Exception as e:
-            logger.error("Error adding message: ", e)
+        except Exception:
+            logger.exception("Error adding message")
 
     def add_messages(self, messages: Sequence[BaseMessage]) -> None:
         """Add messages to the cache in a batched manner"""
@@ -227,20 +183,20 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
                     self._collection.insert_multi(insert_batch, expiry=self._ttl)
                 else:
                     self._collection.insert_multi(insert_batch)
-        except Exception as e:
-            logger.error("Error adding messages: ", e)
+        except Exception:
+            logger.exception("Error adding messages")
 
     def clear(self) -> None:
         """Clear the cache"""
         # Delete all documents in the collection with the session_id
         clear_query = (
-            f"DELETE FROM `{self._collection_name}`"
-            + f"WHERE {self._session_id_key}=$session_id"
+            f"DELETE FROM `{self._collection_name}` "
+            f"WHERE {self._session_id_key}=$session_id"
         )
         try:
             self._scope.query(clear_query, session_id=self._session_id).execute()
-        except Exception as e:
-            logger.error("Error clearing cache: ", e)
+        except Exception:
+            logger.exception("Error clearing cache")
 
     @property
     def messages(self) -> List[BaseMessage]:
@@ -256,8 +212,8 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             result = self._scope.query(fetch_query, session_id=self._session_id)
             for document in result:
                 message_items.append(document[f"{self._message_key}"])
-        except Exception as e:
-            logger.error("Error fetching messages: ", e)
+        except Exception:
+            logger.exception("Error fetching messages")
 
         return messages_from_dict(message_items)
 
