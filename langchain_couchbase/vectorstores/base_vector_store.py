@@ -9,6 +9,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    cast,
 )
 
 from couchbase.cluster import Cluster
@@ -123,8 +124,8 @@ class BaseCouchbaseVectorStore(VectorStore):
         self._scope_name = scope_name
         self._collection_name = collection_name
         self._embedding_function = embedding
-        self._text_key = text_key
-        self._embedding_key = embedding_key
+        self._text_key = cast(str, text_key)
+        self._embedding_key = cast(str, embedding_key)
 
         # Check if the bucket exists
         if not self._check_bucket_exists():
@@ -180,6 +181,8 @@ class BaseCouchbaseVectorStore(VectorStore):
             batch_size = self.DEFAULT_BATCH_SIZE
 
         doc_ids: List[str] = []
+
+        texts = list(texts)
 
         if ids is None:
             ids = [uuid.uuid4().hex for _ in texts]

@@ -58,7 +58,7 @@ vector_store = CouchbaseQueryVectorStore(
     scope_name=SCOPE_NAME,
     collection_name=COLLECTION_NAME,
     embedding=my_embeddings,
-    distance_metric=DistanceStrategy.DOT
+    distance_metric=DistanceStrategy.DOT,
 )
 ```
 
@@ -175,7 +175,7 @@ cluster = couchbase_cluster_connection_object
 set_llm_cache(
     CouchbaseSemanticCache(
         cluster=cluster,
-        embedding = embeddings,
+        embedding=embeddings,
         bucket_name=BUCKET_NAME,
         scope_name=SCOPE_NAME,
         collection_name=COLLECTION_NAME,

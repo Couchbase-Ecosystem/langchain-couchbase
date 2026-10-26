@@ -25,7 +25,7 @@ author = "Couchbase"
 try:
     release = get_version("langchain-couchbase")
 except Exception:
-        # Get version from pyproject.toml if package not installed
+    # Get version from pyproject.toml if package not installed
     pyproject_path = Path(__file__).parents[2] / "pyproject.toml"
     with open(pyproject_path, "rb") as f:
         pyproject_data = tomli.load(f)
@@ -55,4 +55,3 @@ html_context = {
 }
 
 html_static_path = ["_static"]
-

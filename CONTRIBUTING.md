@@ -31,7 +31,7 @@ We welcome contributions of all kinds! Here are some areas where contributions a
 ### Prerequisites
 
 - Python 3.10 or higher
-- [Poetry](https://python-poetry.org/docs/#installation) for dependency management
+- [Poetry](https://python-poetry.org/docs/#installation) 2.x for dependency management
 - Git
 
 ### Initial Setup
@@ -54,7 +54,7 @@ This installs all development dependencies including pytest, linters, type check
 3. **Activate the virtual environment:**
 
 ```bash
-poetry shell
+eval $(poetry env activate)  # Poetry 2.x; or prefix commands with `poetry run`
 ```
 
 ## Development Workflow
