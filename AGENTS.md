@@ -11,7 +11,7 @@ gotchas for dependency, CI, release, and integration-validation work.
 - `poetry.lock` is written by Poetry 2.x (`lock-version = "2.1"`). The CI
   workflows pin the same Poetry version (`POETRY_VERSION` in
   `.github/workflows/*.yml`); keep them in step when you upgrade Poetry locally.
-- Supported Python: `>=3.10,<4.0`. CI runs lint/unit/compile jobs on 3.10 and 3.13.
+- Supported Python: `>=3.11,<4.0`. CI runs lint/unit/compile jobs on 3.11, 3.12, 3.13, and 3.14.
 
 ## Dependency policy
 
@@ -71,7 +71,15 @@ treating a single failure as a regression.
   every PR and push to `main`.
 - `Integration tests` (`_integration_test.yml`): runs on PRs and nightly against
   the team's Capella cluster, using repository variables and the
-  `COUCHBASE_PASSWORD` secret. GitHub disables the nightly schedule after 60 days
+  `COUCHBASE_PASSWORD` secret. On PRs it runs every supported Python version
+  **one at a time** (`max-parallel: 1`); the nightly runs only 3.11, matching
+  the release workflow. It holds the `integration-tests-capella`
+  concurrency group, because the tests wipe shared collections and reuse fixed
+  index names and document keys. Do not parallelize it without first giving each
+  job its own collections and indexes. A manual dispatch can target a single
+  version. The release workflow's pre-release integration tests use the same
+  cluster but not the group, so don't dispatch a release while an integration
+  run is in progress. GitHub disables the nightly schedule after 60 days
   without commits; re-enable it in the Actions tab when that happens.
 - `Build and Deploy Sphinx Docs`: builds on PRs, and deploys to GitHub Pages on
   push to `main`.

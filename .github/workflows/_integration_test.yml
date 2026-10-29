@@ -9,13 +9,19 @@ on:
   workflow_dispatch:
     inputs:
       python-version:
-        required: true
+        required: false
         type: string
-        description: "Python version to use"
-        default: "3.11"
+        description: "Python version to use (leave empty to run all supported versions)"
+        default: ""
 
 env:
   POETRY_VERSION: "2.3.4"
+
+# All runs share one Capella bucket, and the tests wipe collections and reuse
+# fixed index names and document keys, so only one run may hit it at a time.
+concurrency:
+  group: integration-tests-capella
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -23,16 +29,24 @@ jobs:
       run:
         working-directory: .
     runs-on: ubuntu-latest
-    name: Python ${{ inputs.python-version }}
+    strategy:
+      # Sequential for the same reason as the concurrency group above.
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        # Manual dispatch: the given version, or all if empty. Nightly: 3.11,
+        # matching the release workflow. PRs: all supported versions.
+        python-version: ${{ fromJSON(inputs.python-version && format('["{0}"]', inputs.python-version) || github.event_name == 'schedule' && '["3.11"]' || '["3.11", "3.12", "3.13", "3.14"]') }}
+    name: Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Set up Python ${{ inputs.python-version }} + Poetry ${{ env.POETRY_VERSION }}
+      - name: Set up Python ${{ matrix.python-version }} + Poetry ${{ env.POETRY_VERSION }}
         uses: "./.github/actions/poetry_setup"
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ matrix.python-version }}
           poetry-version: ${{ env.POETRY_VERSION }}
           working-directory: .
           cache-key: core

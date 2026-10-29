@@ -18,7 +18,7 @@ jobs:
     name: lint
     strategy:
       matrix:
-        python-version: ["3.10", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
     uses: ./.github/workflows/_lint.yml
     with:
@@ -30,7 +30,7 @@ jobs:
     name: test
     strategy:
       matrix:
-        python-version: ["3.10", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
     uses: ./.github/workflows/_test.yml
     with:
@@ -42,7 +42,7 @@ jobs:
     name: compile-integration-tests
     strategy:
       matrix:
-        python-version: ["3.10", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
     uses: ./.github/workflows/_compile_integration_test.yml
     with:
