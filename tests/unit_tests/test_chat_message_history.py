@@ -63,8 +63,8 @@ def test_failed_multi_result_control() -> None:
 def test_add_messages_raises_on_failed_write(ttl: Optional[timedelta]) -> None:
     history = _make_history(ttl=ttl)
     collection = history._collection
-    collection.insert_multi.side_effect = lambda batch, **kwargs: (
-        _failed_multi_result(batch.keys())
+    collection.insert_multi.side_effect = lambda batch, **kwargs: _failed_multi_result(
+        batch.keys()
     )
 
     with pytest.raises(ValueError, match="Failed to add messages") as exc_info:
