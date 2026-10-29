@@ -166,7 +166,7 @@ class CouchbaseChatMessageHistory(BaseChatMessageHistory):
             try:
                 self._scope.query(index_creation_query).execute()
             except Exception as e:
-                logger.error("Error creating index: ", e)
+                logger.error("Error creating index: %s", e)
 
     def add_message(self, message: BaseMessage) -> None:
         """Add a message to the cache"""
