@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Tuple, Type, cast
 
 from couchbase.cluster import Cluster
 from langchain_core.documents import Document
@@ -57,10 +57,10 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
     """__Couchbase__ vector store integration using Query and Index service.
 
     This vector store supports two types of vector indexes:
-    
+
     * **Hyperscale Vector Index** - Optimized for pure vector searches on large datasets (billions of documents).
       Best for content discovery, recommendations, and applications requiring high accuracy with low memory footprint. Hyperscale Vector indexes compare vectors and scalar values simultaneously.
-    
+
     * **Composite Vector Index** - Combines a Global Secondary Index (GSI) with a vector column.
       Ideal for searches combining vector similarity with scalar filters where scalars filter out large portions of the dataset. Composite Vector indexes apply scalar filters first, then perform vector searches on the filtered results.
 
@@ -335,7 +335,9 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             f"'{self._distance_metric.value}')"
         )
 
-        escaped_fields = ", ".join(_escape_field(field) for field in fields) + ", " if fields else ""
+        escaped_fields = (
+            ", ".join(_escape_field(field) for field in fields) + ", " if fields else ""
+        )
 
         if not where_str:
             search_query = (
@@ -447,7 +449,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         where_clause: Optional[str] = None,
         index_scan_nprobes: Optional[int] = None,
         index_trainlist: Optional[int] = None,
-    ):
+    ) -> None:
         """Create a new index for the Query vector store.
 
         Args:
@@ -501,7 +503,7 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
                 )
 
         # Create the index parameters for the index creation query
-        index_params = {}
+        index_params: Dict[str, Any] = {}
         index_params["dimension"] = vector_dimension
         index_params["similarity"] = similarity_metric.value
         index_params["description"] = index_description
@@ -531,7 +533,8 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
             try:
                 INDEX_CREATE_QUERY = (
                     f"CREATE VECTOR INDEX {index_name} ON {self._collection_name} "
-                    f"({_escape_field(vector_field)} VECTOR) INCLUDE ({escaped_index_fields}) "
+                    f"({_escape_field(vector_field)} VECTOR) "
+                    f"INCLUDE ({escaped_index_fields}) "
                     f"{where_clause} USING GSI WITH {index_params}"
                 )
                 self._scope.query(INDEX_CREATE_QUERY).execute()
@@ -586,10 +589,10 @@ class CouchbaseQueryVectorStore(BaseCouchbaseVectorStore):
         return cls(
             embedding=embedding,
             cluster=cluster,
-            bucket_name=bucket_name,
-            scope_name=scope_name,
-            collection_name=collection_name,
-            distance_metric=distance_metric,
+            bucket_name=cast(str, bucket_name),
+            scope_name=cast(str, scope_name),
+            collection_name=cast(str, collection_name),
+            distance_metric=cast(DistanceStrategy, distance_metric),
             text_key=text_key,
             embedding_key=embedding_key,
         )

@@ -9,6 +9,7 @@ import pytest
 from couchbase.auth import PasswordAuthenticator
 from couchbase.cluster import Cluster
 from couchbase.options import ClusterOptions
+from langchain_core.caches import BaseCache
 from langchain_core.globals import get_llm_cache, set_llm_cache
 from langchain_core.outputs import Generation
 
@@ -32,6 +33,13 @@ USERNAME = os.getenv("COUCHBASE_USERNAME", "")
 PASSWORD = os.getenv("COUCHBASE_PASSWORD", "")
 INDEX_NAME = os.getenv("COUCHBASE_SEMANTIC_CACHE_INDEX_NAME", "")
 SLEEP_DURATION = 1
+
+
+def _llm_cache() -> BaseCache:
+    """Return the global LLM cache, failing if none is set"""
+    cache = get_llm_cache()
+    assert cache is not None
+    return cache
 
 
 def set_all_env_vars() -> bool:
@@ -89,12 +97,12 @@ class TestCouchbaseCache:
         params = llm.dict()
         params["stop"] = None
         llm_string = str(sorted([(k, v) for k, v in params.items()]))
-        get_llm_cache().update("foo", llm_string, [Generation(text="fizz")])
-        cache_output = get_llm_cache().lookup("foo", llm_string)
+        _llm_cache().update("foo", llm_string, [Generation(text="fizz")])
+        cache_output = _llm_cache().lookup("foo", llm_string)
         assert cache_output == [Generation(text="fizz")]
 
-        get_llm_cache().clear()
-        output = get_llm_cache().lookup("bar", llm_string)
+        _llm_cache().clear()
+        output = _llm_cache().lookup("bar", llm_string)
         assert output != [Generation(text="fizz")]
 
     def test_cache_with_ttl(self, cluster: Any) -> None:
@@ -115,8 +123,8 @@ class TestCouchbaseCache:
         params = llm.dict()
         params["stop"] = None
         llm_string = str(sorted([(k, v) for k, v in params.items()]))
-        get_llm_cache().update("foo", llm_string, [Generation(text="fizz")])
-        cache_output = get_llm_cache().lookup("foo", llm_string)
+        _llm_cache().update("foo", llm_string, [Generation(text="fizz")])
+        cache_output = _llm_cache().lookup("foo", llm_string)
         assert cache_output == [Generation(text="fizz")]
 
         # Check the document's expiry time by fetching it from the database
@@ -148,22 +156,22 @@ class TestCouchbaseCache:
         params = llm.dict()
         params["stop"] = None
         llm_string = str(sorted([(k, v) for k, v in params.items()]))
-        get_llm_cache().update(
+        _llm_cache().update(
             "foo", llm_string, [Generation(text="fizz"), Generation(text="Buzz")]
         )
 
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
         # foo and bar will have the same embedding produced by FakeEmbeddings
-        cache_output = get_llm_cache().lookup("bar", llm_string)
+        cache_output = _llm_cache().lookup("bar", llm_string)
         assert cache_output == [Generation(text="fizz"), Generation(text="Buzz")]
 
         # clear the cache
-        get_llm_cache().clear()
+        _llm_cache().clear()
         # Wait for the documents to be indexed
         time.sleep(SLEEP_DURATION)
 
-        output = get_llm_cache().lookup("bar", llm_string)
+        output = _llm_cache().lookup("bar", llm_string)
         assert output != [Generation(text="fizz"), Generation(text="Buzz")]
 
     def test_semantic_cache_with_ttl(self, cluster: Any) -> None:
@@ -190,7 +198,7 @@ class TestCouchbaseCache:
 
         # Add a document to the cache
         seed_prompt = "foo"
-        get_llm_cache().update(
+        _llm_cache().update(
             seed_prompt, llm_string, [Generation(text="fizz"), Generation(text="Buzz")]
         )
 
@@ -198,7 +206,7 @@ class TestCouchbaseCache:
         time.sleep(SLEEP_DURATION)
 
         # foo and bar will have the same embedding produced by FakeEmbeddings
-        cache_output = get_llm_cache().lookup("bar", llm_string)
+        cache_output = _llm_cache().lookup("bar", llm_string)
         assert cache_output == [Generation(text="fizz"), Generation(text="Buzz")]
 
         # Check the document's expiry time by fetching it from the database
