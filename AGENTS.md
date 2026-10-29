@@ -11,7 +11,7 @@ gotchas for dependency, CI, release, and integration-validation work.
 - `poetry.lock` is written by Poetry 2.x (`lock-version = "2.1"`). The CI
   workflows pin the same Poetry version (`POETRY_VERSION` in
   `.github/workflows/*.yml`); keep them in step when you upgrade Poetry locally.
-- Supported Python: `>=3.10,<4.0`. CI runs lint/unit/compile jobs on 3.10 and 3.13.
+- Supported Python: `>=3.11,<4.0`. CI runs lint/unit/compile jobs on 3.11, 3.12, 3.13, and 3.14.
 
 ## Dependency policy
 

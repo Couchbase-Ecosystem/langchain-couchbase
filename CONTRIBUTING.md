@@ -30,7 +30,7 @@ We welcome contributions of all kinds! Here are some areas where contributions a
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.11 or higher
 - [Poetry](https://python-poetry.org/docs/#installation) 2.x for dependency management
 - Git
 
