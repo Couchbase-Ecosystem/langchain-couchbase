@@ -75,7 +75,7 @@ codespell = "^2.4.1"
 [tool.poetry.group.test_integration.dependencies]
 
 [tool.poetry.group.lint.dependencies]
-ruff = "^0.16.10"
+ruff = "^0.17.3"
 
 [tool.poetry.group.typing.dependencies]
 mypy = "^2.4.0"
