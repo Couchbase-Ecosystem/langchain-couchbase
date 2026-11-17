@@ -39,7 +39,7 @@ jobs:
         python-version: ${{ fromJSON(inputs.python-version && format('["{0}"]', inputs.python-version) || github.event_name == 'schedule' && '["3.11"]' || '["3.11", "3.12", "3.13", "3.14"]') }}
     name: Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 

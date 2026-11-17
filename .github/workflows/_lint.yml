@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python ${{ inputs.python-version }} + Poetry ${{ env.POETRY_VERSION }}
         uses: "./.github/actions/poetry_setup"
@@ -61,7 +61,7 @@ jobs:
           poetry install --with lint,typing
 
       - name: Get .mypy_cache to speed up mypy
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         env:
           SEGMENT_DOWNLOAD_TIMEOUT_MIN: "2"
         with:
@@ -95,7 +95,7 @@ jobs:
           poetry install --with test,test_integration
 
       - name: Get .mypy_cache_test to speed up mypy
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         env:
           SEGMENT_DOWNLOAD_TIMEOUT_MIN: "2"
         with:
